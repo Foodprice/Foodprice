@@ -575,7 +575,7 @@ datos_env <- new.env()
 
     Alimentos_Inclu = setdiff(Data_abs_precios_Sipsa_ABS$Alimento, Alimentos_Exclu)
     criterio_2 = Data_abs_precios_Sipsa_ABS %>% filter(Alimento %in% Alimentos_Inclu)
-
+    View(criterio_2)
     # Eliminar niveles NA de abastecimiento (Flujos de carga nulos)
     criterio_2 = criterio_2 %>% drop_na(paste0("Total_Cali_",Mes))
 
