@@ -459,14 +459,3 @@ assign("Modelo_3_F_INT",modelo_3_dieta_int,envir = globalenv())
 
 }
 
-remove.packages("Foodprice")
-devtools::install_github("Foodprice/Foodprice");library(Foodprice)
-
-
-
-Datos_dane_col(Ciudad = "Cali",Año=2022,Mes="Septiembre",Percentil_Abast = 0.25)
-
-View(Data_Sipsa_Abas_Unicos)
-View(Data_abs_precios_Sipsa)
-
-View(Mapeo_Precios_Abs)

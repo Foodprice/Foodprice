@@ -581,7 +581,7 @@ datos_env <- new.env()
 
     # Calcular cuantiles
     quant = quantile(criterio_2[,2],probs = Percentil_Abast, na.rm = TRUE)
-
+    print(quant)
     # Eliminar los alimentos cuyo flujo de carga está abajo del percentil 25
     criterio_2 = criterio_2[criterio_2[,2] < quant,]
 
