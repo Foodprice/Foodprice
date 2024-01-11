@@ -13,7 +13,7 @@ En el presente repositorio encontrará la versión 1.0.0 del paquete Foodprice, 
 
 - **Modelo_1:** Calcula el alimento y su costo minimo para una dieta que garantice suficiente energía en el día. Requiere un parámetro obligatorio y dos opcionales.
 - **Modelo_2:** calcula los alimentos para una dieta adecuada en nutrientes y su costo mínimo diario. Requiere un parámetro obligatorio y dos opcionales.
-
+- **Modelo_3:** calcula los alimentos para una dieta saludable y su costo mínimo diario. Requiere un parámetro obligatorio y tres opcionales.
 #
 
 ### :wrench: **Instrucciones de instalación y uso:**
