@@ -36,6 +36,7 @@ cat("\n")
     stop("Error: Datos_Insumo debe tener al menos 4 columnas.")
   }
 
+
 required_columns3 <- c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust")
 
 missing_columns3 <- setdiff(required_columns3, colnames(Datos_Insumo))
@@ -43,15 +44,56 @@ missing_columns3 <- setdiff(required_columns3, colnames(Datos_Insumo))
 if (length(missing_columns3) > 0) {
   stop(paste("El modelo 3 requiere las siguientes columnas en los datos de insumo:", paste(missing_columns3, collapse = ", "),". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al segundo modelo"))}
 
-# -------------- VERIFICACIÓN DE intercabios
+# -------------- VERIFICACIÓN DE INTERCAMBIOS
 
-#---------------------#
-#       FALTA        #
-#-------------------#
+# Asegurarse de que Intercambio_Gramos_OP sea NULL o un data frame con al menos 6 columnas específicas
+if (!is.null(Intercambio_Gramos_OP)) {
+  if (!is.data.frame(Intercambio_Gramos_OP)) {
+    stop("Error: Intercambio_Gramos_OP no es un data frame.")
+  }
+  
+  # Verificar si tiene al menos 6 columnas específicas
+  required_columns_op <- c("Cod_TCAC", "Alimentos", "Subgrupo_GABAS", "Energia_100g", "Energia_Int", "Intercambio_g")
+  missing_columns_op <- setdiff(required_columns_op, colnames(Intercambio_Gramos_OP))
+  
+  if (length(missing_columns_op) > 0) {
+    stop(paste("Error: Intercambio_Gramos_OP debe tener al menos 6 columnas con los siguientes nombres:", 
+               paste(missing_columns_op, collapse = ", "), ". Revise la documentación para más información.."))
+  }
+}
+
+
+# Asegurarse de que Int_Req_M_OP sea NULL o un data frame con al menos 2 columnas
+if (!is.null(Int_Req_M_OP)) {
+  if (!is.data.frame(Int_Req_M_OP)) {
+    stop("Error: Int_Req_M_OP no es un data frame. Revise la documentación para más información.")
+  }
+  
+  # Verificar si tiene al menos 2 columnas
+  if (ncol(Int_Req_M_OP) < 2) {
+    stop("Error: Int_Req_M_OP debe tener al menos 2 columnas. Revise la documentación para más información.")
+  }
+}
+
+# Asegurarse de que Int_Req_F_OP sea NULL o un data frame con al menos 2 columnas
+if (!is.null(Int_Req_F_OP)) {
+  if (!is.data.frame(Int_Req_F_OP)) {
+    stop("Error: Int_Req_F_OP no es un data frame. Revise la documentación para más información.")
+  }
+  
+  # Verificar si tiene al menos 2 columnas
+  if (ncol(Int_Req_F_OP) < 2) {
+    stop("Error: Int_Req_F_OP debe tener al menos 2 columnas. Revise la documentación para más información.")
+  }
+}
+
+
 
 #------------------------------------------------------------------------------------------#
 #                               TERCERA ETAPA: CARGA DE REQUERIMIENTOS                    #
 #-----------------------------------------------------------------------------------------#
+
+
 
 MOD_3 <- new.env()
 
@@ -601,11 +643,13 @@ modelo_3_dieta_int = modelo_3_dieta_int[order(modelo_3_dieta_int$Grupo_GABAS),]
 
 names(modelo_3_costo)[names(modelo_3_costo) == "Gupo"][1] <- "Alimentos"
 
+assign("Modelo_3_M",modelo_3_costo,envir = globalenv())
+assign("Modelo_3_M_INT",modelo_3_dieta_int,envir = globalenv())
+
 #------------------------------------------------------------------------------------------#
 #                       FIN DEL CUARTO MÓDULO COMO FUNCIÓN                                 #
 #-----------------------------------------------------------------------------------------#
-assign("Modelo_3_M",modelo_3_costo,envir = globalenv())
-assign("Modelo_3_M_INT",modelo_3_dieta_int,envir = globalenv())
+
 
   if(length(warnings())<100) {print("Ejecución del modelo 3 correcta")} else {cat("Cantidad de errores encontrados:",length(warnings()), "\n")}
 

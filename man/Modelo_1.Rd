@@ -14,7 +14,7 @@ DRI_F_OP=NULL
 
 }
 \description{
-La función Modelo_1 calcula el alimento y su costo minimo para una dieta que garantice suficiente energía en el día. Requiere un parámetro obligatorio y dos opcionales.
+La función Modelo_1 calcula el alimento y su costo minimo para una dieta que garantice suficiente energía en el día. Presenta un parámetro obligatorio y dos opcionales.
 }
 \examples{
 

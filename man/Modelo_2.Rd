@@ -15,7 +15,7 @@ DRI_F_OP=NULL
 
 }
 \description{
-La función Modelo_2 calcula los alimentos para una dieta adecuada en nutrientes y su costo mínimo diario. Requiere un parámetro obligatorio y dos opcionales.
+La función Modelo_2 calcula los alimentos para una dieta adecuada en nutrientes y su costo mínimo diario. Presenta un parámetro obligatorio y dos opcionales.
 }
 \examples{
 
