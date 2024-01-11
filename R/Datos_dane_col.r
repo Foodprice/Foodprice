@@ -550,6 +550,7 @@ datos_env <- new.env()
     Data_abs_precios_Sipsa = merge(Data_Sipsa_Abas_Unicos, Data_abs_precios_Sipsa,by = "Alimento_abs", all.x = TRUE)
     # Selección de las variables de interés
     Data_abs_precios_Sipsa = Data_abs_precios_Sipsa[c("Alimento", "Precio_kg", "Total")]
+    assign("Data_abs_precios_Sipsa",Data_abs_precios_Sipsa,envir = globalenv())
     Data_abs_precios_Sipsa = Data_abs_precios_Sipsa[order(Data_abs_precios_Sipsa$Alimento),]
     colnames(Data_abs_precios_Sipsa) = c("Alimento",paste0("Precio_kg_", Mes), paste0("Total_Cali_", Mes))
  }
