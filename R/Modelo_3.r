@@ -457,18 +457,5 @@ assign("Modelo_3_F_INT",modelo_3_dieta_int,envir = globalenv())
 
 
 
-
-Datos_Prueba[98,1]="K004"
-Datos_Prueba[99,1]="K003"
-
-
-
-library(Foodprice)
-Datos_dane_col(Ciudad = "Cali",Año=2022,Mes="Septiembre",Percentil_Abast = 0.25)
-View(Datos_Insumo_Modelos_2022_Septiembre_Cali)
-Modelo_3(Datos_Insumo=Datos_Prueba)
-View(Modelo_3_F_INT)
 }
-
-
 
