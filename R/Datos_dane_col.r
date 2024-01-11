@@ -471,6 +471,8 @@ columnas_numericas <- sapply(Data_Sipsa_Abas_Unicos, is.numeric)
 Data_Sipsa_Abas_Unicos$Total <- rowSums(Data_Sipsa_Abas_Unicos[columnas_numericas], na.rm = TRUE)
 
 Data_Sipsa_Abas_Unicos=Data_Sipsa_Abas_Unicos[,c("Alimento_abs","Total")]
+assign("Data_Sipsa_Abas_Unicos",Data_Sipsa_Abas_Unicos,envir = globalenv())
+
 
 #----# Salida: Data_Sipsa_Abas_Unicos #----#
 

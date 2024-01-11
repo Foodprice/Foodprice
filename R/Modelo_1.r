@@ -38,7 +38,7 @@ required_columns <- c("Precio_100g_ajust", "Alimento", "Energia")
 missing_columns <- setdiff(required_columns, colnames(Datos_Insumo))
 
 if (length(missing_columns) > 0) {
-  stop(paste("El modelo 1 requiere las siguientes columnas: ", paste(missing_columns, collapse = ", "),". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al primer modelo"))}
+  stop(paste("El modelo 1 requiere las siguientes columnas en los datos de insumo: ", paste(missing_columns, collapse = ", "),". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al primer modelo"))}
 
 
 # -------------- VERIFICACIÓN DE DRI_M_OP Y F
@@ -87,7 +87,7 @@ if (length(missing_columns) > 0) {
 #                       TERCERA ETAPA: Carga de requerimientos                             #
 #-----------------------------------------------------------------------------------------#
 
-Req_env <- new.env()
+MOD_1 <- new.env()
 
 #------------------------- másculino
 
@@ -97,7 +97,7 @@ DRI_M=DRI_M_OP
 } else {
 
 
-data(DRI_M, package = "Foodprice", envir = Req_env)
+data(DRI_M, package = "Foodprice", envir = MOD_1)
 DRI_M=DRI_M[,1:2]
 colnames(DRI_M)=c("Edad","Energía") # El priemro siembre debe ser la edad y la segundo la energía
 
@@ -111,7 +111,7 @@ DRI_F=DRI_F_OP
 
 } else {
 
-data(DRI_F, package = "Foodprice", envir = Req_env)
+data(DRI_F, package = "Foodprice", envir = MOD_1)
 DRI_F=DRI_F[,1:2]
 colnames(DRI_F)=c("Edad","Energía") 
 }

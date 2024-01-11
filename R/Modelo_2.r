@@ -40,7 +40,7 @@ required_columns2 <- c("Precio_100g_ajust", "Alimento", "Energia","Proteina", "L
 missing_columns2 <- setdiff(required_columns2, colnames(Datos_Insumo))
 
 if (length(missing_columns2) > 0) {
-  stop(paste("El modelo 2 requiere las siguientes columnas", paste(missing_columns2, collapse = ", "),". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al segundo modelo"))}
+  stop(paste("El modelo 2 requiere las siguientes columnas en los datos de insumo:", paste(missing_columns2, collapse = ", "),". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al segundo modelo"))}
 
 # -------------- VERIFICACIÓN DE DRI_M_OP Y F
 
@@ -106,7 +106,7 @@ f_x = function(a){
   return(df)
 }
 
-Req_env <- new.env()
+MOD_2 <- new.env()
 
 #------------------------- másculino
 
@@ -116,7 +116,7 @@ DRI_m=DRI_M_OP
 } else {
 
 
-data(DRI_M, package = "Foodprice", envir = Req_env)
+data(DRI_M, package = "Foodprice", envir = MOD_2)
 DRI_m = f_x(DRI_M) # El priemro siembre debe ser la edad y la segundo la energía
 
 }
@@ -129,7 +129,7 @@ DRI_f=DRI_F_OP
 
 } else {
 
-data(DRI_F, package = "Foodprice", envir = Req_env)
+data(DRI_F, package = "Foodprice", envir = MOD_2)
 DRI_f = f_x(DRI_F) # El priemro siembre debe ser la edad y la segundo la energía
 
 }
