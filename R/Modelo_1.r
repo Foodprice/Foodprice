@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------------------------#
 
 
-Modelo_1=function(Datos_Insumo,DRI_M_OP=NULL,DRI_F_OP=NULL){
+Modelo_1=function(Datos_Insumo,EER,Filtrar_Alimentos=NULL{
 
 #------------------------------------------------------------------------------------------#
 #                       PRIMERA ETAPA: VALIDACIÓN DE LIBRERIAS                             #
@@ -23,7 +23,7 @@ cat("\n")
 #         SEGUNDA ETAPA: VALIDACIÓN DE PARÁMETROS OBLIGATORIOS Y OPCIONALES                #
 #-----------------------------------------------------------------------------------------#
 
-#-------------data 
+# -------------- VERIFICACIÓN DE DATOS DE INSUMO
 
   # Verificar si Datos_Insumo es un data frame
   if (!is.data.frame(Datos_Insumo)) {
@@ -40,94 +40,52 @@ missing_columns <- setdiff(required_columns, colnames(Datos_Insumo))
 if (length(missing_columns) > 0) {
   stop(paste("El modelo 1 requiere las siguientes columnas en los datos de insumo: ", paste(missing_columns, collapse = ", "),". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al primer modelo"))}
 
-
-# -------------- VERIFICACIÓN DE DRI_M_OP Y F
-
-  if (!is.null(DRI_M_OP) || !is.null(DRI_F_OP)) {
-
-  # Verificar la existencia de los dataframes DRI_M_OP y DRI_F_OP
- if (!is.null(DRI_M_OP) && !is.data.frame(DRI_M_OP)) {
-    stop("DRI_M_OP no es un data frame.")
-  }
-
-      if((!is.null(DRI_M_OP) && !ncol(DRI_M_OP)>=2)){ stop("DRI_M_OP no es un data frame de  al menos dos columnas.")}
-
-  if (!is.null(DRI_F_OP) && !is.data.frame(DRI_F_OP)) {
-    stop("DRI_F_OP no es un data frame de al menos dos columnas.")
-    
-  }
-    if((!is.null(DRI_M_OP) && !ncol(DRI_M_OP)>=2)){ stop("DRI_M_OP no es un data frame de al menos dos columnas.")}
-
-
-if(!is.null(DRI_M_OP)){
-required_columns <- c("Edad", "Energía")
-missing_columns <- setdiff(required_columns, colnames(DRI_M_OP))
-
-if (length(missing_columns) > 0) {
-  stop(paste("Los datos de requerimientos del modelo 1  requiere las siguientes columnas: ", paste(missing_columns, collapse = ", "),". Por favor revise la docuentación para conocer el nombre que deben tener las columnas necesarias al primer modelo"))
-} 
-  }
-
-
-  if(!is.null(DRI_F_OP)){
-required_columns <- c("Edad", "Energía")
-missing_columns <- setdiff(required_columns, colnames(DRI_F_OP))
-
-if (length(missing_columns) > 0) {
-  stop(paste("Los datos de requerimientos del modelo 1  requiere las siguientes columnas: ", paste(missing_columns, collapse = ", "),". Por favor revise la docuentación para conocer el nombre que deben tener las columnas necesarias al primer modelo"))
-} 
-  
-  }}
-  
-
-
-
-
-#------------------------------------------------------------------------------------------#
-#                       TERCERA ETAPA: Carga de requerimientos                             #
-#-----------------------------------------------------------------------------------------#
-
-MOD_1 <- new.env()
-
-#------------------------- másculino
-
-if(!is.null(DRI_M_OP)){
-DRI_M=DRI_M_OP
-
-} else {
-
-
-data(DRI_M, package = "Foodprice", envir = MOD_1)
-DRI_M=DRI_M[,1:2]
-colnames(DRI_M)=c("Edad","Energía") # El priemro siembre debe ser la edad y la segundo la energía
-
-}
-
-
-#------------------------- femenino
-
-if(!is.null(DRI_F_OP)){
-DRI_F=DRI_F_OP
-
-} else {
-
-data(DRI_F, package = "Foodprice", envir = MOD_1)
-DRI_F=DRI_F[,1:2]
-colnames(DRI_F)=c("Edad","Energía") 
-}
-
-# El priemro siembre debe ser la edad y la segundo la energía
-
+#Filtrar azucar
 if ("Cod_TCAC" %in% colnames(Datos_Insumo)) {Datos_Insumo = Datos_Insumo %>% filter(!Cod_TCAC %in% c("K003", "K004", "K033","D013"))} 
 
+# -------------- VERIFICACIÓN DE EER
+
+
+  # Verificar si Datos_Insumo es un data frame
+  if (!is.data.frame(EER)) {
+    stop("Datos_Insumo no es un data frame.")
+  }
+  
+  # Verificar si tiene al menos 3 columnas
+  if (ncol(EER) < 2) {
+    stop("Los requerimientos para el modelo 1 deben contener al menos 2 columnas.")
+  }
+required_columns_E <- c("Edad","Energia")
+missing_columns_E <- setdiff(required_columns_E, colnames(EER))
+
+if (length(missing_columns_E) > 0) {
+  stop(paste("El modelo 1 requiere las siguientes columnas en los datos de insumo: ", paste(missing_columns_E, collapse = ", "),". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al primer modelo"))}
+
+
+# -------------- Filtrar_Alimentos
+
+ # Validar si Filtrar_Alimentos es distinto de NULL
+
+  if (!is.null(Filtrar_Alimentos)) {
+    # Validar si Filtrar_Alimentos es un vector
+    if (!is.vector(Filtrar_Alimentos)) {
+      stop("El parámetro Filtrar_Alimentos debe ser un vector.")
+    }
+    
+    # Filtrar los alimentos que no están en Filtrar_Alimentos
+    Datos_insumo <- Datos_insumo[!(Datos_insumo$Alimento %in% Filtrar_Alimentos), ]
+  }
+
+  
 #------------------------------------------------------------------------------------------#
-#                       CUARTA ETAPA: MODELO 1 MASCULINO                                   #
+#                       TERCERA ETAPA: MODELO 1 MASCULINO                                   #
 #-----------------------------------------------------------------------------------------#
 
 #--------------------Preparación:
 
 # Asignación de vectores
-precios = Datos_Insumo$Precio_100g_ajust;alimentos=Datos_Insumo$Alimento
+
+
 
 # Matriz de contenidos energéticos
 A = matrix(as.vector(Datos_Insumo$Energia), ncol = length(alimentos))
@@ -152,6 +110,8 @@ edad=DRI_M$Edad
     dri_edad = append(dri_edad, b)
     names(dri_edad)[i] = paste0("b_", i)
   }
+
+
   #solucion del modelo
   for (i in 1:8) {
     df_1 = data.frame()
@@ -270,4 +230,37 @@ modelo_1_res[nrow(modelo_1_res), "Alimentos"] <- paste0(alimento_nombre, " (100g
 #-----------------------------------------------------------------------------------------#
 
 }
+
+#-------------------
+library(stringdist)
+
+nombres_columnas <- c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust", "Energía", "Proteina",
+                      "Carbohidratos", "Lipidos", "Calcio", "Zinc", "Hierro", "Magnesio", "Fosforo",
+                      "VitaminaC", "Tiamina", "Riboflavina", "Niacina", "Folatos", "VitaminaB12",
+                      "VitaminaA", "Sodio")
+
+# Nombres clave en inglés y español
+  nombres_clave <- c("Precio", "Alimento", "Energia")
+  
+
+  
+# Encontrar la mejor coincidencia para cada nombre clave
+mejor_coincidencia <- sapply(nombres_clave, function(clave) agrep(clave, nombres_columnas, ignore.case = TRUE))
+
+
+coincidencias_validas <- unlist(mejor_coincidencia[sapply(mejor_coincidencia, function(x) length(x) > 0)])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
