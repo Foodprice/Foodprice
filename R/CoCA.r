@@ -210,7 +210,7 @@ Coef.Restriq = matrix(as.vector(Datos_Insumo$Energia), ncol = length(Alimento))
 
 # Vector de limitaciones del modelo
 Limitaciones=EER_F$Energia
-print(Edad)
+
 #------------------------------Solución:
 
 # Modelo
@@ -238,7 +238,6 @@ Salida_CoCA_F <- merge(Salida_CoCA_F, df_combinado, by = "Alimentos")
 
 }
 
-print(DF_o)
 
 # DF sin ceros
 DF_o <- Salida_CoCA_F[rowSums(Salida_CoCA_M[, -1]) != 0, ]
