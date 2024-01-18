@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------------------------#
 
 
-Modelo_1=function(Datos_Insumo,EER,Filtrar_Alimentos=NULL{
+Modelo_1=function(Datos_Insumo,EER,Filtrar_Alimentos=NULL){
 
 #------------------------------------------------------------------------------------------#
 #                       PRIMERA ETAPA: VALIDACIÓN DE LIBRERIAS                             #
@@ -82,8 +82,6 @@ if (length(missing_columns_E) > 0) {
 #-----------------------------------------------------------------------------------------#
 
 #--------------------Preparación:
-
-# Asignación de vectores
 
 
 
