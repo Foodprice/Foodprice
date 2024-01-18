@@ -91,22 +91,25 @@ if (!identical(names(DRI_min_F_li), names(DRI_max_F_li))) {
 
 DRI_min_F_li= DRI_min_F %>% select(-any_of(c("Edad","Sexo")))
 
+Limitaciones=cbind(DRI_min_F_li,DRI_max_F_li)
+
 
 # Exraer los nutrientes de entrada que son distintos a las columnas: ("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust")
 DF_Nutrientes_ALimentos <- Datos_Insumo %>% select(-any_of(c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust")))
+DF_Nutrientes_ALimentos=DF_Nutrientes_ALimentos[names(DRI_min_F_li)]
 
 Sin_EER= DF_Nutrientes_ALimentos %>% select(-Energia)
 DF_Nutrientes_ALimentos=cbind(DF_Nutrientes_ALimentos,Sin_EER)
-names(DF_Nutrientes_ALimentos) <- gsub("\\s", "", names(DF_Nutrientes_ALimentos))
 
+names(DRI_min_F_li)
 
-# MAtriz de coef de restricción al modelo (ENERGIA y nutrientes)
+# Matriz de coef de restricción al modelo (ENERGIA y nutrientes)
 Coef.Restriq=DF_Nutrientes_ALimentos %>% as.matrix() %>% t()
 
-
-
+View(Coef.Restriq)
+View(Limitaciones)
 #signos de las restricciones
-constr_signs = c("=", rep(">=", length(Edad)), rep("<=", length(Edad)))
+constr_signs = c("=", rep(">=", ncol(DRI_min_F_li)-1), rep("<=", length(DRI_max_F_li)))
 
 
 
