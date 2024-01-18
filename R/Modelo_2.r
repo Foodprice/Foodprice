@@ -70,10 +70,6 @@ if (!1 %in% categorias_unicas) {
 
 if(Femenino==TRUE) {
 
-library(Foodprice)
-names(Datos_Prueba)
-names(DRI_min_F)
-Datos_Insumo=Foodprice::Datos_Prueba
 
 
 DRI_min_F=subset(DRI_min,Sexo==1)
@@ -140,12 +136,3 @@ opt_sol = lp(direction = "min",
 
 
 
-
-
-names(DRI_min) <- c("Edad", "Energia", "Sexo", "Proteina", "Lipidos", "Carbohidratos", "VitaminaC", "Folato", "VitaminaA", "Tiamina",
-                    "Riboflavina", "Niacina", "VitaminaB12", "Magnesio", "Fosforo", "Sodio", "Calcio", "Hierro", "Zinc")
-
-# Asignar nombres a Datos_Prueba
-names(Datos_Prueba) <- c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust", "Energia", "Proteina", "Carbohidratos", "Lipidos",
-                         "Calcio", "Zinc", "Hierro", "Magnesio", "Fosforo", "VitaminaC", "Tiamina", "Riboflavina", "Niacina", "Folatos",
-                         "VitaminaB12", "VitaminaA", "Sodio")
