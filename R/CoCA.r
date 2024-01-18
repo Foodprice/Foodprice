@@ -279,7 +279,7 @@ assign("CoCA_Result",CoCA,envir = globalenv())
 #------------------------------------------------------------------------------------------#
 #                       FIN DEL SEGUNDO MÓDULO COMO FUNCIÓN                                 #
 #-----------------------------------------------------------------------------------------#
-  if(length(warnings())<100) {print ("Ejecución del modelo 1 correcta") }
+  if(length(warnings())<100) {print ("Ejecución del modelo correcta") }
 
 }
 
