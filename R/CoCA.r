@@ -159,11 +159,11 @@ df_alimentos[, -1] <- df_alimentos[, -1] * 100
 
 #ESTRUCTURA CIAT
 df_transformado <- df_alimentos %>%
-  pivot_longer(cols = -Alimentos, names_to = "Grupo_Etario", values_to = "Cantidad_G") %>%
+  pivot_longer(cols = -Alimentos, names_to = "Grupo_demo", values_to = "Cantidad_G") %>%
   mutate(Alimento = Alimentos,
          Sexo = 0
          ) %>%
-  select(Alimento, Cantidad_G, Grupo_Etario, Sexo)
+  select(Alimento, Cantidad_G, Grupo_demo, Sexo)
 
 
 CoCA_M=cbind(df_transformado,Costo)
@@ -215,7 +215,7 @@ Limitaciones=EER_F$Energia
 
 # Modelo
 
-for( i in seq_along(Limitaciones)) {#ciclo para cada edad
+for( i in seq_along(Edad)) {#ciclo para cada edad
 
 CoCA = lp(direction = "min",
 objective.in = Precio,
@@ -252,11 +252,11 @@ df_alimentos[, -1] <- df_alimentos[, -1] * 100
 
 #ESTRUCTURA CIAT
 df_transformado <- df_alimentos %>%
-  pivot_longer(cols = -Alimentos, names_to = "Grupo_Etario", values_to = "Cantidad_G") %>%
+  pivot_longer(cols = -Alimentos, names_to = "Grupo_demo", values_to = "Cantidad_G") %>%
   mutate(Alimento = Alimentos,
          Sexo = 1
          ) %>%
-  select(Alimento, Cantidad_G, Grupo_Etario, Sexo)
+  select(Alimento, Cantidad_G, Grupo_demo, Sexo)
 
 
 CoCA_F=cbind(df_transformado,Costo)
@@ -282,4 +282,5 @@ assign("CoCA_Result",CoCA,envir = globalenv())
   if(length(warnings())<100) {print ("Ejecución del modelo correcta") }
 
 }
+
 

@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------------------------#
 
 
-Modelo_2=function(Datos_Insumo,DRI_min,DRI_max){
+Modelo_2=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
 
 #------------------------------------------------------------------------------------------#
 #                       PRIMERA ETAPA: VALIDACIÓN DE LIBRERIAS                             #
@@ -57,8 +57,9 @@ if (length(missing_columns2) > 0) {
 
 
 #--------------------------------------------------------------------------------------#
-#                   TERCERA ETAPA: CMODELO FEMENINO                                    #
+#            TERCERA ETAPA: MODELO FEMENINO- VALIDACIÓN DE NUTRIENTES DE ENTRADA      #
 #------------------------------------------------------------------------------------#
+categorias_unicas <- unique(DRI_min$Sexo)
 
 if (!1 %in% categorias_unicas) {
   print("No se correrá para el modelo para el sexo femenino ya que la categoría 1 no está presente en la columna sexo del parametro EER.")
@@ -71,7 +72,6 @@ if (!1 %in% categorias_unicas) {
 if(Femenino==TRUE) {
 
 
-
 DRI_min_F=subset(DRI_min,Sexo==1)
 
 DRI_max_F=subset(DRI_max,Sexo==1);DRI_max_F[is.na(DRI_max_F)] = 999999
@@ -80,56 +80,103 @@ DRI_max_F=subset(DRI_max,Sexo==1);DRI_max_F[is.na(DRI_max_F)] = 999999
 # Asignación de vectores
 Precio = Datos_Insumo$Precio_100g_ajust;Alimento=Datos_Insumo$Alimento;Edad=DRI_min_F$Edad
 
-# DF de limitaciones en nutrientes
+# DF de limitaciones en nutrientes y validación de nombres
 DRI_min_F_li= DRI_min_F %>% select(-any_of(c("Edad","Energia","Sexo")))
 DRI_max_F_li= DRI_max_F %>% select(-any_of(c("Edad","Energia","Sexo")))
 
 if (!identical(names(DRI_min_F_li), names(DRI_max_F_li))) {
-  stop("Los dataframes no tienen las mismas columnas.")
+  stop("Los datos DRI max y min no tienen los mismos nombres en la columnas.")
 }
 
-
+# selecionar de DRI_min energía
 DRI_min_F_li= DRI_min_F %>% select(-any_of(c("Edad","Sexo")))
-
-Limitaciones=cbind(DRI_min_F_li,DRI_max_F_li)
+DRI_max_F_li= DRI_max_F %>% select(-any_of(c("Edad","Energia","Sexo")))
 
 
 # Exraer los nutrientes de entrada que son distintos a las columnas: ("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust")
 DF_Nutrientes_ALimentos <- Datos_Insumo %>% select(-any_of(c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust")))
-DF_Nutrientes_ALimentos=DF_Nutrientes_ALimentos[names(DRI_min_F_li)]
 
+# Identificar las columnas que son iguales de datos insumo y requerimientos y ordenarlas
+nombres_comunes <- intersect(names(DF_Nutrientes_ALimentos), names(DRI_min_F_li))
+
+# Ordenar los nombrespara el modelo
+DF_Nutrientes_ALimentos <- DF_Nutrientes_ALimentos %>% select(any_of(nombres_comunes));DRI_min_F_li <- DRI_min_F_li %>% select(any_of(nombres_comunes));  DRI_max_F_li <- DRI_max_F_li %>% select(any_of(nombres_comunes))
+
+
+# Unir los nutrientes de aliemntos en min y max
 Sin_EER= DF_Nutrientes_ALimentos %>% select(-Energia)
 DF_Nutrientes_ALimentos=cbind(DF_Nutrientes_ALimentos,Sin_EER)
 
-names(DRI_min_F_li)
 
 # Matriz de coef de restricción al modelo (ENERGIA y nutrientes)
 Coef.Restriq=DF_Nutrientes_ALimentos %>% as.matrix() %>% t()
 
-View(Coef.Restriq)
-View(Limitaciones)
+
 #signos de las restricciones
 constr_signs = c("=", rep(">=", ncol(DRI_min_F_li)-1), rep("<=", length(DRI_max_F_li)))
 
+#Unir los EER, minx y max
+Limitaciones=cbind(DRI_min_F_li,DRI_max_F_li)
+
+#--------------------------------------------------------------------------------------#
+#            CUARTA ETAPA: MODELO FEMENINO- SOLUCIÓN                                  #
+#------------------------------------------------------------------------------------#
 
 
 
 #------------------------------Solución:
+#DF de la solución de intercambios
+Intercambios_CoNA_F <- data.frame(Alimento = character(), Cantidad_GR = numeric(), Grupo_demo = integer(), Sexo = integer())
 
+#DF de la solución de csotos
+Costo_CoNA_F <- data.frame(Grupo_demo = integer(), Sexo = integer(), Costo_dia = numeric())
 # Modelo
+for (i in seq_along(Edad)) { #ciclo para cada edad
 
 opt_sol = lp(direction = "min",
                objective.in = Precio,
                const.mat = Coef.Restriq,
                const.dir = constr_signs,
-               const.rhs =as.vector(unlist(Limitaciones[1, , drop = FALSE])),
+               const.rhs =as.vector(unlist(Limitaciones[i, , drop = FALSE])),
                compute.sens = TRUE)
- 
 
+# Guardar estructura de intercambios
+costo <- sum(opt_sol$solution * Precio)
+Alimentos_sol <- which(opt_sol$solution != 0) # ALimento selexionados
+cantidades_intercambio <- opt_sol$solution[Alimentos_sol] # intercambios
+    
+# Crear un dataframe temporal de la estructura CIAT
+temp_df <- data.frame(Alimento = Alimento[Alimentos_sol],
+Cantidad_GR = (cantidades_intercambio*100),
+Grupo_demo = Edad[i],
+Sexo = 1)
+
+# Agregar los resultados al dataframe general
+Intercambios_CoNA_F <- merge(Intercambios_CoNA_F, temp_df, all = TRUE)
+
+# Guardar estructura de costo
+
+Costo_dia=sum(opt_sol$solution * Precio)
+
+# Agregar los resultados al dataframe Costo_CoNA
+temp_df <- data.frame(Grupo_demo = Edad[i],
+                          Sexo = 1,
+                          Costo_dia = sum(opt_sol$solution * Precio))
+
+# Agregar los resultados al dataframe general
+Costo_CoNA_F <- rbind(Costo_CoNA_F, temp_df)
+
+
+
+}
+
+View(Costo_CoNA_F)
+View(Intercambios_CoNA_F)
+}
 #------------------------------------------------------------------------------------------#
 #                       FIN DEL TERCER MÓDULO COMO FUNCIÓN                                 #
 #-----------------------------------------------------------------------------------------#
-}
+
 }
 
 
