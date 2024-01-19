@@ -279,7 +279,7 @@ assign("Costo_CoCA",CoCA,envir = globalenv())
 #------------------------------------------------------------------------------------------#
 #                       FIN DEL SEGUNDO MÓDULO COMO FUNCIÓN                                 #
 #-----------------------------------------------------------------------------------------#
-  if(length(warnings())<100) {print ("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA SUFICIENTE EN ENERGÍA' correcta") }
+  if(length(warnings())<100) {print ("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA SUFICIENTE EN ENERGÍA (CoCA)' correcta") }
 
 }
 
