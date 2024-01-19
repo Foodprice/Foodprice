@@ -55,6 +55,45 @@ if (length(missing_columns2) > 0) {
   }
 
 
+# Verificar si DRI_min y DRI_max es un data frame
+
+
+# Verificar si DRI_min es un data frame
+if (!is.data.frame(DRI_min)) {
+  stop("Error: DRI_min no es un data frame.")
+}
+
+# Verificar si DRI_max es un data frame
+if (!is.data.frame(DRI_max)) {
+  stop("Error: DRI_max no es un data frame.")
+}
+
+# Verificar si DRI_min tiene al menos 2 columnas
+if (ncol(DRI_min) < 2) {
+  stop("Error: DRI_min debe tener al menos 2 columnas.")
+}
+
+# Verificar si DRI_max tiene al menos 2 columnas
+if (ncol(DRI_max) < 2) {
+  stop("Error: DRI_max debe tener al menos 2 columnas.")
+}
+
+# Verificar si DRI_min tiene las columnas Energia y Edad
+required_columns_DRI_min <- c("Energia", "Edad")
+missing_columns_DRI_min <- setdiff(required_columns_DRI_min, colnames(DRI_min))
+
+if (length(missing_columns_DRI_min) > 0) {
+  stop(paste("DRI_min debe tener las siguientes columnas:", paste(missing_columns_DRI_min, collapse = ", "), "."))
+}
+
+# Verificar si DRI_max tiene las columnas Energia y Edad
+required_columns_DRI_max <- c("Energia", "Edad")
+missing_columns_DRI_max <- setdiff(required_columns_DRI_max, colnames(DRI_max))
+
+if (length(missing_columns_DRI_max) > 0) {
+  stop(paste("DRI_max debe tener las siguientes columnas:", paste(missing_columns_DRI_max, collapse = ", "), "."))
+}
+
 
 #--------------------------------------------------------------------------------------#
 #            TERCERA ETAPA: MODELO FEMENINO- VALIDACIÓN DE NUTRIENTES DE ENTRADA      #

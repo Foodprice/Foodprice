@@ -58,9 +58,8 @@ La función realiza una validación exhaustiva de los parámetros ingresados par
 Las salidas se mostrarán en el ambiente global de R, su estructura es:
 
     \item{PRECIOS_SIPSA_Mes_Año:}{Datos de los precios mayoristas de SIPSA descargados desde el DANE en el año y més dado}
-        \item{SASDA}{xdxd}
-        \item{SASDA}{xdxd} 
-    \item{Datos_Insumo_Modelos_Año_Mes_Ciudad:}{Data frame de la estimación de los precios minorístas junto con la composición nutricional de cada alimento}
+
+    \item{Datos_Insumo_Modelos_Año_Mes_Ciudad:}{Dataframe que incluye información detallada sobre diversos alimentos. Cada fila del dataframe representa un alimento específico y las columnas abarcan una variedad de nutrientes y propiedades relacionadas con la composición nutricional de los alimentos. Estos atributos incluyen el código de identificación (Cod_TCAC), el nombre del alimento (Alimento), la porción típica del alimento (Serving), el precio ajustado por 100 gramos (Precio_100g_ajust), y los contenidos de diversos nutrientes esenciales, como energía, proteínas, carbohidratos, lípidos, calcio, zinc, hierro, magnesio, fósforo, vitamina C, tiamina, riboflavina, niacina, folatos, vitamina B12, vitamina A, y sodio.}
 
 }
 

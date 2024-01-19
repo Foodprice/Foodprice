@@ -5,26 +5,27 @@
 \usage{
 CoCA(
 Datos_Insumo,
-DRI_M_OP=NULL,
-DRI_F_OP=NULL
+EER,
+Filtrar_Alimentos=NULL
 )
 
 }
 \description{
-La función CoCA calcula el alimento y su costo minimo para una dieta que garantice suficiente energía en el día. Presenta un parámetro obligatorio y dos opcionales.
+La función CoCA calcula el alimento y su costo minimo para una dieta  suficiente en energía para el día. Presenta dos parámetros obligatorios y uno opcional.
 }
 \examples{
 
 # Ejemplo de uso:
 
 # Obtener datos de ejemplo
-data(Datos_Prueba, package = "Foodprice")
+data(Datos_Prueba, package = "Foodprice") # Datos de insumo
+data(DRI_min, package = "Foodprice") # Requerimientos energéticos
 
 # Aplicar la función a los datos de entrada
-CoCA(Datos_Insumo = Datos_Prueba)
+CoCA(Datos_Insumo = Datos_Prueba, EER=DRI_min)
 
 # Salidas en el ambiente global
-kable(CoCA_Result)
+kable(Costo_CoCA)
 
 }
 
@@ -47,11 +48,10 @@ kable(CoCA_Result)
 \details{
 Si los parámetros de requerimientos (DRI_M_OP o DRI_f_OP) no son utilizados, se emplearán por defecto los requerimientos energéticos establecidos para la región pacífica de Colombia.}
 \value{
-Las salidas se mostrarán en el ambiente global de R, su estructura es:
+Las salida se mostrará en el ambiente global de R, su estructura es:
 
-    \item{Modelo_1_M:}{Marco de datos con las estimaciones para hombres, que incluye el costo y las porciones del alimento en gramos y 100 gramos.}
+    \item{Costo_CoCA:}{Marco de datos con las estimaciones para hombres, que incluye el costo y las porciones del alimento en gramos y 100 gramos.}
     
-    \item{Modelo_1_F:}{Marco de datos con las estimaciones para muejeres, que incluye el costo y las porciones del alimento en gramos y 100 gramos.}
 
 }
 
