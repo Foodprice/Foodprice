@@ -32,11 +32,11 @@ devtools::install_github("Foodprice/Foodprice");library(Foodprice)
 Para conocer la información, el uso y las condiciones de funcionamiento de cada función use en R la función "help" o "??" para acceder a la documentación:
 
 ```
-help(Datos_dane_col)
+help(DatosCol)
 
 # ó
 
-??Datos_dane_col
+??DatosCol
 
 ```
 #
