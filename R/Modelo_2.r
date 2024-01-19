@@ -240,6 +240,9 @@ constr_signs = c("=", rep(">=", ncol(DRI_min_M_li)-1), rep("<=", length(DRI_max_
 #Unir los EER, minx y max
 Limitaciones=cbind(DRI_min_M_li,DRI_max_M_li)
 
+#Correción con mayores de 70
+#Limitaciones[nrow(Limitaciones), ] <- (1 - 0.067) * Limitaciones[7, ]
+
 #--------------------------------------------------------------------------------------#
 #            SEXTA ETAPA: MODELO MASCULINO- SOLUCIÓN                                  #
 #------------------------------------------------------------------------------------#
@@ -299,7 +302,7 @@ Costo_CoNA_M <- rbind(Costo_CoNA_M, temp_df)
 
 }
 
-View(Costo_CoNA_M)
+View(Limitaciones)
 View(Intercambios_CoNA_M)
 
 
@@ -313,6 +316,5 @@ View(Intercambios_CoNA_M)
 library(Foodprice)
 Modelo_2(Datos_Insumo=Datos_Prueba,DRI_min=DRI_min,DRI_max=DRI_max)
 options(error=recover)
-
 
 
