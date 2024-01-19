@@ -4,7 +4,7 @@
 \title{Función para la estimación del costo diario mínimo de una dieta adecuada en nutrientes.}
 \usage{
 
-Modelo_2(
+CoNA(
 Datos_Insumo,
 DRI_min=,
 DRI_max,
@@ -42,12 +42,14 @@ kable(head(Alimentos_CoNA))
 
  \code{- PARÁMETROS NECESARIOS} 
 
-\item{Datos_Insumo:}{Data frame que contiene los precios minoristas ajustados por 100 gramos para cada alimento. Debe incluir al menos las columnas con los siguientes nombres: "Precio_100g_ajust", "Alimento" y "Energia". Además, puede contener columnas adicionales que representan los nutrientes que serán considerados en el modelo. Es crucial que los nombres de estos nutrientes sean consistentes tanto en Datos_Insumo como en DRI_min y DRI_max para garantizar una integración adecuada entre los conjuntos de datos.}
- 
+        \item{Datos_Insumo:}{Data frame que contiene los precios minoristas ajustados por 100 gramos para cada alimento. Debe incluir al menos las columnas con los siguientes nombres: "Precio_100g_ajust", "Alimento" y "Energia". Además, puede contener columnas adicionales que representan los nutrientes que serán considerados en el modelo. Es crucial que los nombres de estos nutrientes sean consistentes tanto en Datos_Insumo como en DRI_min y DRI_max para garantizar una integración adecuada entre los conjuntos de datos.}
+        \item{DRI_min:}{Data Frame de los requerimientos minimos nutricionales. Debe contener mínimo tres columnas así nombradas: "Edad","Energia","Sexo".La columna Edad se asume tipo caracter, Energia y Sexo (1=Femenino,0=Masculino) tipo numérico. Además, Puede contener columnas adicionales que representan los nutrientes que serán considerados en el modelo.} 
+       \item{DRI_max:}{Data Frame de los requerimientos maximos nutricionales. Debe contener mínimo tres columnas así nombradas: "Edad","Energia","Sexo".La columna Edad se asume tipo caracter, Energia y Sexo (1=Femenino,0=Masculino) tipo numérico. Además, Puede contener columnas adicionales que representan los nutrientes que serán considerados en el modelo. Si un requerimiento tiene valor "NA", se asume igual a 99999} 
+
  \code{- PARÁMETROS OPCIONALES} 
 
-       \item{DRI_min:}{Data Frame de los requerimientos minimos nutricionales. Debe contener mínimo tres columnas así nombradas: "Edad","Energia","Sexo".La columna Edad se asume tipo caracter, Energia y Sexo (1=Femenino,0=Masculino) tipo numérico. Además, Puede contener columnas adicionales que representan los nutrientes que serán considerados en el modelo.} 
-       \item{DRI_max:}{Data Frame de los requerimientos maximos nutricionales. Debe contener mínimo tres columnas así nombradas: "Edad","Energia","Sexo".La columna Edad se asume tipo caracter, Energia y Sexo (1=Femenino,0=Masculino) tipo numérico. Además, Puede contener columnas adicionales que representan los nutrientes que serán considerados en el modelo. Si un requerimiento tiene valor "NA", se asume igual a 99999} 
+        \item{Filtrar_Alimentos:}{Un vector utilizado como filtro para los alimentos antes de su ingreso al modelo. Este  es útil si se desea excluir uno o varios alimentos específicos del modelo.}
+
 }
 
 

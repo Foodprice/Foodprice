@@ -350,7 +350,7 @@ if (!is.null(Costo_CoNA_M) && !is.null(Costo_CoNA_F)) {
   Intercambios_CoNA <- ifelse(!is.null(Intercambios_CoNA_F), Intercambios_CoNA_F, Intercambios_CoNA_M)
 }
 
-assign("Costo_CoNA",Costo_CoNA,envir = globalenv());assign("Alimento_CoNA",Intercambios_CoNA,envir = globalenv())
+assign("Costo_CoNA",Costo_CoNA,envir = globalenv());assign("Alimentos_CoNA",Intercambios_CoNA,envir = globalenv())
 
   if(length(warnings())<100) {print ("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA ADECUADA EN NUTRIENTES (CoNA)' correcta") }
 #------------------------------------------------------------------------------------------#
