@@ -15,7 +15,7 @@ DatosCol(
 )
 }
 \description{
-La función Datos_dane_col ofrece la posibilidad de obtener y manejar datos de precios mayoristas SIPSA del Departamento Administrativo Nacional de Estadística (DANE) en Colombia, adecuados para un mes, año y ciudad particulares. Su resultado principal se centra en las estimaciones de los precios minoristas, vinculando los nutrientes correspondientes a cada alimento.}
+La función DatosCol ofrece la posibilidad de obtener y manejar datos de precios mayoristas SIPSA del Departamento Administrativo Nacional de Estadística (DANE) en Colombia, adecuados para un mes, año y ciudad particulares. Su resultado principal se centra en las estimaciones de los precios minoristas, vinculando los nutrientes correspondientes a cada alimento.}
 \examples{
 
 # Ejemplo de uso:
@@ -58,7 +58,8 @@ La función realiza una validación exhaustiva de los parámetros ingresados par
 Las salidas se mostrarán en el ambiente global de R, su estructura es:
 
     \item{PRECIOS_SIPSA_Mes_Año:}{Datos de los precios mayoristas de SIPSA descargados desde el DANE en el año y més dado}
-    
+        \item{SASDA}{xdxd}
+        \item{SASDA}{xdxd} 
     \item{Datos_Insumo_Modelos_Año_Mes_Ciudad:}{Data frame de la estimación de los precios minorístas junto con la composición nutricional de cada alimento}
 
 }
@@ -66,3 +67,4 @@ Las salidas se mostrarán en el ambiente global de R, su estructura es:
 \note{
 Es importante revisar la documentación para asegurar que los parámetros proporcionados sean correctos y coherentes con los requisitos establecidos.
 }
+
