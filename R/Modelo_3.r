@@ -660,3 +660,9 @@ assign("Modelo_3_M_INT",modelo_3_dieta_int,envir = globalenv())
 
 
 
+
+
+
+remove.packages("Foodprice")
+devtools::install_github("Foodprice/Foodprice");library(Foodprice)
+help(Modelo_3) 
