@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------------------------#
 
 
-Modelo_2=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
+CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
 
 #------------------------------------------------------------------------------------------#
 #                       PRIMERA ETAPA: VALIDACIÓN DE LIBRERIAS                             #
@@ -240,9 +240,6 @@ constr_signs = c("=", rep(">=", ncol(DRI_min_M_li)-1), rep("<=", length(DRI_max_
 #Unir los EER, minx y max
 Limitaciones=cbind(DRI_min_M_li,DRI_max_M_li)
 
-#Correción con mayores de 70
-#Limitaciones[nrow(Limitaciones), ] <- (1 - 0.067) * Limitaciones[7, ]
-
 #--------------------------------------------------------------------------------------#
 #            SEXTA ETAPA: MODELO MASCULINO- SOLUCIÓN                                  #
 #------------------------------------------------------------------------------------#
@@ -302,15 +299,24 @@ Costo_CoNA_M <- rbind(Costo_CoNA_M, temp_df)
 
 }
 
-View(Limitaciones)
-View(Intercambios_CoNA_M)
+# Salida en el ambiente global
 
+if (!is.null(Costo_CoNA_M) && !is.null(Costo_CoNA_F)) {
+  # Unir los dataframes usando rbind
+  Costo_CoNA <- rbind(Costo_CoNA_F, Costo_CoNA_M)
+  Intercambios_CoNA=rbind(Intercambios_CoNA_F,Intercambios_CoNA_M)
+} else {
+  # Asignar el dataframe que no es NULL a CoCA
+  Costo_CoNA <- ifelse(!is.null(Costo_CoNA_F), Costo_CoNA_F, Costo_CoNA_M)
+  Intercambios_CoNA <- ifelse(!is.null(Intercambios_CoNA_F), Intercambios_CoNA_F, Intercambios_CoNA_M)
+}
+
+assign("Costo_CoNA",Costo_CoNA,envir = globalenv());assign("Intercambios_CoNA",Intercambios_CoNA,envir = globalenv())
 
 #------------------------------------------------------------------------------------------#
 #                       FIN DEL TERCER MÓDULO COMO FUNCIÓN                                 #
 #-----------------------------------------------------------------------------------------#
 
 }
-
 
 
