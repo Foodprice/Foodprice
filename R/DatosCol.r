@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------------------------#
  
  
- Datos_dane_col<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos = NULL, data_list_precios = NULL, data_list_abas = NULL, Margenes=NULL) {
+ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos = NULL, data_list_precios = NULL, data_list_abas = NULL, Margenes=NULL) {
 
 
 #------------------------------------------------------------------------------------------#
