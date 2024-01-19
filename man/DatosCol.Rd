@@ -33,7 +33,23 @@ kable(head(Datos_Insumo_Modelos_2017_Enero_Medellín))
 
 }
 
+\arguments{
 
+ \code{- PARÁMETROS NECESARIOS} 
+
+    \item{Mes:}{Un texto representando el mes del año (por ejemplo, "Enero").}
+    \item{Año:}{Un valor numérico entre 2014 y 2023, indicando el año de interés.}
+    \item{Ciudad:}{Un texto que especifica la ciudad de interés en Colombia.}
+
+ \code{- PARÁMETROS OPCIONALES} 
+
+    \item{Percentil_Abast:}{Un número dentro del rango de 0 a 1 que señala el percentil utilizado para filtrar los alimentos con un nivel de abastecimiento inferior a este valor. Por omisión, se establece como NULL.}
+    \item{Ingreso_Alimentos:}{Un vector o data frame con 21 columnas, que puede tener un tamaño de 21 si se trata de un vector. Este conjunto de datos actúa como un complemento para los alimentos faltantes en términos de su contenido nutricional. Inicialmente, los análisis nutricionales se llevaron a cabo exclusivamente para la ciudad de Cali, Colombia, lo que resulta en la ausencia de información sobre la composición nutricional de varios alimentos en otras ciudades. La función identifica y muestra los alimentos faltantes en la ciudad proporcionada debido a esta carencia de datos nutricionales específicos para cada ubicación.}
+    \item{data_list_precios:}{Una lista que incorpora información de precios. Para su correcto funcionamiento, se espera que el paquete maneje datos descargados directamente desde el DANE, evitando así cualquier procedimiento previo de depuración de datos. Se supone que estos datos se encuentran en un archivo Excel con múltiples hojas, por lo que deben ser cargados como una lista utilizando la librería RIO. Por ejemplo, se puede utilizar la función rio::import_list(Archivo_excel, setclass = "tbl").}
+    \item{data_list_abas:}{Una colección de datos vinculados al abastecimiento. Se espera que el proceso de carga para estos datos siga las mismas pautas que se establecen para la carga de la lista de precios, es decir, aplicando las mismas condiciones y procedimientos de carga que se emplean para data_list_precios.}
+    \item{Margenes:}{Un conjunto de ocho valores que representan los márgenes de comercialización asociados a cada categoría de alimentos. Estos valores deben seguir un orden específico correspondiente a las siguientes categorías: carnes, frutas, granos y cereales, lácteos y huevos, pescados, productos procesados, tubérculos, raíces y plátanos, verduras y hortalizas.}
+
+}
 
 
 
