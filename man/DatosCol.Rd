@@ -2,11 +2,11 @@
 #                 D O C U M E N T A C I Ó N: FUNCIÓN-Datos_dane_col                        #
 #-----------------------------------------------------------------------------------------#
 
-\name{Datos_dane_col}
-\alias{Datos_dane_col}
+\name{DatosCol}
+\alias{DatosCol}
 \title{Función para procesar datos de precios SIPSA del DANE en Colombia, desde el año 2013 hasta 2023.}
 \usage{
-Datos_dane_col(
+DatosCol(
   Mes,
   Año,
   Ciudad,
@@ -23,7 +23,7 @@ La función Datos_dane_col ofrece la posibilidad de obtener y manejar datos de p
 
 # Ejemplo de uso:
 # Obtener datos para Medellín, enero de 2017
-Datos_dane_col(Mes = "Enero", Año = 2017, Ciudad = "Medellín")
+DatosCol(Mes = "Enero", Año = 2017, Ciudad = "Medellín")
 
 # Salidas en el ambiente global
 
