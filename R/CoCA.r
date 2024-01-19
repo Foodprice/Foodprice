@@ -52,10 +52,10 @@ if ("Cod_TCAC" %in% colnames(Datos_Insumo)) {Datos_Insumo = Datos_Insumo %>% fil
   }
   
   # Verificar si tiene al menos 3 columnas
-  if (ncol(EER) < 2) {
-    stop("Los requerimientos para el modelo 1 deben contener al menos 2 columnas.")
+  if (ncol(EER) < 3) {
+    stop("Los requerimientos para el modelo 1 deben contener al menos 3 columnas.")
   }
-required_columns_E <- c("Edad","Energia")
+required_columns_E <- c("Edad","Energia","Sexo")
 missing_columns_E <- setdiff(required_columns_E, colnames(EER))
 
 if (length(missing_columns_E) > 0) {

@@ -33,26 +33,23 @@ kable(Costo_CoCA)
 
  \code{- PARÁMETROS NECESARIOS} 
 
-    \item{Datos_Insumo:}{El marco de datos debe tener al menos tres columnas con estos nombres: "Precio_100g_ajust", "Alimento", "Energia", para asegurar una estimación precisa del modelo.} 
- 
+    \item{Datos_Insumo:}{Data frame con precios minorístas ajustado por 100gr a cada alimento; debe tener al menos tres columnas con estos nombres: "Precio_100g_ajust", "Alimento", "Energia", para asegurar una estimación correcta del modelo.} 
+    \item{EER:}{Data frame que contiene información sobre los grupos demográficos, el sexo y sus respectivos contenidos energéticos. Este data frame debe incluir las columnas "Edad" , "Energia" y "Sexo". La columna Edad se asume tipo caracter, Energia y Sexo (1=Femenino,0=Masculino) tipo numérico}
+
  
  \code{- PARÁMETROS OPCIONALES} 
 
-    \item{DRI_M_OP:}{Marco de datos que puede ser utilizado como una entrada opcional para los requerimientos energéticos de hombres de diferentes edades. Debe incluir al menos dos columnas llamadas "Edad" y "Energía". La columna "Edad" debe ser de tipo carácter.}
-    \item{DRI_F_OP:}{Marco de datos que puede ser utilizado como una entrada opcional para los requerimientos energéticos de muejeres de diferentes edades y/o grupos gestantes o lactantes. Debe incluir al menos dos columnas llamadas "Edad" y "Energía". La columna "Edad" debe ser de tipo carácter.}
-
-}
+    \item{Filtrar_Alimentos:}{Un vector utilizado como filtro para los alimentos antes de su ingreso al modelo. Este  es útil si se desea excluir uno o varios alimentos específicos del modelo.}
 
 
 
 \details{
-Si los parámetros de requerimientos (DRI_M_OP o DRI_f_OP) no son utilizados, se emplearán por defecto los requerimientos energéticos establecidos para la región pacífica de Colombia.}
+Nota: No es necesario que ambas codificaciones (1=Femenino, 0=Masculino) estén presentes en la columna "Sexo" de EER. Si su conjunto de datos EER solo incluye un género, aún puede ejecutar el modelo sin problemas. En este caso, simplemente especifique en la columna "Sexo" si corresponde al valor 0 o 1.
+}
 \value{
 Las salida se mostrará en el ambiente global de R, su estructura es:
 
-    \item{Costo_CoCA:}{Marco de datos con las estimaciones para hombres, que incluye el costo y las porciones del alimento en gramos y 100 gramos.}
-    
-
+\item{Costo_CoCA:}{Conjunto de resultados que muestra la asignación de costos asociados al alimento de menor costo capaz de satisfacer los requerimientos energéticos de cada grupo demográfico. Las columnas incluyen: "Alimento" (el alimento seleccionado), "Cantidad_G" (la cantidad necesaria en gramos para satisfacer los requerimientos de energía), "Grupo_demo" (grupo demográfico), "Sexo" (género) y "Costo" (el costo del alimento). Este conjunto proporciona una visión detallada de las elecciones alimenticias óptimas desde el punto de vista económico para cada grupo demográfico.}
 }
 
 \note{
