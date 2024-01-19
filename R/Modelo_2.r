@@ -313,8 +313,4 @@ View(Intercambios_CoNA_M)
 }
 
 
-library(Foodprice)
-Modelo_2(Datos_Insumo=Datos_Prueba,DRI_min=DRI_min,DRI_max=DRI_max)
-options(error=recover)
-
 
