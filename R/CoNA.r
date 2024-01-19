@@ -313,6 +313,7 @@ if (!is.null(Costo_CoNA_M) && !is.null(Costo_CoNA_F)) {
 
 assign("Costo_CoNA",Costo_CoNA,envir = globalenv());assign("Intercambios_CoNA",Intercambios_CoNA,envir = globalenv())
 
+  if(length(warnings())<100) {print ("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA ADECUADA EN NUTRIENTES' correcta") }
 #------------------------------------------------------------------------------------------#
 #                       FIN DEL TERCER MÓDULO COMO FUNCIÓN                                 #
 #-----------------------------------------------------------------------------------------#

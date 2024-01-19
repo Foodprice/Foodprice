@@ -274,12 +274,12 @@ if (!is.null(CoCA_F) && !is.null(CoCA_M)) {
   CoCA <- ifelse(!is.null(CoCA_F), CoCA_F, CoCA_M)
 }
 
-assign("CoCA_Result",CoCA,envir = globalenv())
+assign("Costo_CoCA",CoCA,envir = globalenv())
 
 #------------------------------------------------------------------------------------------#
 #                       FIN DEL SEGUNDO MÓDULO COMO FUNCIÓN                                 #
 #-----------------------------------------------------------------------------------------#
-  if(length(warnings())<100) {print ("Ejecución del modelo correcta") }
+  if(length(warnings())<100) {print ("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA SUFICIENTE EN ENERGÍA' correcta") }
 
 }
 
