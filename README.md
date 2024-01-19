@@ -1,7 +1,7 @@
 # Foodprice
 
 <p align="center">
-<a name="top" href="#"> <img src="https://media2.giphy.com/media/rGlAZysKBcjRCkAX7S/giphy.gif" alt="mf-dots" height="40%" width="60%"/> </a>
+<a name="top" href="#"> <img src="https://raw.githubusercontent.com/Foodprice/Foodprice/main/data/Logo.png" alt="mf-dots" height="40%" width="60%"/> </a>
 
 # 
 
