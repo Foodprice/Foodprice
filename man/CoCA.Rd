@@ -40,12 +40,12 @@ kable(Costo_CoCA)
  \code{- PARÁMETROS OPCIONALES} 
 
     \item{Filtrar_Alimentos:}{Un vector utilizado como filtro para los alimentos antes de su ingreso al modelo. Este  es útil si se desea excluir uno o varios alimentos específicos del modelo.}
-
-
+}
 
 \details{
 Nota: No es necesario que ambas codificaciones (1=Femenino, 0=Masculino) estén presentes en la columna "Sexo" de EER. Si su conjunto de datos EER solo incluye un género, aún puede ejecutar el modelo sin problemas. En este caso, simplemente especifique en la columna "Sexo" si corresponde al valor 0 o 1.
 }
+
 \value{
 Las salida se mostrará en el ambiente global de R, su estructura es:
 

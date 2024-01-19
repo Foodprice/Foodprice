@@ -53,7 +53,7 @@ kable(head(Alimentos_CoNA))
 
 
 \details{
-NOTA: Es crucial que los nombres los  nutrientes sean consistentes tanto en Datos_Insumo como en DRI_min y DRI_max para garantizar una integración adecuada entre los conjuntos de datos. Además, el vector necesario de "Energia" se asume se encuentra en DRI_min.
+NOTA: Es crucial que los nombres los  nutrientes sean consistentes tanto en Datos_Insumo como en DRI_min y DRI_max para garantizar una integración adecuada entre los conjuntos de datos. Además, el vector necesario de "Energia" se asume se encuentra en DRI_min.}
 
 \value{
 
