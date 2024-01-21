@@ -157,7 +157,7 @@ intercambio_gramos$Alimento <- trimws(intercambio_gramos$Alimento)
 # Realizar left join
 Data_MOD_1 <- Data_MOD %>%
   left_join(intercambio_gramos, by = "Alimento")
-View(Data_MOD_1)
+
 
   # recuperar grupos y subgrupos GABAS
 
