@@ -26,9 +26,6 @@ cat("\n")
 
 
 
-Foodprice::
-
-
 
 #------------------------------------------------------------------------------------------#
 #                               CUARTA ETAPA: PREPARACIÓN DE REQU                         #
@@ -339,7 +336,7 @@ for (i in 1:length(edad)) {
   df_x$solution_g = df_x$sol_int*df_x$Intercambio_g
   df_solution = rbind(df_solution, df_x)
 
-86/207
+
 
   # grasas, lacteos y azucares
   for (k in c(1,2,3,5,6,7,8,9)) {
