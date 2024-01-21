@@ -108,10 +108,9 @@ f_b_1 = function(a){
     return(b)
   }
 
-remove.packages("Foodprice")
-devtools::install_github("Foodprice/Foodprice");library(Foodprice)
 
-dataset_m3
+
+
 
   # primero: se excluyen los alimentos sin categorías
   dataset_m3 = dataset_m3 %>% filter(!Grupo_GABAS %in% "Sin categoría")
