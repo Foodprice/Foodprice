@@ -112,6 +112,7 @@ f_b_1 = function(a){
 
 
 
+dataset_m3=NULL
   # primero: se excluyen los alimentos sin categorías
   dataset_m3 = dataset_m3 %>% filter(!Grupo_GABAS %in% "Sin categoría")
 
