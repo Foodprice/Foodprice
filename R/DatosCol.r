@@ -820,8 +820,6 @@ alimentos_faltantes <- alimentos_faltantes[!grepl(paste(alimentos_a_eliminar, co
 
 }
 
-    
-assign(paste0("Datos_Insumo_Modelos_",Año,"_",Mes,"_",Ciudad),Datos_Insumo_Modelos,envir = globalenv())
 
 
 mensaje <- paste("En la ciudad de", Ciudad, "del año", Año, "y mes", Mes, ", se omitieron los siguientes alimentos por falta de información nutricional " , length(alimentos_faltantes) ," :", paste(alimentos_faltantes, collapse = ", "), ". Si conoce la información de estos, utilice el parámetro opcional llamado 'Ingreso_Alimentos' para ingresarlos")
@@ -830,21 +828,69 @@ print(mensaje)
 
 
 
-
     # -----------------------------------------------------------------#
-    #               Estado de la depuración del módulo                 #
+    #               MAPEOS Y GRUPOS PARA EL MODELO CORD                #
     #------------------------------------------------------------------#
+
+
+
+
+# Función de recodificación de subgrupos
+f_gabas_1 <- function(a) {
+  a$Grupo_GABAS[a$Grupo_GABAS == "AZUCARES"] <- "Azúcares"
+  a$Grupo_GABAS[a$Grupo_GABAS == "CARNES, HUEVOS, LEGUMINOSAS SECAS, FRUTOS SECOS Y SEMILLAS"] <- "Carnes, huevos y leguminosas"
+  a$Grupo_GABAS[a$Grupo_GABAS == "CEREALES, RAÍCES, TUBÉRCULOS Y PLÁTANOS"] <- "Cereales y raíces"
+  a$Grupo_GABAS[a$Grupo_GABAS == "FRUTAS Y VERDURAS"] <- "Frutas y verduras"
+  a$Grupo_GABAS[a$Grupo_GABAS == "GRASAS"] <- "Grasas"
+  a$Grupo_GABAS[a$Grupo_GABAS == "LECHE Y PRODUCTOS LACTEOS"] <- "Lácteos"
+  a$Grupo_GABAS[a$Grupo_GABAS == "SIN CATEGORIA"] <- "Sin categoría"
+  return(a)
+}
+
+# Mapear con base en COD TCAC los alimentos y subgrupos además de mapear los intercambios de EER
+Datos_MOD3 <- merge(Datos_Insumo_Modelos, intercambio_gramos[c("Cod_TCAC", "Intercambio_g")], by = "Cod_TCAC", all.x = TRUE) %>%
+  distinct()  # Quitar duplicados
+
+# Crear una nueva columna con el precio por intercambio unitario
+Datos_MOD3 <- Datos_MOD3 %>%
+  mutate(Precio_INT = (Precio_100g_ajust/as.numeric(Serving)) * Intercambio_g)
+
+# Recuperar grupos y subgrupos GABAS
+Datos_MOD3 <- merge(Datos_MOD3, TCAC[c("Cod_TCAC", "Grupo_GABAS", "Subgrupo_GABAS")], by = "Cod_TCAC") %>%
+  f_gabas_1()
+
+# Extraer subgrupos y pasarlos a grupos
+Datos_MOD3 <- Datos_MOD3 %>%
+  mutate(Grupo_GABAS = case_when(
+    Subgrupo_GABAS == "FRUTAS" ~ "Frutas",
+    Subgrupo_GABAS == "VERDURAS" ~ "Verduras",
+    Subgrupo_GABAS == "CARNES MAGRAS CRUDAS" ~ "Carnes",
+    Subgrupo_GABAS == "LEGUMINOSAS COCIDAS Y MEZCLAS VEGETALES COCIDAS" ~ "Leguminosas",
+    Subgrupo_GABAS == "TUBÉRCULOS" ~ "Tuberculos",
+    Subgrupo_GABAS == "RAÍCES" ~ "Raices",
+    Subgrupo_GABAS == "CEREALES" ~ "Cereales",
+    TRUE ~ Grupo_GABAS
+  ));Datos_MOD3 <- Datos_MOD3[, -which(names(Datos_MOD3) == "Subgrupo_GABAS")]
+
+colnames(Datos_MOD3)=c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust",  "Energia","Proteina","Carbohidratos","Lipidos",  "Calcio",  "Zinc", "Hierro", "Magnesio","Fosforo","VitaminaC", "Tiamina", "Riboflavina","Niacina", "Folatos", "VitaminaB12", "VitaminaA","Sodio","Intercambio_EER_gr","Precio_INT","Grupo")
+
+# Orden de salida
+
+Datos_MOD3 <- Datos_MOD3 %>%
+  select(Cod_TCAC, Alimento, Serving, Precio_100g_ajust,Intercambio_EER_gr, Precio_INT, Grupo, Energia:VitaminaB12,
+         VitaminaA, Sodio)
+View(Datos_MOD3)
+#------------------------------------------------------------------------------------------#
+#                       ASGINACIÓN EN EL ENTORNO GLOBAL                                   #
+#-----------------------------------------------------------------------------------------#
+
+assign(paste0("Datos_Insumo_Modelos_",Año,"_",Mes,"_",Ciudad),Datos_MOD3,envir = globalenv())
 
 
 
 cat("\n")
  if(length(warnings())<100) {cat("Depuración de datos exitosa", "\n")} else {cat("Cantidad de errores encontrados:",length(warnings()), "\n")}
 cat("\n")
-
-
-
-
-
 
 
 #------------------------------------------------------------------------------------------#

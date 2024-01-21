@@ -2,6 +2,9 @@
 #                    SEGUNDA FUNCIÓN: MODELO 2: DIETA ADEC EN NUTRIENTES                  #
 #-----------------------------------------------------------------------------------------#
 
+
+Modelo_3=function(Datos_Insumo,Intercambio_Gramos_OP=NULL,Int_Req_M_OP=NULL,Int_Req_F_OP=NULL){
+
 #------------------------------------------------------------------------------------------#
 #                       PRIMERA ETAPA: VALIDACIÓN DE LIBRERIAS                             #
 #-----------------------------------------------------------------------------------------#
@@ -12,7 +15,40 @@ Librerias_base = c("readxl","dplyr","ggplot2","reshape2","knitr","haven","foreig
 if (!require("pacman")) install.packages("pacman") # Paquete que simplifica la carga de librerias
 pacman::p_load(char = Librerias_base);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
 
+cat("\n")
+print("Se instalaron y cargaron todas la librerias corectamente")
+cat("\n")
 
+
+#------------------------------------------------------------------------------------------#
+#         SEGUNDA ETAPA: VALIDACIÓN DE PARÁMETROS OBLIGATORIOS Y OPCIONALES                #
+#-----------------------------------------------------------------------------------------#
+
+
+
+Foodprice::
+
+
+
+#------------------------------------------------------------------------------------------#
+#                               CUARTA ETAPA: PREPARACIÓN DE REQU                         #
+#-----------------------------------------------------------------------------------------#
+
+
+
+# función de recodificacion
+f_gabas_1 = function(a){
+  dataset_0 = data.frame()
+  a$Grupo_GABAS[which(a$Grupo_GABAS == "AZUCARES")] = "Azúcares"
+  a$Grupo_GABAS[which(a$Grupo_GABAS == "CARNES, HUEVOS, LEGUMINOSAS SECAS, FRUTOS SECOS Y SEMILLAS")] = "Carnes, huevos y leguminosas"
+  a$Grupo_GABAS[which(a$Grupo_GABAS == "CEREALES, RAÍCES, TUBÉRCULOS Y PLÁTANOS")] = "Cereales y raíces"
+  a$Grupo_GABAS[which(a$Grupo_GABAS == "FRUTAS Y VERDURAS")] = "Frutas y verduras"
+  a$Grupo_GABAS[which(a$Grupo_GABAS == "GRASAS")] = "Grasas"
+  a$Grupo_GABAS[which(a$Grupo_GABAS == "LECHE Y PRODUCTOS LACTEOS")] = "Lácteos"
+  a$Grupo_GABAS[which(a$Grupo_GABAS == "SIN CATEGORIA")] = "Sin categoría"
+  dataset_0 = a
+  return(dataset_0)
+}
 
 f_gabas_2 = function(a){
   dataset_0 = data.frame()
@@ -109,6 +145,85 @@ f_b_1 = function(a){
   }
 
 
+## ----------------  Preparación de la base de datos de entrada ------------------------------   ##
+
+
+# Coge el datos insumo y lo mapea con los reque de energía del parámetro de entrada
+
+Data_MOD = Datos_Insumo[c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust")]
+
+
+# Eliminar espacios adicionales en ambos dataframes
+Data_MOD$Alimento <- trimws(Data_MOD$Alimento)
+intercambio_gramos$Alimento <- trimws(intercambio_gramos$Alimento)
+
+# Realizar left join
+Data_MOD_1 <- Data_MOD %>%
+  left_join(intercambio_gramos, by = "Alimento")
+View(Data_MOD_1)
+
+  # recuperar grupos y subgrupos GABAS
+
+TCAC = TCAC[c("Cod_TCAC", "Grupo_GABAS", "Subgrupo_GABAS")]
+
+  dataset_m3 = merge(dataset_m3, TCAC, by = "Cod_TCAC")
+  dataset_m3 = f_gabas_1(dataset_m3)
+
+  ################
+  ##   AD HOC   ##
+  ################
+  for (k in 1:nrow(dataset_m3)) {
+    if (dataset_m3$Subgrupo_GABAS[k] == "FRUTAS") {
+      dataset_m3$Grupo_GABAS[k] = "Frutas"
+    }
+  }
+
+  for (k in 1:nrow(dataset_m3)) {
+    if (dataset_m3$Subgrupo_GABAS[k] == "VERDURAS") {
+      dataset_m3$Grupo_GABAS[k] = "Verduras"
+    }
+  }
+
+  for (k in 1:nrow(dataset_m3)) {
+    if (dataset_m3$Subgrupo_GABAS[k] == "CARNES MAGRAS CRUDAS") {
+      dataset_m3$Grupo_GABAS[k] = "Carnes"
+    }
+  }
+
+  for (k in 1:nrow(dataset_m3)) {
+    if (dataset_m3$Subgrupo_GABAS[k] == "LEGUMINOSAS COCIDAS Y MEZCLAS VEGETALES COCIDAS") {
+      dataset_m3$Grupo_GABAS[k] = "Leguminosas"
+    }
+  }
+
+  for (k in 1:nrow(dataset_m3)) {
+    if (dataset_m3$Subgrupo_GABAS[k] == "TUBÉRCULOS") {
+      dataset_m3$Grupo_GABAS[k] = "Tuberculos"
+    }
+  }
+
+  for (k in 1:nrow(dataset_m3)) {
+    if (dataset_m3$Subgrupo_GABAS[k] == "RAÍCES") {
+      dataset_m3$Grupo_GABAS[k] = "Raices"
+    }
+  }
+
+  for (k in 1:nrow(dataset_m3)) {
+    if (dataset_m3$Subgrupo_GABAS[k] == "CEREALES") {
+      dataset_m3$Grupo_GABAS[k] = "Cereales"
+    }
+  }
+library(Foodprice);Datos_Insumo=Datos_Prueba
+dataset_m3 = Datos_Insumo[c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust")]
+
+dataset_m3 = merge(dataset_m3, intercambio_gramos[c("Cod_TCAC", "Intercambio_g","Subgrupo_GABAS")],
+                     by = "Cod_TCAC", all.x = TRUE)
+dataset_m3=dataset_m3[,c(2,3,4,5,6)]
+names(dataset_m3)[5]="Grupo"
+
+  ################
+  ##   AD HOC   ##
+  ################
 
   # primero: se excluyen los alimentos sin categorías
   dataset_m3 = dataset_m3 %>% filter(!Grupo_GABAS %in% "Sin categoría")
@@ -224,7 +339,7 @@ for (i in 1:length(edad)) {
   df_x$solution_g = df_x$sol_int*df_x$Intercambio_g
   df_solution = rbind(df_solution, df_x)
 
-
+86/207
 
   # grasas, lacteos y azucares
   for (k in c(1,2,3,5,6,7,8,9)) {
@@ -274,4 +389,10 @@ modelo_3_dieta_int = modelo_3_dieta_int[,c(2,1,3:16)]
 modelo_3_dieta_int = modelo_3_dieta_int[order(modelo_3_dieta_int$Grupo_GABAS),]
 
 
+assign("Modelo_3_F",modelo_3_costo,envir = globalenv())
+assign("Modelo_3_F_INT",modelo_3_dieta_int,envir = globalenv())
+
+
+
+}
 
