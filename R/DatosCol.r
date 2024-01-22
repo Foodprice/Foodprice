@@ -834,7 +834,6 @@ print(mensaje)
 
 
 
-
 # Función de recodificación de subgrupos
 f_gabas_1 <- function(a) {
   a$Grupo_GABAS[a$Grupo_GABAS == "AZUCARES"] <- "Azúcares"
@@ -879,7 +878,8 @@ colnames(Datos_MOD3)=c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust",  
 Datos_MOD3 <- Datos_MOD3 %>%
   select(Cod_TCAC, Alimento, Serving, Precio_100g_ajust,Intercambio_EER_gr, Precio_INT, Grupo, Energia:VitaminaB12,
          VitaminaA, Sodio)
-View(Datos_MOD3)
+
+
 #------------------------------------------------------------------------------------------#
 #                       ASGINACIÓN EN EL ENTORNO GLOBAL                                   #
 #-----------------------------------------------------------------------------------------#
