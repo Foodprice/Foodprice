@@ -22,13 +22,13 @@
   }
 
   # Verificación de Mes
-  meses_validos <- c("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre")
+  meses_validos <- c(1:12)
 
 
-  if (!is.character(Mes) || !toupper(substr(Mes, 1, 1)) %in% toupper(letters)) {
-    stop("El Mes debe ser un texto que represente un mes del año.")
+  if (!is.numeric(Mes)) {
+    stop("El Mes debe ser un número que represente un mes del año.")
   }
-  Mes <- paste0(toupper(substr(Mes, 1, 1)), substr(Mes, 2, nchar(Mes)))
+
   if (!(Mes %in% meses_validos)) {
     stop("Mes inválido. Debe ser un mes del año.")
   }
@@ -230,8 +230,9 @@ nombre_data_abast <- paste0("data_list_abast_ev", Año)
 
 #------------------ IDENTIFICACIÓN DE MES, FECHAS Y SEMESTRES ------------------------------
 
+   
    Nombres_Meses = c("Enero","Febrero","Marzo","Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre","Noviembre","Diciembre")
-
+    Mes=Nombres_Meses[Mes]  
     Semestres=c("I_Semestre","II_Semestre")
 
     Enero = seq(from = as.Date(paste(Año,"1","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"1","31", sep = "-"),format = "%Y-%m-%d"), by =1)
@@ -901,6 +902,7 @@ cat("\n")
 
 
 }
+
 
 
 
