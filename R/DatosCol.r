@@ -823,7 +823,7 @@ alimentos_faltantes <- alimentos_faltantes[!grepl(paste(alimentos_a_eliminar, co
 
 
 mensaje <- paste("En la ciudad de", Ciudad, "del año", Año, "y mes", Mes, ", se omitieron los siguientes alimentos por falta de información nutricional " , length(alimentos_faltantes) ," :", paste(alimentos_faltantes, collapse = ", "), ". Si conoce la información de estos, utilice el parámetro opcional llamado 'Ingreso_Alimentos' para ingresarlos")
-print(mensaje)
+cat(mensaje)
 
 
 
