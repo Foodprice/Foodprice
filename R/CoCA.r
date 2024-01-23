@@ -162,6 +162,7 @@ df_transformado <- df_alimentos %>%
 
 assign(paste("CoCA_", sexo_nombre, sep = ""), cbind(df_transformado, Costo))
 
+
 #--------------------------------------------------------#
 #        FIND DEL       CLICLO PARA CADA SEXO            #
 #-------------------------------------------------------#
