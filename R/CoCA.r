@@ -88,6 +88,7 @@ if ("Sexo" %in% colnames(EER)) {Sexos <- split(EER, EER$Sexo);sexo_nombre=names(
 
 }
 
+
 #--------------------------------------------------------#
 #               CLICLO PARA CADA SEXO                   #
 #-------------------------------------------------------#
@@ -136,6 +137,8 @@ Salida_CoCA <- merge(Salida_CoCA, df_combinado, by = "Alimentos")
 
 }  #Fin del ciclio del modelo por edad
 
+
+
 #--------------------------------------------------------#
 #               ETAPA DE ESTRUCTURA PLAZA                #
 #-------------------------------------------------------#
@@ -166,6 +169,7 @@ assign(paste("CoCA_", sexo_nombre, sep = ""), cbind(df_transformado, Costo))
 #--------------------------------------------------------#
 #        FIND DEL       CLICLO PARA CADA SEXO            #
 #-------------------------------------------------------#
+
 
 }
 # Unir ambos df para cada sexo (si existe)
