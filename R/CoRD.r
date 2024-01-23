@@ -460,12 +460,3 @@ if(length(warnings())<100) {print ("Ejecución del modelo: 'COSTO DIARIO A UNA D
 
 }
 
-
-
-
-remove.packages("Foodprice")
-devtools::install_github("Foodprice/Foodprice");library(Foodprice)
-
-CoRD(Datos_Insumo=Datos_Prueba,Req_Int=Req_Int,Cantidad_selec=Cantidad_selec)
-View(Costo_CoRD)
-View(Inter_CoRD)
