@@ -2,7 +2,6 @@
 #                     SEGUNDA FUNCIÓN: MODELO 1: DIETA SUF EN ENERGÍA                      #
 #-----------------------------------------------------------------------------------------#
 
-
 CoCA=function(Datos_Insumo,EER,Filtrar_Alimentos=NULL){
 
 #------------------------------------------------------------------------------------------#
@@ -55,14 +54,14 @@ if ("Cod_TCAC" %in% colnames(Datos_Insumo)) {Datos_Insumo = Datos_Insumo %>% fil
   if (ncol(EER) < 3) {
     stop("Los requerimientos para el modelo 1 deben contener al menos 3 columnas.")
   }
-required_columns_E <- c("Edad","Energia","Sexo")
+required_columns_E <- c("Edad","Energia")
 missing_columns_E <- setdiff(required_columns_E, colnames(EER))
 
 if (length(missing_columns_E) > 0) {
   stop(paste("El modelo 1 requiere las siguientes columnas en los datos de insumo: ", paste(missing_columns_E, collapse = ", "),". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al primer modelo"))}
 
 
-# -------------- Filtrar_Alimentos
+# -------------- VALIDACIÓN DE Filtrar_Alimentos
 
  # Validar si Filtrar_Alimentos es distinto de NULL
 
@@ -76,48 +75,41 @@ if (length(missing_columns_E) > 0) {
     Datos_insumo <- Datos_insumo[!(Datos_insumo$Alimento %in% Filtrar_Alimentos), ]
   }
 
-  
+
 #------------------------------------------------------------------------------------------#
-#                       TERCERA ETAPA: MODELO 1 MASCULINO                                   #
+#                       TERCERA ETAPA: MODELO 1                                           #
 #-----------------------------------------------------------------------------------------#
 
-#-------------------- PREPARACIÓN:
+#Si no existe la columna sexo
 
-# VALIDAR SI EXISTE SEXO =0 EN EER
+# Extraer sexos disponibles si existe la columna sexo
+if ("Sexo" %in% colnames(EER)) {Sexos <- split(EER, EER$Sexo);sexo_nombre=names(Sexos)} else {
+   sexo_nombre=0
 
-categorias_unicas <- unique(EER$Sexo)
-
-if (!0 %in% categorias_unicas) {
-  print("No se correrá para el modelo para el sexo masculino ya que la categoría 0 no está presente en la columna sexo del parametro EER.")
-  Masculino=FALSE
-} else {
-  Masculino=TRUE
 }
 
+#--------------------------------------------------------#
+#               CLICLO PARA CADA SEXO                   #
+#-------------------------------------------------------#
+for (sexo_nombre in sexo_nombre) { 
 
-if(Masculino==TRUE) {
+
+Salida_CoCA <- data.frame(Alimentos = Datos_Insumo$Alimento);Salida_CoCA <- Salida_CoCA %>% add_row(Alimentos = "Costo") # Define el df de salida
+
+# REquerimientos por sexo
+if ("Sexo" %in% colnames(EER)) {EER <- Sexos[[sexo_nombre]]}
 
 
-# Crear df de salida para el modelo 1 másculino
-
-Salida_CoCA_M <- data.frame(Alimentos = Datos_Insumo$Alimento);Salida_CoCA_M <- Salida_CoCA_M %>% add_row(Alimentos = "Costo")
-
-#-------------------- EXTRAER VECTORES DE PARÁEMTROS AL MODELO:
-
-# Extraer df masculino
-
-EER_M=subset(EER,Sexo==0)
-
-# Asignación de vectores
-Precio = Datos_Insumo$Precio_100g_ajust;Alimento=Datos_Insumo$Alimento;Edad=EER_M$Edad
+# ---Asignación de vectores al modelo
+Precio = Datos_Insumo$Precio_100g_ajust;Alimento=Datos_Insumo$Alimento;Edad=EER$Edad
 
 # MAtriz de coef de restricción al modelo (ENERGIA)
 Coef.Restriq = matrix(as.vector(Datos_Insumo$Energia), ncol = length(Alimento))
 
 # Vector de limitaciones del modelo
-Limitaciones=EER_M$Energia
+Limitaciones=EER$Energia
 
-#------------------------------Solución:
+#------------------------------Solución del modelo:
 
 # Modelo
 
@@ -130,7 +122,7 @@ const.dir = c("="),
 const.rhs = Limitaciones[i],
 compute.sens = TRUE)
 
-# Guardar soluciones
+#------------------------ POR EDAD Guardar soluciones
 
 
 # Crear dataframe df_1 con alimentos y la solución óptima para la edad actual
@@ -140,14 +132,16 @@ df_1 <- data.frame(Alimentos = Alimento, Valor = CoCA$solution);colnames(df_1) <
 df_2 <- data.frame(Alimentos = "Costo", Valor = CoCA$objval);colnames(df_2) <- colnames(df_1);df_combinado <- rbind(df_1, df_2)
 
 # Agregar la información al dataframe modelo_1
-Salida_CoCA_M <- merge(Salida_CoCA_M, df_combinado, by = "Alimentos")
+Salida_CoCA <- merge(Salida_CoCA, df_combinado, by = "Alimentos")
 
-}
+}  #Fin del ciclio del modelo por edad
 
+#--------------------------------------------------------#
+#               ETAPA DE ESTRUCTURA PLAZA                #
+#-------------------------------------------------------#
 
-
-# DF sin ceros
-DF_o <- Salida_CoCA_M[rowSums(Salida_CoCA_M[, -1]) != 0, ]
+#DF sin ceros
+DF_o <- Salida_CoCA[rowSums(Salida_CoCA[, -1]) != 0, ]
 Costo=DF_o[DF_o=="Costo",];Costo=as.vector(t(Costo[Costo$Alimentos == "Costo", -1]))
 
 
@@ -161,125 +155,31 @@ df_alimentos[, -1] <- df_alimentos[, -1] * 100
 df_transformado <- df_alimentos %>%
   pivot_longer(cols = -Alimentos, names_to = "Grupo_demo", values_to = "Cantidad_G") %>%
   mutate(Alimento = Alimentos,
-         Sexo = 0
+         Sexo = as.numeric(sexo_nombre)
          ) %>%
   select(Alimento, Cantidad_G, Grupo_demo, Sexo)
 
 
-CoCA_M=cbind(df_transformado,Costo)
+assign(paste("CoCA_", sexo_nombre, sep = ""), cbind(df_transformado, Costo))
 
-} else {
-   CoCA_M=NULL
+#--------------------------------------------------------#
+#        FIND DEL       CLICLO PARA CADA SEXO            #
+#-------------------------------------------------------#
+
+}
+# Unir ambos df para cada sexo (si existe)
+if ("Sexo" %in% colnames(EER)) {Costo_CoCA=rbind(CoCA_0,CoCA_1)} else {
+   Costo_CoCA <- CoCA_0 %>%
+  select(-Sexo)
 }
 
-
+assign("Costo_CoCA",Costo_CoCA,envir = globalenv()) # Asignación en el ambiente global
 
 #------------------------------------------------------------------------------------------#
-#                       QUINTA ETAPA: MODELO 1 FEMENINO                                   #
+#                       FIN DEL SEGUNDO MÓDULO COMO FUNCIÓN                               #
 #-----------------------------------------------------------------------------------------#
 
-
-
-
-if (!1 %in% categorias_unicas) {
-  print("No se correrá para el modelo para el sexo femenino ya que la categoría 1 no está presente en la columna sexo del parametro EER.")
-  Femenino=FALSE
-} else {
-  Femenino=TRUE
-}
-
-
-if(Femenino==TRUE) {
-
-
-# Crear df de salida para el modelo 1 másculino
-
-Salida_CoCA_F <- data.frame(Alimentos = Datos_Insumo$Alimento);Salida_CoCA_F <- Salida_CoCA_F %>% add_row(Alimentos = "Costo")
-
-#-------------------- EXTRAER VECTORES DE PARÁEMTROS AL MODELO:
-
-# Extraer df Femenino
-
-EER_F=subset(EER,Sexo==1)
-
-# Asignación de vectores
-Precio = Datos_Insumo$Precio_100g_ajust;Alimento=Datos_Insumo$Alimento;Edad=EER_F$Edad
-
-# MAtriz de coef de restricción al modelo (ENERGIA)
-Coef.Restriq = matrix(as.vector(Datos_Insumo$Energia), ncol = length(Alimento))
-
-# Vector de limitaciones del modelo
-Limitaciones=EER_F$Energia
-
-#------------------------------Solución:
-
-# Modelo
-
-for( i in seq_along(Edad)) {#ciclo para cada edad
-
-CoCA = lp(direction = "min",
-objective.in = Precio,
-const.mat = Coef.Restriq,
-const.dir = c("="),
-const.rhs = Limitaciones[i],
-compute.sens = TRUE)
-
-# Guardar soluciones
-
-
-# Crear dataframe df_1 con alimentos y la solución óptima para la edad actual
-df_1 <- data.frame(Alimentos = Alimento, Valor = CoCA$solution);colnames(df_1) <- c("Alimentos", as.character(Edad[i]))
-
-# Crear dataframe df_2 con el costo asociado para la edad actual
-df_2 <- data.frame(Alimentos = "Costo", Valor = CoCA$objval);colnames(df_2) <- colnames(df_1);df_combinado <- rbind(df_1, df_2)
-
-# Agregar la información al dataframe modelo_1
-Salida_CoCA_F <- merge(Salida_CoCA_F, df_combinado, by = "Alimentos")
-
-}
-
-
-# DF sin ceros
-DF_o <- Salida_CoCA_F[rowSums(Salida_CoCA_M[, -1]) != 0, ]
-Costo=DF_o[DF_o=="Costo",];Costo=as.vector(t(Costo[Costo$Alimentos == "Costo", -1]))
-
-
-# Indetificando el alimento
-df_alimentos <- DF_o[DF_o$Alimentos != "Costo", ]
-
-# Multiplicar los valores por 100
-df_alimentos[, -1] <- df_alimentos[, -1] * 100
-
-#ESTRUCTURA CIAT
-df_transformado <- df_alimentos %>%
-  pivot_longer(cols = -Alimentos, names_to = "Grupo_demo", values_to = "Cantidad_G") %>%
-  mutate(Alimento = Alimentos,
-         Sexo = 1
-         ) %>%
-  select(Alimento, Cantidad_G, Grupo_demo, Sexo)
-
-
-CoCA_F=cbind(df_transformado,Costo)
-
-} else {
-   CoCA_F=NULL
-}
-# Salida en el ambiente global
-
-if (!is.null(CoCA_F) && !is.null(CoCA_M)) {
-  # Unir los dataframes usando rbind
-  CoCA <- rbind(CoCA_F, CoCA_M)
-} else {
-  # Asignar el dataframe que no es NULL a CoCA
-  CoCA <- ifelse(!is.null(CoCA_F), CoCA_F, CoCA_M)
-}
-
-assign("Costo_CoCA",CoCA,envir = globalenv())
-
-#------------------------------------------------------------------------------------------#
-#                       FIN DEL SEGUNDO MÓDULO COMO FUNCIÓN                                 #
-#-----------------------------------------------------------------------------------------#
-  if(length(warnings())<100) {print ("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA SUFICIENTE EN ENERGÍA (CoCA)' correcta") }
+print ("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA SUFICIENTE EN ENERGÍA (CoCA)' correcta") 
 
 }
 
