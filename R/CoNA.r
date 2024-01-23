@@ -289,7 +289,8 @@ CoNA_SP = CoNA_SP[c("Edad", "Nutrientes", "SP", "SPE")]
 }
 
 #Nutrientes limtantes y precios sombre
-CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by = c("Edad", "Sexo", "Nutrientes"))
+CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Sexo", "Nutrientes"),
+        by.y= c("Edad", "Sexo", "Nutrientes"))
 
 # Asignación en el ambiente global
 assign("Costo_CoNA",Costo_CoNA,envir = globalenv()) 
@@ -304,7 +305,4 @@ cat("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA ADECUADA EN NUTRIENTES (Co
 cat("\n")
 
 }
-
-
-
 
