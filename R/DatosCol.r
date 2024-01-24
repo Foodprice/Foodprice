@@ -232,6 +232,7 @@ nombre_data_abast <- paste0("data_list_abast_ev", Año)
 
    
    Nombres_Meses = c("Enero","Febrero","Marzo","Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre","Noviembre","Diciembre")
+    Mes_Num=Mes
     Mes=Nombres_Meses[Mes]  
     Semestres=c("I_Semestre","II_Semestre")
 
@@ -885,7 +886,7 @@ Datos_MOD3 <- Datos_MOD3 %>%
 #                       ASGINACIÓN EN EL ENTORNO GLOBAL                                   #
 #-----------------------------------------------------------------------------------------#
 
-assign(paste0("Datos_Insumo_Modelos_",Año,"_",Mes,"_",Ciudad),Datos_MOD3,envir = globalenv())
+assign(paste0("Datos_Insumo_Modelos_",Año,"_",Mes_Num,"_",Ciudad),Datos_MOD3,envir = globalenv())
 
 
 
