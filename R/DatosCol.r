@@ -887,10 +887,10 @@ Datos_MOD3 <- Datos_MOD3 %>%
 #                       ASGINACIÓN EN EL ENTORNO GLOBAL                                   #
 #-----------------------------------------------------------------------------------------#
 
-assign(paste0("Datos_",Año,"_",Mes_Num,"_",Ciudad),Datos_MOD3,envir = globalenv())
+#assign(paste0("Datos_",Año,"_",Mes_Num,"_",Ciudad),Datos_MOD3,envir = globalenv())
 
 print(paste("✔_",Ciudad,"_" , Año,"_" ,Mes,""))
-
+return(invisible(Datos_MOD3))
 
 #cat("\n")
 # if(length(warnings())<100) {cat("Depuración de datos exitosa", "\n")} else {cat("Cantidad de errores encontrados:",length(warnings()), "\n")}
