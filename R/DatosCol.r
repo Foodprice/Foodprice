@@ -890,7 +890,7 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
   
   #assign(paste0("Datos_",Año,"_",Mes_Num,"_",Ciudad),Datos_MOD3,envir = globalenv())
   
-  print(paste("✔1_",Ciudad,"_" , Año,"_" ,Mes,""))
+  print(paste("✔",Ciudad,"_" , Año,"_" ,Mes,""))
   
   #cat("\n")
   # if(length(warnings())<100) {cat("Depuración de datos exitosa", "\n")} else {cat("Cantidad de errores encontrados:",length(warnings()), "\n")}
