@@ -15,9 +15,9 @@ Librerias_base = c("readxl","dplyr","ggplot2","reshape2","knitr","haven","foreig
 if (!require("pacman")) install.packages("pacman") # Paquete que simplifica la carga de librerias
 pacman::p_load(char = Librerias_base);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
 
-cat("\n")
-cat("Se instalaron y cargaron todas la librerias corectamente")
-cat("\n")
+#cat("\n")
+#cat("Se instalaron y cargaron todas la librerias corectamente")
+#cat("\n")
 
 #------------------------------------------------------------------------------------------#
 #         SEGUNDA ETAPA: VALIDACIÓN DE PARÁMETROS OBLIGATORIOS Y OPCIONALES                #
@@ -262,9 +262,9 @@ assign(paste("S_shadow_", sexo_nombre, sep = ""), S_shadow)
 
 
 nombres_comunes_sin_energia <- setdiff(nombres_comunes, "Energia")
-cat("\n")
-cat("Los nutrientes a usar en el modelo son:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
-cat("\n")
+#cat("\n")
+#cat("Los nutrientes a usar en el modelo son:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
+#cat("\n")
 
 # Unir ambos df para cada sexo (si existe)
 if ("Sexo" %in% colnames(DRI_min)) {
@@ -301,9 +301,21 @@ assign("CoNA_SP_LM",CoNA_SP_LM,envir = globalenv())
 #------------------------------------------------------------------------------------------#
 #                       FIN DEL TERCER MÓDULO COMO FUNCIÓN                               #
 #-----------------------------------------------------------------------------------------#
-cat("\n")
-cat("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA ADECUADA EN NUTRIENTES (CoNA)' correcta") 
-cat("\n")
+  #----------------------------#
+  #     ASGINACIONES DE LISTA  #
+  #----------------------------#
+  
+  List_CoNA=list(Costo_CoNA,Alimentos_CoNA,CoNA_SP_LM);names(List_CoCA)=c("Costo_CoNA","Alimentos_CoNA","CoNA_SP_LM")
+  
+  # retorno
+  
+  cat("✔ CoNA")
+  return(invisible(List_CoNA))
+
+  
+#cat("\n")
+#cat("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA ADECUADA EN NUTRIENTES (CoNA)' correcta") 
+#cat("\n")
 
 }
 
