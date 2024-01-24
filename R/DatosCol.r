@@ -659,7 +659,10 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
   
   grupos_margenes <- levels(as.factor(Precios_Grupos_SIPSA$Grupo));Margenes_Historicos <- data.frame(Grupo = grupos_margenes, margen_medio=NA)
   # margen medio
-  Margenes_Historicos$margen_medio <- c(4.925515,32.154734,21.770773,26.226295,17.150887,6.884347,76.380988,54.096494)
+
+  Mar=  c(4.925515,32.154734,21.770773,26.226295,17.150887,6.884347,76.380988,54.096494)
+  Margenes_Historicos$margen_medio <- Mar[1:length(grupos_margenes)]
+  
   
   
   # -----------------------------------------------------------------#
