@@ -89,9 +89,9 @@ Librerias_base = c("readxl","dplyr","ggplot2","reshape2","knitr","haven","foreig
 if (!require("pacman")) install.packages("pacman") # Paquete que simplifica la carga de librerias
 pacman::p_load(char = Librerias_base);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
 
-cat("\n")
-print("Se instalaron y cargaron todas la librerias corectamente")
-cat("\n")
+#cat("\n")
+#print("Se instalaron y cargaron todas la librerias corectamente")
+#cat("\n")
 
 
 
@@ -314,7 +314,8 @@ Data_Sipsa_Precios$Fecha=convertir_fechas_vector(Data_Sipsa_Precios$Fecha)
 
 #Data_Sipsa_Precios$Fecha=as.Date(paste(Año,which(Meses %in% Mes),"1", sep = "-"),format = "%Y-%m-%d") # Cambia los nombres y asigna fechas
 
-assign(paste("PRECIOS_SIPSA", Mes, Año, sep = "_"),Data_Sipsa_Precios,envir = globalenv())
+#-- abajo borrar
+#assign(paste("PRECIOS_SIPSA", Mes, Año, sep = "_"),Data_Sipsa_Precios,envir = globalenv())
 
 
 
@@ -886,9 +887,9 @@ Datos_MOD3 <- Datos_MOD3 %>%
 #                       ASGINACIÓN EN EL ENTORNO GLOBAL                                   #
 #-----------------------------------------------------------------------------------------#
 
-assign(paste0("Datos_Insumo_Modelos_",Año,"_",Mes_Num,"_",Ciudad),Datos_MOD3,envir = globalenv())
+assign(paste0("Datos_",Año,"_",Mes_Num,"_",Ciudad),Datos_MOD3,envir = globalenv())
 
-cat( paste("✔_",Ciudad,"_" , Año,"_" ,Mes))
+print(paste("✔_",Ciudad,"_" , Año,"_" ,Mes,""))
 
 
 #cat("\n")
