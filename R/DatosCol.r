@@ -256,45 +256,10 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
   Lista_Semestres = list(Semestre_I, Semestre_II);names(Lista_Semestres)=c("I_Semestre","II_Semestre")
   Fecha=Lista_Mes[[Mes]]
   
-  
-  #------------------ IDENTIFICACIÓN DE MES EN PRECIOS SIPSA   ------------------------------
-  
-  #{Selecionando el año según la estructura de datos
-  
-  if( Año>=2019){   
-    
-    #--  asgina el més con base en la posición de la hoja y depura un poco las columnas combinadas y texto inecesario de excel
-    Meses=Nombres_Meses[1:length(data_list_precios)-1]
-    posicion_mes <- which(Meses %in% Mes)
-    if (length(posicion_mes) == 0) {
-      stop("El mes solicitado aún no está presente en los datos abiertos de precios SIPSA.")
-    }
-    Data_Sipsa_Precios=(data_list_precios[[which(Meses %in% Mes)+1]]) # Se extraen los meses disponibles con base en la data dada
-    #Data_Sipsa_Precios=Data_Sipsa_Precios[-c(1:4,nrow(Data_Sipsa_Precios)),-c(6,7)];Data_Sipsa_Precios=na.omit(Data_Sipsa_Precios) # Un poco de depuración
-  }
-  
-  if (Año==2018){ 
-    #Meses = c("Enero","Febrero","Marzo","Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre","Noviembre","Diciembre")
-    
-    Data_Sipsa_Precios=data_list_precios[[2]]   
-  }
-  
-  if(Año < 2018) {
-    
-    #Meses = c("Enero","Febrero","Marzo","Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre","Noviembre","Diciembre")
-    Año_selec <- which(Año == 2013:2017)
-    Data_Sipsa_Precios <- data_list_precios[[Año_selec+1]]
-    
-    Data_Sipsa_Precios <- Data_Sipsa_Precios[rowSums(is.na(Data_Sipsa_Precios)) / ncol(Data_Sipsa_Precios) < 0.5, colSums(is.na(Data_Sipsa_Precios)) / nrow(Data_Sipsa_Precios) < 0.5 ]
-    
-  }
-  
-  
-  Data_Sipsa_Precios <- Data_Sipsa_Precios[rowSums(is.na(Data_Sipsa_Precios)) / ncol(Data_Sipsa_Precios) < 0.5, colSums(is.na(Data_Sipsa_Precios)) / nrow(Data_Sipsa_Precios) < 0.5 ]
-  Data_Sipsa_Precios=Data_Sipsa_Precios[-1,]
-  colnames(Data_Sipsa_Precios) = c("Fecha", "Grupo", "Alimento", "Mercado", "Precio_kg");Data_Sipsa_Precios$Precio_kg=as.numeric(Data_Sipsa_Precios$Precio_kg)
+  # -------------------------------------------------
   
   # ------------DFECHAS
+  
   
   
   convertir_fechas_vector <- function(fechas) {
@@ -310,12 +275,74 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
     return(fechas_convertidas)
   }
   
-  Data_Sipsa_Precios$Fecha=convertir_fechas_vector(Data_Sipsa_Precios$Fecha)
+
   
+  #------------------ IDENTIFICACIÓN DE MES EN PRECIOS SIPSA   ------------------------------
+  
+  #{Selecionando el año según la estructura de datos
+  
+  if( Año>=2019){   
+    
+    #--  asgina el més con base en la posición de la hoja y depura un poco las columnas combinadas y texto inecesario de excel
+    Meses=Nombres_Meses[1:length(data_list_precios)-1]
+    posicion_mes <- which(Meses %in% Mes)
+    if (length(posicion_mes) == 0) {
+      stop("El mes solicitado aún no está presente en los datos abiertos de precios SIPSA.")
+    }
+    Data_Sipsa_Precios=(data_list_precios[[which(Meses %in% Mes)+1]])
+    Data_Sipsa_Precios <- Data_Sipsa_Precios[rowSums(is.na(Data_Sipsa_Precios)) / ncol(Data_Sipsa_Precios) < 0.5, colSums(is.na(Data_Sipsa_Precios)) / nrow(Data_Sipsa_Precios) < 0.5 ]
+    Data_Sipsa_Precios=Data_Sipsa_Precios[-1,]
+    colnames(Data_Sipsa_Precios) = c("Fecha", "Grupo", "Alimento", "Mercado", "Precio_kg");Data_Sipsa_Precios$Precio_kg=as.numeric(Data_Sipsa_Precios$Precio_kg)
+    
+    # Se extraen los meses disponibles con base en la data dada
+    #Data_Sipsa_Precios=Data_Sipsa_Precios[-c(1:4,nrow(Data_Sipsa_Precios)),-c(6,7)];Data_Sipsa_Precios=na.omit(Data_Sipsa_Precios) # Un poco de depuración
+    Data_Sipsa_Precios$Fecha=convertir_fechas_vector(Data_Sipsa_Precios$Fecha)
+    
+    
+    
+    }
+  
+  if (Año==2018){ 
+    #Meses = c("Enero","Febrero","Marzo","Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre","Noviembre","Diciembre")
+    
+    Data_Sipsa_Precios=data_list_precios[[2]] 
+    Data_Sipsa_Precios <- Data_Sipsa_Precios[rowSums(is.na(Data_Sipsa_Precios)) / ncol(Data_Sipsa_Precios) < 0.5, colSums(is.na(Data_Sipsa_Precios)) / nrow(Data_Sipsa_Precios) < 0.5 ]
+    Data_Sipsa_Precios=Data_Sipsa_Precios[-1,]
+    colnames(Data_Sipsa_Precios) = c("Fecha", "Grupo", "Alimento", "Mercado", "Precio_kg");Data_Sipsa_Precios$Precio_kg=as.numeric(Data_Sipsa_Precios$Precio_kg)
+    
+    
+    Data_Sipsa_Precios$Fecha=convertir_fechas_vector(Data_Sipsa_Precios$Fecha)
+  
+    # filtrar mes
+    Data_Sipsa_Precios= Data_Sipsa_Precios[month(Data_Sipsa_Precios$Fecha)>=Mes_Num,]  
+    
+    
+  }
+  
+  if(Año < 2018) {
+    
+    #Meses = c("Enero","Febrero","Marzo","Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre","Noviembre","Diciembre")
+    Año_selec <- which(Año == 2013:2017)
+    Data_Sipsa_Precios <- data_list_precios[[Año_selec+1]]
+    
+    Data_Sipsa_Precios <- Data_Sipsa_Precios[rowSums(is.na(Data_Sipsa_Precios)) / ncol(Data_Sipsa_Precios) < 0.5, colSums(is.na(Data_Sipsa_Precios)) / nrow(Data_Sipsa_Precios) < 0.5 ]
+    Data_Sipsa_Precios=Data_Sipsa_Precios[-1,]
+    colnames(Data_Sipsa_Precios) = c("Fecha", "Grupo", "Alimento", "Mercado", "Precio_kg");Data_Sipsa_Precios$Precio_kg=as.numeric(Data_Sipsa_Precios$Precio_kg)
+    
+    Data_Sipsa_Precios$Fecha=convertir_fechas_vector(Data_Sipsa_Precios$Fecha)
+    
+    # filtrar mes
+    Data_Sipsa_Precios= Data_Sipsa_Precios[month(Data_Sipsa_Precios$Fecha)>=Mes_Num,]  
+    
+    
+  }
+  
+  
+
   #Data_Sipsa_Precios$Fecha=as.Date(paste(Año,which(Meses %in% Mes),"1", sep = "-"),format = "%Y-%m-%d") # Cambia los nombres y asigna fechas
   
   #-- abajo borrar
-  #assign(paste("PRECIOS_SIPSA", Mes, Año, sep = "_"),Data_Sipsa_Precios,envir = globalenv())
+ # assign(paste("PRECIOS_SIPSA", Mes, Año, sep = "_"),Data_Sipsa_Precios,envir = globalenv())
   
   
   
@@ -543,8 +570,7 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
   Sipsa_TCAC=Mapeo_Sipsa_TCAC_Carga_2[Micro_Macro_Nutrientes_Necesarios];colnames(Sipsa_TCAC)[1] = "Cod_TCAC";colnames(Sipsa_TCAC)[2] = "Alimento_TCAC"
   
   Data_abs_precios_Sipsa=Data_Sipsa_Precios_Unicos
-  
-  
+
   if (!is.null(Percentil_Abast)){
     # Asignación del valor de abastecimiento en cada caso
     Data_abs_precios_Sipsa = merge(Data_Sipsa_Precios_Unicos, Mapeo_Precios_Abs, by = "Alimento", all.x = TRUE)
@@ -561,7 +587,7 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
     colnames(Data_abs_precios_Sipsa) = c("Alimento",paste0("Precio_kg_", Mes))
   }
   
-
+  
   #------------------------------------------------------#
   #                       criterios de exclusión         #
   #------------------------------------------------------#
@@ -659,7 +685,7 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
   
   grupos_margenes <- levels(as.factor(Precios_Grupos_SIPSA$Grupo));Margenes_Historicos <- data.frame(Grupo = grupos_margenes, margen_medio=NA)
   # margen medio
-
+  
   Mar=  c(4.925515,32.154734,21.770773,26.226295,17.150887,6.884347,76.380988,54.096494)
   Margenes_Historicos$margen_medio <- Mar[1:length(grupos_margenes)]
   
@@ -692,7 +718,7 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
     precios_mayoristas_grupos_margenes$Precio_minorista_kg <- precios_mayoristas_grupos_margenes$Precio_kg * (1 + precios_mayoristas_grupos_margenes$margen_medio/100)
     
   }
-
+  
   
   
   
@@ -838,7 +864,7 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
   # -----------------------------------------------------------------#
   #               MAPEOS Y GRUPOS PARA EL MODELO CORD                #
   #------------------------------------------------------------------#
-
+  
   
   
   # Función de recodificación de subgrupos
@@ -909,14 +935,6 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
   
   
 }
-
-
-
-
-
-
-
-
 
 
 
