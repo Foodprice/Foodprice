@@ -342,8 +342,8 @@ Intercambios_CoRD=rbind(Intercambios_CoRD_0,Intercambios_CoRD_1)
 
 
 # Asignación en el ambiente global
-assign("Costo_CoRD",Costo_CORD,envir = globalenv()) 
-assign("Intercambios_CoRD",Intercambios_CoRD,envir = globalenv()) 
+#assign("Costo_CoRD",Costo_CORD,envir = globalenv()) 
+#assign("Intercambios_CoRD",Intercambios_CoRD,envir = globalenv()) 
 
   #----------------------------#
   #     ASGINACIONES DE LISTA  #

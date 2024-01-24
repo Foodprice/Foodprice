@@ -294,9 +294,9 @@ CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Sexo", "Nutrientes"),
         by.y= c("Edad", "Sexo", "Nutrientes"))
 
 # Asignación en el ambiente global
-assign("Costo_CoNA",Costo_CoNA,envir = globalenv()) 
-assign("Alimentos_CoNA",Alimentos_CoNA,envir = globalenv()) 
-assign("CoNA_SP_LM",CoNA_SP_LM,envir = globalenv()) 
+#assign("Costo_CoNA",Costo_CoNA,envir = globalenv()) 
+#assign("Alimentos_CoNA",Alimentos_CoNA,envir = globalenv()) 
+#assign("CoNA_SP_LM",CoNA_SP_LM,envir = globalenv()) 
 
 #------------------------------------------------------------------------------------------#
 #                       FIN DEL TERCER MÓDULO COMO FUNCIÓN                               #
