@@ -101,6 +101,8 @@ if (length(missing_columns_E) > 0) {
 #                       SEGUNDA ETAPA: FILTRAR RECOMENDACIONES                            #
 #-----------------------------------------------------------------------------------------#
 
+
+
 #se excluyen los alimentos sin categorías
 Datos_Insumo = Datos_Insumo %>% filter(!Grupo %in% "Sin categoría")
 
@@ -229,6 +231,7 @@ Generar_B=function(n){
 CoRD_INT <- data.frame()  # DATA DE SALIDA
 Edad_CoRD <- c()  # Edad de salida
 CoRD_COST <- data.frame() # DF de los costos
+
 # -------------------------------- EXTRACCIONES
 
 # Extraer reque según la edad
@@ -268,11 +271,14 @@ for (i in 1:length(Edad)) {
     # ----------------- MODELO FEMENINO-----------------
     
     # Soluciones por INT y gr
+
+  
     Cantidad_INT = solve(A, B)
+
     Cantidad_g = Cantidad_INT * Datos_grupo_i$Intercambio_EER_gr
     
     # Crear dataframe directamente y agregar las filas a CoRD_INT_F
-    CoRD_F = cbind(Datos_grupo_i, Cantidad_INT = Cantidad_INT, Cantidad_g = Cantidad_g)
+    CoRD_F = cbind(Datos_grupo_i, Cantidad_INT = Cantidad_INT, Cantidad_g = Cantidad_g,Edad=Edad[i],Sexo=sexo_nombre)
     
     CoRD_INT = rbind(CoRD_INT, CoRD_F)
 
@@ -281,12 +287,11 @@ for (i in 1:length(Edad)) {
   }
   
 #SALIDA CON EDAD 
-Edad_i=rep(Edad[i],sum(Cantidad_selec$Cantidad));Edad_CoRD=c(Edad_CoRD,Edad_i)
+#Edad_i=rep(Edad[i],sum(Cantidad_selec$Cantidad));Edad_CoRD=c(Edad_CoRD,Edad_i)
 
 }
 
 
-CoRD_INT$Edad=Edad_CoRD # Cálculo de edad
 
 
 #------------------ CÁLCULO DEL COSTO POR EDAD
@@ -308,7 +313,7 @@ for (E in Edad) {
 
 
 # ----------- ESTRUCTURA CIAT PARA INTERCAMBIOS
-CoRD_INT$Sexo=as.numeric(sexo_nombre);CoRD_INT= CoRD_INT %>% select(any_of(c("Alimento","Grupo","Cantidad_INT","Edad","Sexo")))
+CoRD_INT= CoRD_INT %>% select(any_of(c("Alimento","Grupo","Cantidad_INT","Edad","Sexo")))
 
 # Asignaciones por sexo
 assign(paste("CoRD_", sexo_nombre, sep = ""), CoRD_COST)
@@ -344,4 +349,5 @@ cat("\n")
 cat("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA SALUDABLE (CoRD)' correcta")
 cat("\n") 
 }
+
 
