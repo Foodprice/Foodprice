@@ -305,14 +305,14 @@ assign("CoNA_SP_LM",CoNA_SP_LM,envir = globalenv())
   #     ASGINACIONES DE LISTA  #
   #----------------------------#
   
-  List_CoNA=list(Costo_CoNA,Alimentos_CoNA,CoNA_SP_LM);names(List_CoCA)=c("Costo_CoNA","Alimentos_CoNA","CoNA_SP_LM")
+  List_CoNA=list(Costo_CoNA,Alimentos_CoNA,CoNA_SP_LM);names(List_CoNA)=c("Costo_CoNA","Alimentos_CoNA","CoNA_SP_LM")
   
   # retorno
   
   cat("✔ CoNA")
   return(invisible(List_CoNA))
 
-  
+
 #cat("\n")
 #cat("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA ADECUADA EN NUTRIENTES (CoNA)' correcta") 
 #cat("\n")

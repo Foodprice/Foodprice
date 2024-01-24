@@ -825,7 +825,7 @@ alimentos_faltantes <- alimentos_faltantes[!grepl(paste(alimentos_a_eliminar, co
 
 
 mensaje <- paste("En la ciudad de", Ciudad, "del año", Año, "y mes", Mes, ", se omitieron los siguientes alimentos por falta de información nutricional " , length(alimentos_faltantes) ," :", paste(alimentos_faltantes, collapse = ", "), ". Si conoce la información de estos, utilice el parámetro opcional llamado 'Ingreso_Alimentos' para ingresarlos")
-cat(mensaje)
+#cat(mensaje)
 
 
 
@@ -888,11 +888,12 @@ Datos_MOD3 <- Datos_MOD3 %>%
 
 assign(paste0("Datos_Insumo_Modelos_",Año,"_",Mes_Num,"_",Ciudad),Datos_MOD3,envir = globalenv())
 
+cat( paste("✔_",Ciudad,"_" , Año,"_" ,Mes))
 
 
-cat("\n")
- if(length(warnings())<100) {cat("Depuración de datos exitosa", "\n")} else {cat("Cantidad de errores encontrados:",length(warnings()), "\n")}
-cat("\n")
+#cat("\n")
+# if(length(warnings())<100) {cat("Depuración de datos exitosa", "\n")} else {cat("Cantidad de errores encontrados:",length(warnings()), "\n")}
+#cat("\n")
 
 
 #------------------------------------------------------------------------------------------#

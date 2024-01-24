@@ -17,9 +17,9 @@ Librerias_base = c("readxl","dplyr","ggplot2","reshape2","knitr","haven","foreig
 if (!require("pacman")) install.packages("pacman") # Paquete que simplifica la carga de librerias
 pacman::p_load(char = Librerias_base);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
 
-cat("\n")
-cat("Se instalaron y cargaron todas la librerias corectamente")
-cat("\n")
+#cat("\n")
+#cat("Se instalaron y cargaron todas la librerias corectamente")
+#cat("\n")
 
 #------------------------------------------------------------------------------------------#
 #         SEGUNDA ETAPA.1: VALIDACIÓN DE PARÁMETROS OBLIGATORIOS Y OPCIONALES                #
@@ -345,9 +345,20 @@ Intercambios_CoRD=rbind(Intercambios_CoRD_0,Intercambios_CoRD_1)
 assign("Costo_CoRD",Costo_CORD,envir = globalenv()) 
 assign("Intercambios_CoRD",Intercambios_CoRD,envir = globalenv()) 
 
-cat("\n") 
-cat("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA SALUDABLE (CoRD)' correcta")
-cat("\n") 
+  #----------------------------#
+  #     ASGINACIONES DE LISTA  #
+  #----------------------------#
+  
+  List_CoRD=list(Costo_CoRD,Intercambios_CoRD);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD")
+  
+  # retorno
+  
+  cat("✔ CoRD")
+  return(invisible(List_CoRD))
+
+#cat("\n") 
+#cat("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA SALUDABLE (CoRD)' correcta")
+#cat("\n") 
 }
 
 
