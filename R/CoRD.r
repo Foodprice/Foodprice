@@ -349,7 +349,7 @@ Intercambios_CoRD=rbind(Intercambios_CoRD_0,Intercambios_CoRD_1)
   #     ASGINACIONES DE LISTA  #
   #----------------------------#
   
-  List_CoRD=list(Costo_CoRD,Intercambios_CoRD);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD")
+  List_CoRD=list(Costo_CORD,Intercambios_CoRD);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD")
   
   # retorno
   
