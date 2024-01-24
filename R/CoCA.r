@@ -178,7 +178,15 @@ if ("Sexo" %in% colnames(EER)) {Costo_CoCA=rbind(CoCA_0,CoCA_1)} else {
   select(-Sexo)
 }
 
-assign("Costo_CoCA",Costo_CoCA,envir = globalenv()) # Asignación en el ambiente global
+#----------------------------#
+#     ASGINACIONES DE LISTA  #
+#----------------------------#
+
+List_CoCA=list(Costo_CoCA,Precio,Alimento)
+
+# retorno
+
+return(List_CoCA)
 
 #------------------------------------------------------------------------------------------#
 #                       FIN DEL SEGUNDO MÓDULO COMO FUNCIÓN                               #
