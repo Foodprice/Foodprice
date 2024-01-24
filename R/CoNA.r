@@ -124,15 +124,14 @@ DRI_max_li= DRI_max_i %>% select(-any_of(c("Edad","Energia","Sexo")))
 # Exraer los nutrientes de entrada que son distintos a las columnas: ("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust")
 DF_Nutrientes_ALimentos <- Datos_Insumo %>% select(-any_of(c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust")))
 
+
+
 # Identificar las columnas que son iguales de datos insumo y requerimientos y ordenarlas
 nombres_comunes <- intersect(names(DF_Nutrientes_ALimentos), names(DRI_min_li));
 
 # Ordenar los nombrespara el modelo
 DF_Nutrientes_ALimentos <- DF_Nutrientes_ALimentos %>% select(any_of(nombres_comunes));DRI_min_li <- DRI_min_li %>% select(any_of(nombres_comunes));  DRI_max_li <- DRI_max_li %>% select(any_of(nombres_comunes))
 
-if (!identical(names(DRI_min_li), names(DF_Nutrientes_ALimentos))) {
-  stop("Los datos DRI max ,min t Datos de insumo no tienen los mismos nombres en los nutrientes.")
-}
 
 # Unir los nutrientes de aliemntos en min y max
 Sin_EER= DF_Nutrientes_ALimentos %>% select(-Energia)
