@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------------------#
-#         PRIMERA FUNCIÓN: CARGA Y DEPURACIÓN DATOS DE COLOMBIA, DANE                      #
+#         PRIMERA FUNCIÓN: CARGA Y DEPURACIÓN DATOS DE COLOMBIA, DANE                      # 
 #-----------------------------------------------------------------------------------------#
 
 
@@ -7,34 +7,46 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
   
   
   #------------------------------------------------------------------------------------------#
-  #         PRIMERA ETAPA: VALIDACIÓN DE PARÁMETROS OBLIGATORIOS Y OPCIONALES                #
+  #         PRIMERA ETAPA: VALIDACIÓN DE PARÁMETROS OBLIGATORIOS Y OPCIONALES                # ✔ SIMPLIFICADA Y ASEGURADA
   #-----------------------------------------------------------------------------------------#
   
-  
-  validar_parametros <- function(parametro, tipo, rango = NULL) {
+#Función para validar parámetros
+validar_parametros <- function(parametro, tipo, rango = NULL) {
   if (missing(parametro)) {
-    stop(paste("Falta el parámetro", deparse(substitute(parametro))))
+    stop("Falta el parámetro ", deparse(substitute(parametro)))
   }
   
-  if (!is.null(tipo) && !is.type(parametro, tipo)) {
-    stop(paste(deparse(substitute(parametro)), "debe ser de tipo", tipo))
+  if (!is.null(tipo)) {
+    tipo_funcion <- switch(tipo,
+                           "numeric" = is.numeric,
+                           "character" = is.character,
+                           "list" = is.list,
+                           "vector" = function(x) is.vector(x) || is.data.frame(x),
+                           "default" = function(x) FALSE)
+    
+    if (!tipo_funcion(parametro)) {
+      stop(paste(deparse(substitute(parametro)), " debe ser de tipo ", tipo))
+    }
   }
   
-  if (!is.null(rango) && !is.in_range(parametro, rango)) {
-    stop(paste(deparse(substitute(parametro)), "debe estar en el rango", rango))
+  if (!is.null(rango) && !is.infinite(rango[1]) && !is.infinite(rango[2])) {
+    if (parametro < rango[1] || parametro > rango[2]) {
+      stop(paste(deparse(substitute(parametro)), " debe estar en el rango ", rango[1], " - ", rango[2]))
+    }
   }
 }
 
-# Verificación de Mes
-validar_parametros(Mes, "numeric", 1:12)
+#-----------------------Verificaciones de paraḿetros obligatorios
 
+# Verificación de Mes
+validar_parametros(Mes, "numeric", c(1, 12))
 # Verificación de Año
 validar_parametros(Año, "numeric", c(2013, 2023))
-
 # Verificación de Ciudad
 validar_parametros(Ciudad, "character")
 
-# Verificación de Percentil_Abast si es proporcionado
+#-----------------------Verificaciones de paraḿetros opcionales
+
 if (!is.null(Percentil_Abast)) {
   validar_parametros(Percentil_Abast, "numeric", c(0, 1))
   
@@ -46,25 +58,19 @@ if (!is.null(Percentil_Abast)) {
     stop("Si se proporciona data_list_abas, Percentil_Abast debe estar presente.")
   }
 }
-
 # Verificación de Ingreso_Alimentos si es proporcionado
-if (!is.null(Ingreso_Alimentos)) {
-  validar_parametros(Ingreso_Alimentos, c("vector", "data.frame"), 21)
-}
-
+if (!is.null(Ingreso_Alimentos)) {validar_parametros(Ingreso_Alimentos, "vector", c(21, 21))}
 # Verificación de data_list_precios
-validar_parametros(data_list_precios, "list")
-
+if (!is.null(data_list_precios)) {validar_parametros(data_list_precios, "list")}
 # Verificación de margenes
-validar_parametros(Margenes, "vector", 8)
-  
-  
+if (!is.null(data_list_precios)) {validar_parametros(Margenes, "vector", c(8, 8))}
+
   #------------------------------------------------------------------------------------------#
-  #                       SEGUNDA ETAPA: VALIDACIÓN DE LIBRERIAS                             #
+  #                       SEGUNDA ETAPA: VALIDACIÓN DE LIBRERIAS                             # ✔ SIMPLIFICADA Y ASEGURADA
   #-----------------------------------------------------------------------------------------#
   
   Librerias_base = c("readxl","dplyr","ggplot2","reshape2","knitr","haven","foreign","stringi","labelled","tidyr","plyr","tidyverse",
-                     "lpSolve","Rglpk","scatterplot3d","reshape","R6","rio","janitor","lubridate") # Nombra las librerias necesarias
+                     "lpSolve","Rglpk","scatterplot3d","reshape","R6","rio","janitor","lubridate","stringr") # Nombra las librerias necesarias
   
   if (!require("pacman")) install.packages("pacman") # Paquete que simplifica la carga de librerias
   pacman::p_load(char = Librerias_base,character.only = TRUE);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
@@ -86,133 +92,81 @@ for (paquete in paquetes_faltantes) {
    
 
   #------------------------------------------------------------------------------------------#
-  #                   TERCERA ETAPA: CARGA DE DATOS DESDE EL DANE (COL)                      #
+  #                   TERCERA ETAPA: CARGA DE DATOS DESDE EL DANE (COL)                      # ✔ SIMPLIFICADA Y ASEGURADA
   #-----------------------------------------------------------------------------------------#
-  
-  options(rio.column_names = FALSE) # No mostrar nombres de columnas al importar como lista
-  options(timeout=1000) # Tiempo de espera alto
-  
-  
-  
-  # ----------------------------Precios mayoristas------------------------------
-  
-  if (is.null(data_list_precios)){ # Valida si no se indicó  data_list_precios y así saltarlo
-    
-    
-    temp_dir_P <- tempdir()
-    archivo_excel_p <- file.path(temp_dir_P, paste0("archivo_P_",Año, ".xlsx"))
-    nombre_data <- paste0("data_list_precios_env", Año)
-    
-    
-    if (!exists("data_list_precios_ev", envir = globalenv())) {
-      assign("data_list_precios_ev", new.env(parent = emptyenv()), envir = globalenv())
-    }
-    
-    if (Año>2022) {
-      
-      # Verificar si el archivo ya existe en el directorio temporal >2022
-      
-      if (!file.exists(archivo_excel_p)) {
-        url_excel_P <- sprintf("https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-%d.xlsx", Año)
-        download.file(url_excel_P, archivo_excel_p, mode = "wb",timeout = 444)
-        suppressMessages(assign(nombre_data, rio::import_list(archivo_excel_p, setclass = "tbl"), envir = data_list_precios_ev))
-        data_list_precios =get(nombre_data, envir = data_list_precios_ev)
-      } else {
-        data_list_precios =get(nombre_data, envir = data_list_precios_ev)
-      }
-      
-    }
-    
-    if (Año<2023 & Año>2017) {
-      # Verificar si el archivo ya existe en el directorio temporal < 2022
-      
-      if (!file.exists(archivo_excel_p)) {
-        
-        url_excel_P <- sprintf("https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-%d.xlsx", Año)
-        download.file(url_excel_P, archivo_excel_p, mode = "wb",timeout = 444)
-        suppressMessages(assign(nombre_data, rio::import_list(archivo_excel_p, setclass = "tbl"), envir = data_list_precios_ev))
-        data_list_precios =get(nombre_data, envir = data_list_precios_ev)
-      } else {
-        data_list_precios =get(nombre_data, envir = data_list_precios_ev)
-      }
-    } 
-    
-    
-    if (Año < 2018){
-      
-      if (!file.exists(archivo_excel_p)) {
-        
-        urchivo_excel_p <- file.path(temp_dir_P, paste0("archivo_P_",Año, ".xlsx"))
-        url_excel_P <- "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas.xlsx"
-        download.file(url_excel_P, archivo_excel_p, mode = "wb",timeout = 444)
-        suppressMessages(assign(nombre_data, rio::import_list(archivo_excel_p, setclass = "tbl"),envir = data_list_precios_ev))
-        data_list_precios =get(nombre_data, envir = data_list_precios_ev)
-        
-      } else {
-        data_list_precios =get(nombre_data, envir = data_list_precios_ev)
-      }
-      
-    }   
-  } 
-  
-  #------------------------------------------Abastecimiento-----------------------------
-  
-  
-  if (!is.null(Percentil_Abast)){ # Valida si  se indicó  Percentil_Abast para descargar datos de abastecimiento
-    
-    if (is.null(data_list_abas)){# Valida si no se indicó  data list abas y así saltarlo
-      
-      if (Año>2022) {
-        
-        
-        if (!exists("data_list_abast_ev", envir = globalenv())) {
-          assign("data_list_abast_ev", new.env(parent = emptyenv()), envir = globalenv())}
-        
-        temp_dir_A <- tempdir()
-        archivo_excel_A <- file.path(temp_dir_A, paste0("archivo_A_",Año, ".xlsx"))
-        nombre_data_abast <- paste0("data_list_abast_ev", Año)
-        
-        # Verificar si el archivo ya existe en el directorio temporal > 2022
-        
-        if (!file.exists(archivo_excel_A)) {
-          url_excel_A <- sprintf("https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSAbastecimiento-Microdatos-%d.xlsx", Año)
-          download.file(url_excel_A, archivo_excel_A, mode = "wb",timeout = 444)
-          suppressMessages(assign(nombre_data_abast, rio::import_list(archivo_excel_A, setclass = "tbl"), envir = data_list_abast_ev))
-          data_list_abas =get(nombre_data_abast, envir = data_list_abast_ev)
+
+
+options(rio.column_names = FALSE)  # No mostrar nombres de columnas al importar como lista
+options(timeout = 1000)  # Tiempo de espera alto
+
+
+# Función para descargar y cargar datos desde el DANE
+cargar_datos_dane <- function(tipo, año, mes, env) {
+  temp_dir <- tempdir()
+  archivo_excel <- file.path(temp_dir, paste0("archivo_", tipo, "_", año, "_", mes, ".xlsx"))
+  nombre_data <- paste0("data_list_", tipo, "_", año, "_", mes, "_ev")
+
+  if (!exists(nombre_data, envir = env)) {
+    url_excel <- switch(
+      tipo,
+      "precios" = {
+        if (año > 2022) {
+          sprintf("https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-%d.xlsx", año)
+        } else if (año > 2017) {
+          sprintf("https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-%d.xlsx", año)
         } else {
-          data_list_abas =get(nombre_data_abast, envir = data_list_abast_ev)
+          "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas.xlsx"
         }
-      }
-      
-      if (Año<2023) {
-        
-        
-        if (!exists("data_list_abast_ev", envir = globalenv())) {
-          assign("data_list_abast_ev", new.env(parent = emptyenv()), envir = globalenv())}
-        
-        temp_dir_A <- tempdir()
-        archivo_excel_A <- file.path(temp_dir_A, paste0("archivo_A_",Año, ".xlsx"))
-        nombre_data_abast <- paste0("data_list_abast_ev", Año)
-        
-        # Verificar si el archivo ya existe en el directorio temporal < 2023
-        
-        if (!file.exists(archivo_excel_A)) {
-          url_excel_A <- sprintf("https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/microdato-abastecimiento-%d.xlsx", Año)
-          download.file(url_excel_A, archivo_excel_A, mode = "wb",timeout = 444)
-          suppressMessages(assign(nombre_data_abast, rio::import_list(archivo_excel_A, setclass = "tbl"), envir = data_list_abast_ev))
-          data_list_abas =get(nombre_data_abast, envir = data_list_abast_ev)
+      },
+      "abastecimiento" = {
+        if (año > 2022) {
+          sprintf("https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSAbastecimiento-Microdatos-%d.xlsx", año)
         } else {
-          data_list_abas =get(nombre_data_abast, envir = data_list_abast_ev)
+          sprintf("https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/microdato-abastecimiento-%d.xlsx", año)
         }
-      }
+      },
+      stop("Tipo de datos no reconocido.")
+    )
+
+    if (!file.exists(archivo_excel)) {
+      download.file(url_excel, archivo_excel, mode = "wb", timeout = 444)
+      suppressMessages(assign(nombre_data, rio::import_list(archivo_excel, setclass = "tbl"), envir = env))
+    } else {
+      suppressMessages(assign(nombre_data, rio::import_list(archivo_excel, setclass = "tbl"), envir = env))
     }
-  } else{
-    data_list_abas=NULL
   }
-  
-  
-  
-  
+
+  return(get(nombre_data, envir = env))
+}
+
+
+# Función para crear o reutilizar un entorno
+crear_o_reusar_entorno <- function(nombre_entorno) {
+  if (!exists(nombre_entorno, envir = globalenv())) {
+    assign(nombre_entorno, new.env(parent = emptyenv()), envir = globalenv())
+  }
+  return(get(nombre_entorno, envir = globalenv()))
+}
+
+# Crear o reutilizar entornos para precios y abastecimiento
+data_list_precios_ev_nuevo <- crear_o_reusar_entorno("data_list_precios_ev")
+data_list_abast_ev_nuevo <- crear_o_reusar_entorno("data_list_abast_ev")
+
+
+
+# Carga de precios mayoristas
+if (is.null(data_list_precios)) {
+  data_list_precios = cargar_datos_dane("precios", Año,Mes, data_list_precios_ev_nuevo)
+}
+
+# Carga de datos de abastecimiento
+if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
+  data_list_abas = cargar_datos_dane("abastecimiento", Año,Mes, data_list_abast_ev_nuevo)
+} else {
+  data_list_abas = NULL
+}
+
+
   #------------------------------------------------------------------------------------------#
   #                       CUARTA ETAPA: DEPURACIÓN DE LOS DATOS                              #
   #-----------------------------------------------------------------------------------------#
@@ -925,6 +879,20 @@ for (paquete in paquetes_faltantes) {
   
   
 }
+
+
+devtools::install_github("Foodprice/Foodprice");library(Foodprice)
+
+library(Foodprice)
+
+x=DatosCol(Mes=1,Año=2013,Ciudad="Cali")
+
+remove.packages("stringr")
+
+
+x$Precio_100g_ajust
+
+
 
 
 

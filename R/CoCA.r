@@ -14,6 +14,17 @@ CoCA=function(Datos_Insumo,EER,Filtrar_Alimentos=NULL){
   if (!require("pacman")) install.packages("pacman") # Paquete que simplifica la carga de librerias
   pacman::p_load(char = Librerias_base);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
   
+
+# Instala paquetes individualmente si no se han cargado correctamente
+paquetes_faltantes <- Librerias_base[!(Librerias_base %in% pacman::p_loaded())]
+for (paquete in paquetes_faltantes) {
+  if (!require(paquete, character.only = TRUE)) {
+    install.packages(paquete)
+    library(paquete, character.only = TRUE)
+  }
+}
+
+
   #cat("\n")
   #cat("Se instalaron y cargaron todas la librerias corectamente")
   #cat("\n")
