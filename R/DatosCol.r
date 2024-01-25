@@ -101,10 +101,10 @@ options(timeout = 1000)  # Tiempo de espera alto
 
 
 # Función para descargar y cargar datos desde el DANE
-cargar_datos_dane <- function(tipo, año, mes, env) {
+cargar_datos_dane <- function(tipo, año, env) {
   temp_dir <- tempdir()
-  archivo_excel <- file.path(temp_dir, paste0("archivo_", tipo, "_", año, "_", mes, ".xlsx"))
-  nombre_data <- paste0("data_list_", tipo, "_", año, "_", mes, "_ev")
+  archivo_excel <- file.path(temp_dir, paste0("archivo_", tipo, "_", año, ".xlsx"))
+  nombre_data <- paste0("data_list_", tipo, "_", año, "_ev")
 
   if (!exists(nombre_data, envir = env)) {
     url_excel <- switch(
@@ -156,19 +156,19 @@ data_list_abast_ev_nuevo <- crear_o_reusar_entorno("data_list_abast_ev")
 
 # Carga de precios mayoristas
 if (is.null(data_list_precios)) {
-  data_list_precios = cargar_datos_dane("precios", Año,Mes, data_list_precios_ev_nuevo)
+  data_list_precios = cargar_datos_dane("precios", Año, data_list_precios_ev_nuevo)
 }
 
 # Carga de datos de abastecimiento
 if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
-  data_list_abas = cargar_datos_dane("abastecimiento", Año,Mes, data_list_abast_ev_nuevo)
+  data_list_abas = cargar_datos_dane("abastecimiento", Año, data_list_abast_ev_nuevo)
 } else {
   data_list_abas = NULL
 }
 
 
   #------------------------------------------------------------------------------------------#
-  #                       CUARTA ETAPA: DEPURACIÓN DE LOS DATOS                              #
+  #                       CUARTA ETAPA: DEPURACIÓN DE LOS DATOS                              #  ✔ SIMPLIFICADA Y ASEGURADA
   #-----------------------------------------------------------------------------------------#
   
   
@@ -206,7 +206,7 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
   
   
   
-  convertir_fechas_vector <- function(fechas) {
+  convertir_fechas_vector <- function(fechas) { #Función para validar el tipo de formato de entrada
     formato_fecha <- ifelse(grepl("/", fechas[1]), "%d/%m/%y", "%d") # Comprueba el formato
     
     if (formato_fecha == "%d/%m/%y") {
@@ -223,72 +223,40 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
   
   #------------------ IDENTIFICACIÓN DE MES EN PRECIOS SIPSA   ------------------------------
   
-  #{Selecionando el año según la estructura de datos
+  #S---elecionando el año según la estructura de datos
   
-  if( Año>=2019){   
-    
-    #--  asgina el més con base en la posición de la hoja y depura un poco las columnas combinadas y texto inecesario de excel
-    Meses=Nombres_Meses[1:length(data_list_precios)-1]
-    posicion_mes <- which(Meses %in% Mes)
-    if (length(posicion_mes) == 0) {
-      stop("El mes solicitado aún no está presente en los datos abiertos de precios SIPSA.")
-    }
-    Data_Sipsa_Precios=(data_list_precios[[which(Meses %in% Mes)+1]])
-    Data_Sipsa_Precios <- Data_Sipsa_Precios[rowSums(is.na(Data_Sipsa_Precios)) / ncol(Data_Sipsa_Precios) < 0.5, colSums(is.na(Data_Sipsa_Precios)) / nrow(Data_Sipsa_Precios) < 0.5 ]
-    Data_Sipsa_Precios=Data_Sipsa_Precios[-1,]
-    colnames(Data_Sipsa_Precios) = c("Fecha", "Grupo", "Alimento", "Mercado", "Precio_kg");Data_Sipsa_Precios$Precio_kg=as.numeric(Data_Sipsa_Precios$Precio_kg)
-    
-    # Se extraen los meses disponibles con base en la data dada
-    #Data_Sipsa_Precios=Data_Sipsa_Precios[-c(1:4,nrow(Data_Sipsa_Precios)),-c(6,7)];Data_Sipsa_Precios=na.omit(Data_Sipsa_Precios) # Un poco de depuración
-    Data_Sipsa_Precios$Fecha=convertir_fechas_vector(Data_Sipsa_Precios$Fecha)
-    
-    
-    
-    }
+# Función para depurar y filtrar datos
+depurar_y_filtrar <- function(data, mes_num) {
+  data <- data[rowSums(is.na(data)) / ncol(data) < 0.5, colSums(is.na(data)) / nrow(data) < 0.5 ]
+  data <- data[-1,]
+  colnames(data) <- c("Fecha", "Grupo", "Alimento", "Mercado", "Precio_kg")
+  data$Precio_kg <- as.numeric(data$Precio_kg)
+  data$Fecha <- convertir_fechas_vector(data$Fecha)
+  return(data[month(data$Fecha) >= mes_num,])
+}
+
+
+
+# Selección del año según la estructura de datos
+if (Año >= 2019) {
+  Meses <- Nombres_Meses[1:length(data_list_precios) - 1]
+  posicion_mes <- which(Meses %in% Mes)
   
-  if (Año==2018){ 
-    #Meses = c("Enero","Febrero","Marzo","Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre","Noviembre","Diciembre")
-    
-    Data_Sipsa_Precios=data_list_precios[[2]] 
-    Data_Sipsa_Precios <- Data_Sipsa_Precios[rowSums(is.na(Data_Sipsa_Precios)) / ncol(Data_Sipsa_Precios) < 0.5, colSums(is.na(Data_Sipsa_Precios)) / nrow(Data_Sipsa_Precios) < 0.5 ]
-    Data_Sipsa_Precios=Data_Sipsa_Precios[-1,]
-    colnames(Data_Sipsa_Precios) = c("Fecha", "Grupo", "Alimento", "Mercado", "Precio_kg");Data_Sipsa_Precios$Precio_kg=as.numeric(Data_Sipsa_Precios$Precio_kg)
-    
-    
-    Data_Sipsa_Precios$Fecha=convertir_fechas_vector(Data_Sipsa_Precios$Fecha)
-  
-    # filtrar mes
-    Data_Sipsa_Precios= Data_Sipsa_Precios[month(Data_Sipsa_Precios$Fecha)>=Mes_Num,]  
-    
-    
+  if (length(posicion_mes) == 0) {
+    stop("El mes solicitado aún no está presente en los datos abiertos de precios SIPSA.")
   }
   
-  if(Año < 2018) {
-    
-    #Meses = c("Enero","Febrero","Marzo","Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre","Noviembre","Diciembre")
-    Año_selec <- which(Año == 2013:2017)
-    Data_Sipsa_Precios <- data_list_precios[[Año_selec+1]]
-    
-    Data_Sipsa_Precios <- Data_Sipsa_Precios[rowSums(is.na(Data_Sipsa_Precios)) / ncol(Data_Sipsa_Precios) < 0.5, colSums(is.na(Data_Sipsa_Precios)) / nrow(Data_Sipsa_Precios) < 0.5 ]
-    Data_Sipsa_Precios=Data_Sipsa_Precios[-1,]
-    colnames(Data_Sipsa_Precios) = c("Fecha", "Grupo", "Alimento", "Mercado", "Precio_kg");Data_Sipsa_Precios$Precio_kg=as.numeric(Data_Sipsa_Precios$Precio_kg)
-    
-    Data_Sipsa_Precios$Fecha=convertir_fechas_vector(Data_Sipsa_Precios$Fecha)
-    
-    # filtrar mes
-    Data_Sipsa_Precios= Data_Sipsa_Precios[month(Data_Sipsa_Precios$Fecha)>=Mes_Num,]  
-    
-    
-  }
-  
+  Data_Sipsa_Precios <- depurar_y_filtrar(data_list_precios[[posicion_mes + 1]], Mes_Num)
+}
+
+if (Año == 2018 || Año < 2018) {
+  Año_selec <- ifelse(Año == 2018, 2, which(Año == 2013:2017) + 1)
+  Data_Sipsa_Precios <- depurar_y_filtrar(data_list_precios[[Año_selec]], Mes_Num)
+}
+
   
 
-  #Data_Sipsa_Precios$Fecha=as.Date(paste(Año,which(Meses %in% Mes),"1", sep = "-"),format = "%Y-%m-%d") # Cambia los nombres y asigna fechas
-  
-  #-- abajo borrar
- # assign(paste("PRECIOS_SIPSA", Mes, Año, sep = "_"),Data_Sipsa_Precios,envir = globalenv())
-  
-  
+# assign(paste("PRECIOS_SIPSA", Mes, Año, sep = "_"),Data_Sipsa_Precios,envir = globalenv())
   
   
   
@@ -452,12 +420,10 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
   
   
   #------------------------------------------------------#
-  #                       CARGA DE MAPEOS: Datos intra  #
+  #                       CARGA DE MAPEOS: Datos insumo  #  ✔ SIMPLIFICADA Y ASEGURADA
   #------------------------------------------------------#
   
   # LA CARGA DE DATOS NO SE MUESTRA EN EL AMBIENTE GLOBAL
-  
-  
   
   
   # Crear un nuevo ambiente local para sólo los datos
@@ -499,12 +465,8 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
   data(Mapeo_Sipsa_TCAC_Carga_2, package = "Foodprice",envir=datos_env)
   
   
-  
-  
-  
-  
-  #------------------------------------------------------#
-  #                       seleción de datos              #
+#------------------------------------------------------#
+  #                       seleción de datos              #  ✔ SIMPLIFICADA Y ASEGURADA
   #------------------------------------------------------#
   
   Micro_Macro_Nutrientes_Necesarios = c("codigo", "Nombre del Alimento", "% de parte comestible", "Factor de conversión", "Energia (Kcal)", "Proteina (g)", "Carbohidratos Totales (g)", "Lipidos (g)", "Calcio (mg)",
@@ -522,7 +484,7 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
     # Selección de las variables de interés
     Data_abs_precios_Sipsa = Data_abs_precios_Sipsa[c("Alimento", "Precio_kg", "Total")]
     Data_abs_precios_Sipsa = Data_abs_precios_Sipsa[order(Data_abs_precios_Sipsa$Alimento),]
-    colnames(Data_abs_precios_Sipsa) = c("Alimento",paste0("Precio_kg_", Mes), paste0("Total_Cali_", Mes))
+    colnames(Data_abs_precios_Sipsa) = c("Alimento",paste0("Precio_kg_", Mes), paste0("Total_", Mes))
   }
   else {
     # Selección de las variables de interés
@@ -533,12 +495,12 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
   
   
   #------------------------------------------------------#
-  #                       criterios de exclusión         #
+  #                       criterios de exclusión         #  ✔ SIMPLIFICADA Y ASEGURADA
   #------------------------------------------------------#
   
   if (!is.null(Percentil_Abast)){
     
-    Data_abs_precios_Sipsa_ABS=Data_abs_precios_Sipsa[,c("Alimento",paste0("Total_Cali_",Mes))]
+    Data_abs_precios_Sipsa_ABS=Data_abs_precios_Sipsa[,c("Alimento",paste0("Total_",Mes))]
     
     
     
@@ -549,7 +511,7 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
     criterio_2 = Data_abs_precios_Sipsa_ABS %>% filter(Alimento %in% Alimentos_Inclu)
     
     # Eliminar niveles NA de abastecimiento (Flujos de carga nulos)
-    criterio_2 = criterio_2 %>% drop_na(paste0("Total_Cali_",Mes))
+    criterio_2 = criterio_2 %>% drop_na(paste0("Total_",Mes))
     
     # Calcular cuantiles
     quant = quantile(criterio_2[,2],probs = Percentil_Abast, na.rm = TRUE)
@@ -568,7 +530,7 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
     
     
     # Abastecimiento nulo
-    Alimentos_NA = Data_abs_precios_Sipsa_ABS %>% filter(is.na(get(paste0("Total_Cali_", Mes))))
+    Alimentos_NA = Data_abs_precios_Sipsa_ABS %>% filter(is.na(get(paste0("Total_", Mes))))
     
     # Construir el vector con la totalidad de alimentos excluidos
     # (criterio 1, criterio 2, flujo de carga nulo y exclusiones ad hoc)
@@ -586,7 +548,7 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
     
     
     #--------                               -------#
-    #  Primer  criterio de exclusión: Nutrición    #
+    #  Primer  criterio de exclusión: Nutrición    # 
     #-----                                  -------#
     
     Alimentos_Exclu_Criterio_1 = Primer_Criterio_Lista_Alimentos[Primer_Criterio_Lista_Alimentos$`COD. TCAC` == "EX000","Alimento"]
@@ -594,8 +556,6 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
     #--------                               -------#
     # Lista depurada con base en los dos criterios #
     #-----                                  -------#
-    
-    
     
     # Construir el vector con la totalidad de alimentos excluidos
     # (criterio 1, criterio 2, flujo de carga nulo y exclusiones ad hoc)
@@ -609,9 +569,8 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
     
   }
   
-  
   # ---------------------------#
-  #   Marginalización          #  
+  #   Marginalización          #    ✔ SIMPLIFICADA Y ASEGURADA
   #---------------------------#
   
   
@@ -621,49 +580,40 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
   Precios_Grupos_SIPSA = merge(Data_Sipsa_Precios_Unicos, Grupos_Alimentos_Sipsa,by = "Alimento", all.x = TRUE, all.y = FALSE, no.dups = TRUE)
   
   
-  
-  
   #--------                    -------#
-  #  Margenes de comercialziación     #
+  #  Margenes de comercialziación     #  ✔ SIMPLIFICADA Y ASEGURADA
   #-----                       -------#
-  
-  grupos_margenes <- levels(as.factor(Precios_Grupos_SIPSA$Grupo));Margenes_Historicos <- data.frame(Grupo = grupos_margenes, margen_medio=NA)
-  # margen medio
-  
-  Mar=  c(4.925515,32.154734,21.770773,26.226295,17.150887,6.884347,76.380988,54.096494)
-  Margenes_Historicos$margen_medio <- Mar[1:length(grupos_margenes)]
-  
-  
+
+# Margenes de grupos en general para COL
+categorias <- c("CARNES", "FRUTAS", "GRANOS Y CEREALES", "LACTEOS Y HUEVOS", 
+                "PESCADOS", "PROCESADOS", "TUBERCULOS, RAICES Y PLATANOS", "VERDURAS Y HORTALIZAS")
+
+ if (!is.null(Margenes)) {valores=Margenes} else {valores <- c(4.925515, 32.154734, 21.770773, 26.226295, 17.150887, 6.884347, 76.380988, 54.096494)}
+Df_grupos_marg=data.frame(Grupos=categorias,Valor=valores);grupos_margenes <- levels(as.factor(Precios_Grupos_SIPSA$Grupo))
+
+# Encontrar índices de los grupos en el dataframe
+indices <- match(grupos_margenes, Df_grupos_marg$Grupos)
+# Asociar los valores correspondientes a los grupos
+valores_asociados <- Df_grupos_marg$Valor[indices]
+
+Margenes_Historicos <- data.frame(Grupo = grupos_margenes, margen_medio=valores_asociados);colnames(Margenes_Historicos)=c("Grupo", "margen_medio")
+
   
   # -----------------------------------------------------------------#
   #                 Estimación precios minoristas                    #
   #------------------------------------------------------------------#
   
+
   
-  if (!is.null(Margenes)) {
+  Precios_Grupos_SIPSA$Grupo <- toupper(Precios_Grupos_SIPSA$Grupo)
     
-    Margenes_Historicos$margen_medio=Margenes
-    Precios_Grupos_SIPSA$Grupo <- toupper(Precios_Grupos_SIPSA$Grupo)
-    
-    precios_mayoristas_grupos_margenes <- merge(Precios_Grupos_SIPSA,
+  precios_mayoristas_grupos_margenes <- merge(Precios_Grupos_SIPSA,
                                                 Margenes_Historicos[c("Grupo", "margen_medio")],
                                                 by = "Grupo", all.x = TRUE)
-    precios_mayoristas_grupos_margenes$Precio_minorista_kg <- precios_mayoristas_grupos_margenes$Precio_kg * (1 + precios_mayoristas_grupos_margenes$margen_medio/100)
+  precios_mayoristas_grupos_margenes$Precio_minorista_kg <- precios_mayoristas_grupos_margenes$Precio_kg * (1 + precios_mayoristas_grupos_margenes$margen_medio/100)
     
     
-  } else {
-    Precios_Grupos_SIPSA$Grupo <- toupper(Precios_Grupos_SIPSA$Grupo)
-    Margenes_Historicos$Grupo=toupper(Margenes_Historicos$Grupo)
-    
-    precios_mayoristas_grupos_margenes <- merge(Precios_Grupos_SIPSA,
-                                                Margenes_Historicos[c("Grupo", "margen_medio")],
-                                                by = "Grupo", all.x = TRUE)
-    
-    precios_mayoristas_grupos_margenes$Precio_minorista_kg <- precios_mayoristas_grupos_margenes$Precio_kg * (1 + precios_mayoristas_grupos_margenes$margen_medio/100)
-    
-  }
-  
-  
+
   
   
   Estimación_Precios_Minoristas <- precios_mayoristas_grupos_margenes %>%
@@ -673,8 +623,8 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
   #--------                    -------  #
   # Mapeo: Precios con contenidos nutri #
   #-----                       -------  #
-  
-  precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg")]
+
+precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg")]
   colnames(Mapeo_Sipsa_TCAC) <- c("Alimento", "Cod_TCAC")
   
   dataset_sim <- merge(precios_kg, Mapeo_Sipsa_TCAC, by = "Alimento", all.x = TRUE)
@@ -760,7 +710,7 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
   
   colnames(Datos_Insumo_Modelos)=c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust",  "Energia","Proteina","Carbohidratos","Lipidos",  "Calcio",  "Zinc", "Hierro", "Magnesio","Fosforo","VitaminaC", "Tiamina", "Riboflavina","Niacina", "Folatos", "VitaminaB12", "VitaminaA","Sodio")
   #--------------------------------------------------- Salida principal 2 ----------------------------- Datos_Insumo_Modelos ----------------------------------------#
-  
+ 
   
   # -----------------------------------------------------------------#
   #                         Alimentos faltantes                      #
@@ -879,6 +829,5 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
   
   
 }
-
 
 
