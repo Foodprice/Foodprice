@@ -881,18 +881,4 @@ if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
 }
 
 
-devtools::install_github("Foodprice/Foodprice");library(Foodprice)
-
-library(Foodprice)
-
-x=DatosCol(Mes=1,Año=2013,Ciudad="Cali")
-
-remove.packages("stringr")
-
-
-x$Precio_100g_ajust
-
-
-
-
 
