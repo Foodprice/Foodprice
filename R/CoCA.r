@@ -184,7 +184,7 @@ for (paquete in paquetes_faltantes) {
     
   }
   # Unir ambos df para cada sexo (si existe)
-  if ("Sexo" %in% colnames(EER)) {Costo_CoCA=rbind(CoCA_0,CoCA_1)} else {
+  if ("Sexo" %in% colnames(EER)) {Costo_CoCA=rbind(CoCA_1,CoCA_0)} else {
     Costo_CoCA <- CoCA_0 %>%
       select(-Sexo)
   }

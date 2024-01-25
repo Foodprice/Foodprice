@@ -342,7 +342,7 @@ assign(paste("Intercambios_CoRD_", sexo_nombre, sep = ""), CoRD_INT)
 # Unir ambos df para cada sexo (si existe)
 if ("Sexo" %in% colnames(Req_Int)) {
 
-Costo_CORD=rbind(CoRD_0,CoRD_1)
+Costo_CORD=rbind(CoRD_1,CoRD_0)
 Intercambios_CoRD=rbind(Intercambios_CoRD_0,Intercambios_CoRD_1)
   
   } else {

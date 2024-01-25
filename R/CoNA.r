@@ -328,7 +328,7 @@ nombres_comunes_sin_energia <- setdiff(nombres_comunes, "Energia")
 # Unir ambos df para cada sexo (si existe)
 if ("Sexo" %in% colnames(DRI_min)) {
 
-Costo_CoNA=rbind(CoNA_0,CoNA_1)
+Costo_CoNA=rbind(CoNA_1,CoNA_0)
 Alimentos_CoNA=rbind(Intercambios_CoNA_0,Intercambios_CoNA_1)
 CoNA_N_Limit=rbind(N_limit_0,N_limit_1) 
 CoNA_SP=rbind(S_shadow_0,S_shadow_1);CoNA_SP = CoNA_SP %>% filter(constraint == ">=")
