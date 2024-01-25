@@ -11,72 +11,52 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
   #-----------------------------------------------------------------------------------------#
   
   
-  # Verificación de los parámetros obligatorios
-  if (missing(Mes) || missing(Año) || missing(Ciudad)) {
-    mensaje_faltante <- c()
-    if (missing(Mes)) mensaje_faltante <- c(mensaje_faltante, "Mes")
-    if (missing(Año)) mensaje_faltante <- c(mensaje_faltante, "Año")
-    if (missing(Ciudad)) mensaje_faltante <- c(mensaje_faltante, "Ciudad")
-    
-    stop(paste("Falta el/los siguiente(s) parámetro(s):", paste(mensaje_faltante, collapse = ", ")), " revise la documentación de la función para más información")
+  validar_parametros <- function(parametro, tipo, rango = NULL) {
+  if (missing(parametro)) {
+    stop(paste("Falta el parámetro", deparse(substitute(parametro))))
   }
   
-  # Verificación de Mes
-  meses_validos <- c(1:12)
-  
-  
-  if (!is.numeric(Mes)) {
-    stop("El Mes debe ser un número que represente un mes del año.")
+  if (!is.null(tipo) && !is.type(parametro, tipo)) {
+    stop(paste(deparse(substitute(parametro)), "debe ser de tipo", tipo))
   }
   
-  if (!(Mes %in% meses_validos)) {
-    stop("Mes inválido. Debe ser un mes del año.")
+  if (!is.null(rango) && !is.in_range(parametro, rango)) {
+    stop(paste(deparse(substitute(parametro)), "debe estar en el rango", rango))
   }
+}
+
+# Verificación de Mes
+validar_parametros(Mes, "numeric", 1:12)
+
+# Verificación de Año
+validar_parametros(Año, "numeric", c(2013, 2023))
+
+# Verificación de Ciudad
+validar_parametros(Ciudad, "character")
+
+# Verificación de Percentil_Abast si es proporcionado
+if (!is.null(Percentil_Abast)) {
+  validar_parametros(Percentil_Abast, "numeric", c(0, 1))
   
-  
-  # Verificación de Año
-  if (!is.numeric(Año) || Año < 2013 || Año > 2023) {
-    stop("El Año debe ser un valor numérico entre 2014 y 2023. Revise la documentación de la función para más información")
-  }
-  
-  # Verificación de Ciudad
-  if (!is.character(Ciudad)) {
-    stop("La Ciudad debe ser un texto.")
-  }
-  
-  # Verificación de Percentil_Abast si es proporcionado
-  if(!is.null(Percentil_Abast)){
-    if (!is.numeric(Percentil_Abast) || Percentil_Abast < 0 || Percentil_Abast > 1) {
-      stop("El Percentil_Abast debe ser un valor numérico entre 0 y 1. Revise la documentación de la función para más información")
-    }
-    
-  }
   if (!is.null(data_list_abas)) {
-    if (!is.list(data_list_abas)){
-      stop("data_list_abas debe ser una lista. Revise la documentación de la función para más información")
-    }
-    if (is.null(Percentil_Abast)) {
-      stop("Si se proporciona data_list_abas, Percentil_Abast debe estar presente. Revise la documentación de la función para más información")
-    } 
+    validar_parametros(data_list_abas, "list")
   }
-  
-  # Verificación de Ingreso_Alimentos si es proporcionado
-  if (!is.null(Ingreso_Alimentos)) {
-    if (!(is.vector(Ingreso_Alimentos) || is.data.frame(Ingreso_Alimentos)) || length(Ingreso_Alimentos) != 21) {
-      stop("El Ingreso_Alimentos debe ser un vector o data frame con 21 columnas o tamaño 21. Revise la documentación de la función para más información")
-    }
+} else {
+  if (!is.null(data_list_abas)) {
+    stop("Si se proporciona data_list_abas, Percentil_Abast debe estar presente.")
   }
-  
-  # Verificación de data_list_precios 
-  if (!is.null(data_list_precios) && !is.list(data_list_precios)) {
-    stop("data_list_precios debe ser una lista. Revise la documentación de la función para más información")
-  }
-  
-  # Verificación de margenes 
-  if (!(is.vector(Margenes) ||length(Margenes) != 8)) {
-    stop("Margenes debe ser un vector tamaño 8. Revise la documentación de la función para más información")
-  }
-  
+}
+
+# Verificación de Ingreso_Alimentos si es proporcionado
+if (!is.null(Ingreso_Alimentos)) {
+  validar_parametros(Ingreso_Alimentos, c("vector", "data.frame"), 21)
+}
+
+# Verificación de data_list_precios
+validar_parametros(data_list_precios, "list")
+
+# Verificación de margenes
+validar_parametros(Margenes, "vector", 8)
   
   
   #------------------------------------------------------------------------------------------#
@@ -87,14 +67,24 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
                      "lpSolve","Rglpk","scatterplot3d","reshape","R6","rio","janitor","lubridate") # Nombra las librerias necesarias
   
   if (!require("pacman")) install.packages("pacman") # Paquete que simplifica la carga de librerias
-  pacman::p_load(char = Librerias_base);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
-  
+  pacman::p_load(char = Librerias_base,character.only = TRUE);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
+
+
+# Instala paquetes individualmente si no se han cargado correctamente
+paquetes_faltantes <- Librerias_base[!(Librerias_base %in% pacman::p_loaded())]
+for (paquete in paquetes_faltantes) {
+  if (!require(paquete, character.only = TRUE)) {
+    install.packages(paquete)
+    library(paquete, character.only = TRUE)
+  }
+}
+
+
   #cat("\n")
   #print("Se instalaron y cargaron todas la librerias corectamente")
   #cat("\n")
-  
-  
-  
+   
+
   #------------------------------------------------------------------------------------------#
   #                   TERCERA ETAPA: CARGA DE DATOS DESDE EL DANE (COL)                      #
   #-----------------------------------------------------------------------------------------#
