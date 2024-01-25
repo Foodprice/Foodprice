@@ -111,12 +111,12 @@ DRI_max_i <- Sexos_max[[sexo_nombre]];DRI_max_i[is.na(DRI_max_i)] = 999999
 }
 
 # Organizar ambos df iguales
-
+Edad=DRI_min_i$Edad
 DRI_min_i <- arrange(DRI_min_i, Edad)
 DRI_max_i <- arrange(DRI_max_i, Edad)
 
 # Asignación de vectores
-Precio = Datos_Insumo$Precio_100g_ajust;Alimento=Datos_Insumo$Alimento;Edad=DRI_min_i$Edad
+Precio = Datos_Insumo$Precio_100g_ajust;Alimento=Datos_Insumo$Alimento
 
 # DF de limitaciones en nutrientes y validación de nombres
 DRI_min_li= DRI_min_i %>% select(-any_of(c("Edad","Energia","Sexo")))
