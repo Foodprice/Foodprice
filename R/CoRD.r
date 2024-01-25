@@ -139,6 +139,7 @@ if ("Sexo" %in% colnames(Req_Int)) {Sexos <- split(Req_Int, Req_Int$Sexo);sexo_n
 
 }
 
+Alimento=Datos_Insumo$ALimento
 #--------------------------------------------------------#
 #               CLICLO PARA CADA SEXO                   #
 #-------------------------------------------------------#
