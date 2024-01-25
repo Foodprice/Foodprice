@@ -177,6 +177,7 @@ S_shadow = na.omit(data.frame(Edad = NA,Sexo = NA,Nutrientes = NA,constraint = N
 for (i in seq_along(Edad)) { #ciclo para cada edad
 
 
+
 CoNA = lp(direction = "min",
                objective.in = Precio,
                const.mat = Coef.Restriq,
@@ -184,9 +185,11 @@ CoNA = lp(direction = "min",
                const.rhs =as.vector(unlist(Limitaciones[i, , drop = FALSE])),
                compute.sens = TRUE)
 
+
 #--------------------------------------------------------#
 #               ETAPA DE ESTRUCTURA PLAZA                #
 #-------------------------------------------------------#
+if (CoNA$status == 0) {
 
 # Guardar estructura de intercambios
 costo <- sum(CoNA$solution * Precio)
@@ -248,9 +251,55 @@ Costo_T=rbind(Costo_T, temp_df)
   ) %>%
     mutate(SP = CoNA$duals[1:length(constr_signs)],
            SPE = ((SP/1) * (unlist(Limitaciones[i, , drop = FALSE])/CoNA$objval)) * 100)
-  # Añadir a output4
-  S_shadow <- rbind(S_shadow, Spe)
   
+  S_shadow <- rbind(S_shadow, Spe)
+
+
+}else { # CUANDO EL MODELO NO ENCUENTRE SOLUCIÓN EN ESA EDAD LLENAR CON PRINT
+
+
+    temp_df <- data.frame(Alimento = "No encontró solución",
+                          Cantidad_GR = "No encontró solución",
+                          Grupo_demo = Edad[i],
+                          Sexo = as.numeric(sexo_nombre))
+    Intercambios_CoNA <- merge(Intercambios_CoNA, temp_df, all = TRUE)
+
+
+
+    # Agregar los resultados al dataframe Costo_CoNA
+    temp_df <- data.frame(Grupo_demo = Edad[i],
+                          Sexo = as.numeric(sexo_nombre),
+                          Costo_dia = "No encontró solución",
+                          Costo_1000kcal = "No encontró solución")
+    Costo_T <- rbind(Costo_T, temp_df)
+
+
+
+    # Nutrientes Limitantes
+    Nutrie_limit <- data.frame(
+      Nutrientes = "No encontró solución",
+      Opt = "No encontró solución",
+      Rest = "No encontró solución",
+      Diff = "No encontró solución",
+      Limiting = "No encontró solución",
+      Edad = Edad[i],
+      Sexo = as.numeric(sexo_nombre))
+    N_limit = rbind(N_limit, Nutrie_limit)
+
+    # Precios Sombra y Elasticidades
+    Spe <- data.frame(
+      Edad = Edad[i],
+      Sexo = as.numeric(sexo_nombre),
+      Nutrientes = "No encontró solución",
+      constraint = "No encontró solución",
+      value_constraint = "No encontró solución",
+      SP = "No encontró solución",
+      SPE = "No encontró solución")
+    S_shadow <- rbind(S_shadow, Spe)
+  
+}
+
+
 
 } #FIN DEL CICLO EN EDAD
 
@@ -284,6 +333,10 @@ Alimentos_CoNA=rbind(Intercambios_CoNA_0,Intercambios_CoNA_1)
 CoNA_N_Limit=rbind(N_limit_0,N_limit_1) 
 CoNA_SP=rbind(S_shadow_0,S_shadow_1);CoNA_SP = CoNA_SP %>% filter(constraint == ">=")
 CoNA_SP = CoNA_SP[c("Edad", "Sexo", "Nutrientes", "SP", "SPE")]
+
+#Nutrientes limtantes y precios sombre
+CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Sexo", "Nutrientes"),
+        by.y= c("Edad", "Sexo", "Nutrientes"))
   } else {
 
    Costo_CoNA <- CoNA_0 %>%
@@ -297,11 +350,13 @@ CoNA_SP = CoNA_SP[c("Edad", "Sexo", "Nutrientes", "SP", "SPE")]
 
   CoNA_SP = CoNA_SP %>% filter(constraint == ">=")
 CoNA_SP = CoNA_SP[c("Edad", "Nutrientes", "SP", "SPE")]
-}
 
 #Nutrientes limtantes y precios sombre
-CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Sexo", "Nutrientes"),
-        by.y= c("Edad", "Sexo", "Nutrientes"))
+CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Nutrientes"),
+        by.y= c("Edad", "Nutrientes"))
+}
+
+
 
 # Asignación en el ambiente global
 #assign("Costo_CoNA",Costo_CoNA,envir = globalenv()) 
@@ -315,7 +370,7 @@ CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Sexo", "Nutrientes"),
   #     ASGINACIONES DE LISTA  #
   #----------------------------#
   
-  List_CoNA=list(Costo_CoNA,Alimentos_CoNA,CoNA_SP_LM);names(List_CoNA)=c("Costo_CoNA","Alimentos_CoNA","CoNA_SP_LM")
+  List_CoNA=list(Costo_CoNA,Alimentos_CoNA,CoNA_SP_LM,Precio,Alimento);names(List_CoNA)=c("Costo_CoNA","Alimentos_CoNA","CoNA_SP_LM","Precio","Alimento")
   
   # retorno
   

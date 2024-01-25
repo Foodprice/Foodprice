@@ -830,4 +830,3 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   
 }
 
-
