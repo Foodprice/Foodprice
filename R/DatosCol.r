@@ -418,7 +418,6 @@ if (Año == 2018 || Año < 2018) {
     
   } else {Data_Sipsa_Abas_Unicos=NULL}
   
-  
   #------------------------------------------------------#
   #                       CARGA DE MAPEOS: Datos insumo  #  ✔ SIMPLIFICADA Y ASEGURADA
   #------------------------------------------------------#
@@ -578,7 +577,8 @@ if (Año == 2018 || Año < 2018) {
   
   Grupos_Alimentos_Sipsa = Data_Sipsa_Precios[c("Alimento", "Grupo")];Grupos_Alimentos_Sipsa = Grupos_Alimentos_Sipsa[!duplicated(Grupos_Alimentos_Sipsa), ]
   Precios_Grupos_SIPSA = merge(Data_Sipsa_Precios_Unicos, Grupos_Alimentos_Sipsa,by = "Alimento", all.x = TRUE, all.y = FALSE, no.dups = TRUE)
-  
+  Precios_Grupos_SIPSA$Grupo <- toupper(Precios_Grupos_SIPSA$Grupo)
+
   
   #--------                    -------#
   #  Margenes de comercialziación     #  ✔ SIMPLIFICADA Y ASEGURADA
@@ -603,9 +603,6 @@ Margenes_Historicos <- data.frame(Grupo = grupos_margenes, margen_medio=valores_
   #                 Estimación precios minoristas                    #
   #------------------------------------------------------------------#
   
-
-  
-  Precios_Grupos_SIPSA$Grupo <- toupper(Precios_Grupos_SIPSA$Grupo)
     
   precios_mayoristas_grupos_margenes <- merge(Precios_Grupos_SIPSA,
                                                 Margenes_Historicos[c("Grupo", "margen_medio")],
