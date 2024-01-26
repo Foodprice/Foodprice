@@ -85,6 +85,7 @@ if ("Sexo" %in% colnames(DRI_min)) {
     stop("Error: Los sexos en ambos requerimientos no son iguales")
   }
 
+
   # Seleccionar el primer nombre de sexo como referencia
   sexo_nombre <- names(Sexos_min)
 
@@ -114,6 +115,12 @@ DRI_max_i <- Sexos_max[[sexo_nombre]];DRI_max_i[is.na(DRI_max_i)] = 999999
 
 DRI_min_i <- arrange(DRI_min_i, Edad)
 DRI_max_i <- arrange(DRI_max_i, Edad)
+
+  # Verificar si los vectores de edad son iguales
+  if (!identical(levels(as.factor((DRI_min_i$Edad))), levels(as.factor((DRI_max_i$Edad))))) {
+    stop("Error: Los grupos de edades en ambos requerimientos no son iguales")
+  }
+
 
 # Asignación de vectores
 Precio = Datos_Insumo$Precio_100g_ajust;Alimento=Datos_Insumo$Alimento;Edad=DRI_min_i$Edad
@@ -383,4 +390,3 @@ CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Nutrientes"),
 #cat("\n")
 
 }
-
