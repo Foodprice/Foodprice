@@ -73,6 +73,13 @@ if (!is.null(Filtrar_Alimentos)) {
 #                       TERCERA ETAPA: MODELO 2                                        #
 #------------------------------------------------------------------------------------#
 
+req_min_ent= DRI_min %>% select(-any_of(c("Edad")))
+req_max_ent= DRI_max %>% select(-any_of(c("Edad","Energia")))
+
+
+Req_entrantes=cbind(req_min_ent,req_max_ent)
+
+
 # Verificar si existe la columna "Sexo"
 if ("Sexo" %in% colnames(DRI_min)) {
 
@@ -169,7 +176,7 @@ Limitaciones=cbind(DRI_min_li,DRI_max_li)
 
 #------------------------------ Preparación de datos de resultados:
 #DF de la solución de intercambios
-Intercambios_CoNA <- data.frame(Alimento = character(), Cantidad_GR = numeric(), Grupo_demo = integer(), Sexo = integer())
+Intercambios_CoNA <- data.frame(Alimento = character(), Cantidad_GR = numeric(), Grupo_demo = integer(), Sexo = integer(), Grupo= character())
 
 #DF de la solución de csotos
 Costo_T <- data.frame(Grupo_demo = integer(), Sexo = integer(), Costo_dia = numeric())
@@ -202,13 +209,27 @@ if (CoNA$status == 0) {
 costo <- sum(CoNA$solution * Precio)
 Alimentos_sol <- which(CoNA$solution != 0) # ALimento selexionados
 cantidades_intercambio <- CoNA$solution[Alimentos_sol] # intercambios
- 
+ if ("Grupo" %in% colnames(Datos_Insumo)) {
+
+  indices_coincidencia <- match(Alimento[Alimentos_sol], Datos_Prueba$Alimento)
+
+  Grupo_sex=Datos_Prueba$Grupo[indices_coincidencia]
+  
+  
+  } 
+
+#print(Alimento[Alimentos_sol])
  
 # Crear un dataframe temporal de la estructura CIAT
 temp_df <- data.frame(Alimento = Alimento[Alimentos_sol],
 Cantidad_GR = (cantidades_intercambio*100),
 Grupo_demo = Edad[i],
-Sexo = as.numeric(sexo_nombre))
+Sexo = as.numeric(sexo_nombre),
+Grupo = if ("Grupo" %in% colnames(Datos_Insumo)) Grupo_sex else NA)
+
+
+
+
 
 # Agregar los resultados al dataframe general
 Intercambios_CoNA <- merge(Intercambios_CoNA, temp_df, all = TRUE)
@@ -265,10 +286,12 @@ Costo_T=rbind(Costo_T, temp_df)
 }else { # CUANDO EL MODELO NO ENCUENTRE SOLUCIÓN EN ESA EDAD LLENAR CON PRINT
 
 
+
     temp_df <- data.frame(Alimento = NA,
                           Cantidad_GR = NA,
                           Grupo_demo = Edad[i],
-                          Sexo = as.numeric(sexo_nombre))
+                          Sexo = as.numeric(sexo_nombre),
+                          Grupo=NA)
     Intercambios_CoNA <- merge(Intercambios_CoNA, temp_df, all = TRUE)
 
 
@@ -309,6 +332,10 @@ Costo_T=rbind(Costo_T, temp_df)
 
 
 } #FIN DEL CICLO EN EDAD
+
+# Eliminar grupo si no se encuentra
+  Intercambios_CoNA <- Intercambios_CoNA %>%
+  select(-where(~all(is.na(.))))
 
 
 # Asignaciones por sexo
@@ -374,7 +401,7 @@ CoNA_SP = CoNA_SP[c("Edad", "Nutrientes", "SP", "SPE")]
   #     ASGINACIONES DE LISTA  #
   #----------------------------#
   
-  List_CoNA=list(Costo_CoNA,Alimentos_CoNA,CoNA_N_Limit,CoNA_SP,Precio,Alimento);names(List_CoNA)=c("Costo_CoNA","Alimentos_CoNA","CoNA_N_Limit","CoNA_SP","Precio","Alimento")
+  List_CoNA=list(Costo_CoNA,Alimentos_CoNA,CoNA_N_Limit,CoNA_SP,Precio,Alimento,Req_entrantes);names(List_CoNA)=c("Costo_CoNA","Alimentos_CoNA","CoNA_N_Limit","CoNA_SP","Precio","Alimento","Req")
   
   # retorno
   
@@ -383,9 +410,4 @@ cat("(✓) CoNA: Costo diario promedio por cada 1000 kilocalorías es", mean(Cos
   return(invisible(List_CoNA))
 
 
-#cat("\n")
-#cat("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA ADECUADA EN NUTRIENTES (CoNA)' correcta") 
-#cat("\n")
-
 }
-
