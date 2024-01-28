@@ -828,5 +828,3 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   
 }
 
-x=DatosCol(Mes=11,Año=2021,Ciudad="Cali")
-View(x)

@@ -224,6 +224,3 @@ cat("(✓) CoCA: Costo promedio diario por cada 1000 kilocalorías es", mean(Cos
   #cat("\n") 
 }
 
-CoCA(Datos_Insumo = Datos_Prueba,EER=EER)
-
-names(Datos_Prueba)
