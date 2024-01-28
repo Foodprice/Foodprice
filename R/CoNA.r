@@ -265,8 +265,8 @@ Costo_T=rbind(Costo_T, temp_df)
 }else { # CUANDO EL MODELO NO ENCUENTRE SOLUCIÓN EN ESA EDAD LLENAR CON PRINT
 
 
-    temp_df <- data.frame(Alimento = "No encontró solución",
-                          Cantidad_GR = "No encontró solución",
+    temp_df <- data.frame(Alimento = NA,
+                          Cantidad_GR = NA,
                           Grupo_demo = Edad[i],
                           Sexo = as.numeric(sexo_nombre))
     Intercambios_CoNA <- merge(Intercambios_CoNA, temp_df, all = TRUE)
@@ -276,19 +276,19 @@ Costo_T=rbind(Costo_T, temp_df)
     # Agregar los resultados al dataframe Costo_CoNA
     temp_df <- data.frame(Grupo_demo = Edad[i],
                           Sexo = as.numeric(sexo_nombre),
-                          Costo_dia = "No encontró solución",
-                          Costo_1000kcal = "No encontró solución")
+                          Costo_dia = NA,
+                          Costo_1000kcal = NA)
     Costo_T <- rbind(Costo_T, temp_df)
 
 
 
     # Nutrientes Limitantes
     Nutrie_limit <- data.frame(
-      Nutrientes = "No encontró solución",
-      Opt = "No encontró solución",
-      Rest = "No encontró solución",
-      Diff = "No encontró solución",
-      Limiting = "No encontró solución",
+      Nutrientes = NA,
+      Opt = NA,
+      Rest = NA,
+      Diff = NA,
+      Limiting = NA,
       Edad = Edad[i],
       Sexo = as.numeric(sexo_nombre))
     N_limit = rbind(N_limit, Nutrie_limit)
@@ -297,11 +297,11 @@ Costo_T=rbind(Costo_T, temp_df)
     Spe <- data.frame(
       Edad = Edad[i],
       Sexo = as.numeric(sexo_nombre),
-      Nutrientes = "No encontró solución",
-      constraint = "No encontró solución",
-      value_constraint = "No encontró solución",
-      SP = "No encontró solución",
-      SPE = "No encontró solución")
+      Nutrientes = NA,
+      constraint = NA,
+      value_constraint = NA,
+      SP = NA,
+      SPE = NA)
     S_shadow <- rbind(S_shadow, Spe)
   
 }

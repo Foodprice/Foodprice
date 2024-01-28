@@ -784,7 +784,7 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   
   # Extraer subgrupos y pasarlos a grupos
   Datos_MOD3 <- Datos_MOD3 %>%
-    mutate(Grupo_GABAS = case_when(
+    mutate(Subgrupo_GABAS = case_when(
       Subgrupo_GABAS == "FRUTAS" ~ "Frutas",
       Subgrupo_GABAS == "VERDURAS" ~ "Verduras",
       Subgrupo_GABAS == "CARNES MAGRAS CRUDAS" ~ "Carnes",
@@ -793,14 +793,15 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
       Subgrupo_GABAS == "RAÍCES" ~ "Raices",
       Subgrupo_GABAS == "CEREALES" ~ "Cereales",
       TRUE ~ Grupo_GABAS
-    ));Datos_MOD3 <- Datos_MOD3[, -which(names(Datos_MOD3) == "Subgrupo_GABAS")]
+    ));
+   # Datos_MOD3 <- Datos_MOD3[, -which(names(Datos_MOD3) == "Subgrupo_GABAS")]
   
-  colnames(Datos_MOD3)=c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust",  "Energia","Proteina","Carbohidratos","Lipidos",  "Calcio",  "Zinc", "Hierro", "Magnesio","Fosforo","VitaminaC", "Tiamina", "Riboflavina","Niacina", "Folatos", "VitaminaB12", "VitaminaA","Sodio","Intercambio_EER_gr","Precio_INT","Grupo")
+  colnames(Datos_MOD3)=c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust",  "Energia","Proteina","Carbohidratos","Lipidos",  "Calcio",  "Zinc", "Hierro", "Magnesio","Fosforo","VitaminaC", "Tiamina", "Riboflavina","Niacina", "Folatos", "VitaminaB12", "VitaminaA","Sodio","Intercambio_EER_gr","Precio_INT","Grupo","Subgrupo")
   
   # Orden de salida
   
   Datos_MOD3 <- Datos_MOD3 %>%
-    select(Cod_TCAC, Alimento, Serving, Precio_100g_ajust,Intercambio_EER_gr, Precio_INT, Grupo, Energia:VitaminaB12,
+    select(Cod_TCAC, Alimento, Serving, Precio_100g_ajust,Intercambio_EER_gr, Precio_INT, Grupo,Subgrupo, Energia:VitaminaB12,
            VitaminaA, Sodio)
   
   
@@ -810,7 +811,7 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   
   #assign(paste0("Datos_",Año,"_",Mes_Num,"_",Ciudad),Datos_MOD3,envir = globalenv())
   
-  print(paste("✔",Ciudad,"_" , Año,"_" ,Mes,""))
+  print(paste("✔",Ciudad,"_" ,Año,"_" ,Mes))
   
   #cat("\n")
   # if(length(warnings())<100) {cat("Depuración de datos exitosa", "\n")} else {cat("Cantidad de errores encontrados:",length(warnings()), "\n")}
@@ -827,3 +828,5 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   
 }
 
+x=DatosCol(Mes=11,Año=2021,Ciudad="Cali")
+View(x)

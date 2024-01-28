@@ -106,10 +106,11 @@ for (paquete in paquetes_faltantes) {
   for (sexo_nombre in sexo_nombre) { 
     
     
+    
     Salida_CoCA <- data.frame(Alimentos = Datos_Insumo$Alimento);Salida_CoCA <- Salida_CoCA %>% add_row(Alimentos = "Costo") # Define el df de salida
     
     # REquerimientos por sexo
-    if ("Sexo" %in% colnames(EER)) {EER <- Sexos[[sexo_nombre]]}
+    if ("Sexo" %in% colnames(EER)) {EER_S <- Sexos[[sexo_nombre]]}
     
     
     # ---Asignación de vectores al modelo
@@ -119,7 +120,8 @@ for (paquete in paquetes_faltantes) {
     Coef.Restriq = matrix(as.vector(Datos_Insumo$Energia), ncol = length(Alimento))
     
     # Vector de limitaciones del modelo
-    Limitaciones=EER$Energia
+    Limitaciones=EER_S$Energia
+
     
     #------------------------------Solución del modelo:
     
@@ -145,9 +147,10 @@ for (paquete in paquetes_faltantes) {
       
       # Agregar la información al dataframe modelo_1
       Salida_CoCA <- merge(Salida_CoCA, df_combinado, by = "Alimentos")
-      
+
+
+
     }  #Fin del ciclio del modelo por edad
-    
     
     
     #--------------------------------------------------------#
@@ -155,10 +158,17 @@ for (paquete in paquetes_faltantes) {
     #-------------------------------------------------------#
     
     #DF sin ceros
-    DF_o <- Salida_CoCA[rowSums(Salida_CoCA[, -1]) != 0, ]
+    DF_o <- Salida_CoCA[rowSums(Salida_CoCA[, -which(names(Salida_CoCA) %in% c("Alimentos"))]) != 0, ]
+
+
     Costo=DF_o[DF_o=="Costo",];Costo=as.vector(t(Costo[Costo$Alimentos == "Costo", -1]))
-    
-    
+    Costo_1000kcal=(Costo/Limitaciones)*1000
+    # Identificar grupo si existe la columna en insumos
+
+    if ("Grupo" %in% colnames(Datos_Insumo)) {Grupo_sex=na.omit(as.vector(Datos_Insumo$Grupo[match(Alimento, DF_o$Alimentos)]))[1]}
+
+
+
     # Indetificando el alimento
     df_alimentos <- DF_o[DF_o$Alimentos != "Costo", ]
     
@@ -166,15 +176,20 @@ for (paquete in paquetes_faltantes) {
     df_alimentos[, -1] <- df_alimentos[, -1] * 100
     
     #ESTRUCTURA CIAT
-    df_transformado <- df_alimentos %>%
-      pivot_longer(cols = -Alimentos, names_to = "Grupo_demo", values_to = "Cantidad_G") %>%
-      mutate(Alimento = Alimentos,
-             Sexo = as.numeric(sexo_nombre)
-      ) %>%
-      select(Alimento, Cantidad_G, Grupo_demo, Sexo)
+df_transformado <- df_alimentos %>%
+  pivot_longer(cols = -Alimentos, names_to = "Grupo_demo", values_to = "Cantidad_G") %>%
+  mutate(
+    Alimento = Alimentos,
+    Sexo = as.numeric(sexo_nombre),
+    Grupo = if ("Grupo" %in% colnames(Datos_Insumo)) Grupo_sex else NA
+  ) %>%
+  select(Alimento, Cantidad_G, Grupo_demo, Sexo, Grupo)
+
+  df_transformado_limpio <- df_transformado %>%
+  select(-where(~all(is.na(.))))
     
     
-    assign(paste("CoCA_", sexo_nombre, sep = ""), cbind(df_transformado, Costo))
+    assign(paste("CoCA_", sexo_nombre, sep = ""), cbind(df_transformado_limpio, Costo,Costo_1000kcal))
     
     
     #--------------------------------------------------------#
@@ -193,12 +208,13 @@ for (paquete in paquetes_faltantes) {
   #     ASGINACIONES DE LISTA  #
   #----------------------------#
   
-  List_CoCA=list(Costo_CoCA,Precio,Alimento);names(List_CoCA)=c("Costo_CoCA","Precio","Alimento")
+  List_CoCA=list(Costo_CoCA,Precio,Alimento,EER[, -which(names(EER) %in% c("Edad"))]);names(List_CoCA)=c("Costo_CoCA","Precio","Alimento","EER")
   
   # retorno
   
-  cat("✔ CoCA")
-  return(invisible(List_CoCA))
+cat("(✓) CoCA: Costo promedio diario por cada 1000 kilocalorías es", mean(Costo_CoCA$Costo_1000kcal)) 
+
+ return(invisible(List_CoCA))
   
   #------------------------------------------------------------------------------------------#
   #                       FIN DEL SEGUNDO MÓDULO COMO FUNCIÓN                               #
@@ -208,7 +224,6 @@ for (paquete in paquetes_faltantes) {
   #cat("\n") 
 }
 
+CoCA(Datos_Insumo = Datos_Prueba,EER=EER)
 
-
-
-
+names(Datos_Prueba)
