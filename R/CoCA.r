@@ -212,7 +212,7 @@ df_transformado <- df_alimentos %>%
   
   # retorno
   
-cat("(✓) CoCA: Costo promedio diario por cada 1000 kilocalorías es", mean(Costo_CoCA$Costo_1000kcal)) 
+cat("(✓) CoCA: Costo diario promedio por cada 1000 kilocalorías es", mean(Costo_CoCA$Costo_1000kcal)) 
 
  return(invisible(List_CoCA))
   

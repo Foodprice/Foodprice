@@ -342,8 +342,7 @@ CoNA_SP=rbind(S_shadow_0,S_shadow_1);CoNA_SP = CoNA_SP %>% filter(constraint == 
 CoNA_SP = CoNA_SP[c("Edad", "Sexo", "Nutrientes", "SP", "SPE")]
 
 #Nutrientes limtantes y precios sombre
-CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Sexo", "Nutrientes"),
-        by.y= c("Edad", "Sexo", "Nutrientes"))
+
   } else {
 
    Costo_CoNA <- CoNA_0 %>%
@@ -355,12 +354,10 @@ CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Sexo", "Nutrientes"),
     CoNA_SP<- S_shadow_0 %>%
   select(-Sexo)
 
-  CoNA_SP = CoNA_SP %>% filter(constraint == ">=")
+CoNA_SP = CoNA_SP %>% filter(constraint == ">=")
 CoNA_SP = CoNA_SP[c("Edad", "Nutrientes", "SP", "SPE")]
 
-#Nutrientes limtantes y precios sombre
-CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Nutrientes"),
-        by.y= c("Edad", "Nutrientes"))
+
 }
 
 
@@ -377,11 +374,12 @@ CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Nutrientes"),
   #     ASGINACIONES DE LISTA  #
   #----------------------------#
   
-  List_CoNA=list(Costo_CoNA,Alimentos_CoNA,CoNA_SP_LM,Precio,Alimento);names(List_CoNA)=c("Costo_CoNA","Alimentos_CoNA","CoNA_SP_LM","Precio","Alimento")
+  List_CoNA=list(Costo_CoNA,Alimentos_CoNA,CoNA_N_Limit,CoNA_SP,Precio,Alimento);names(List_CoNA)=c("Costo_CoNA","Alimentos_CoNA","CoNA_N_Limit","CoNA_SP","Precio","Alimento")
   
   # retorno
   
-  cat("✔ CoNA")
+cat("(✓) CoNA: Costo diario promedio por cada 1000 kilocalorías es", mean(Costo_CoNA$Costo_1000kcal)) 
+
   return(invisible(List_CoNA))
 
 
@@ -390,5 +388,6 @@ CoNA_SP_LM = merge(CoNA_SP, CoNA_N_Limit,by.x = c("Edad", "Nutrientes"),
 #cat("\n")
 
 }
+
 
 
