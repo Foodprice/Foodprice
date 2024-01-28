@@ -219,7 +219,5 @@ cat("(✓) CoCA: Costo diario promedio por cada 1000 kilocalorías es", mean(Cos
   #------------------------------------------------------------------------------------------#
   #                       FIN DEL SEGUNDO MÓDULO COMO FUNCIÓN                               #
   #-----------------------------------------------------------------------------------------#
-  #cat("\n") 
-  #cat("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA SUFICIENTE EN ENERGÍA (CoCA)' correcta") 
-  #cat("\n") 
+
 }

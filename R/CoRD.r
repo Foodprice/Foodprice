@@ -46,7 +46,7 @@ for (paquete in paquetes_faltantes) {
   if (ncol(Datos_Insumo) < 4) {
     stop("Datos_Insumo debe tener al menos 4 columnas.")
   }
-required_columns <- c("Precio_100g_ajust" , "Intercambio_EER_gr" ,"Precio_INT","Grupo")
+required_columns <- c("Precio_100g_ajust" , "Intercambios_g" ,"Precio_INT","Grupo")
 missing_columns <- setdiff(required_columns, colnames(Datos_Insumo))
 
 if (length(missing_columns) > 0) {
@@ -113,6 +113,9 @@ if (length(missing_columns_E) > 0) {
 #-----------------------------------------------------------------------------------------#
 
 
+# Validar si existen Grupos o Subgrupos
+
+
 
 #se excluyen los alimentos sin categorías
 Datos_Insumo = Datos_Insumo %>% filter(!Grupo %in% "Sin categoría")
@@ -139,7 +142,7 @@ if ("Sexo" %in% colnames(Req_Int)) {Sexos <- split(Req_Int, Req_Int$Sexo);sexo_n
 
 }
 
-Alimento=Datos_Insumo$ALimento
+Alimento=Datos_Insumo$Alimento
 Precio=Datos_Insumo$Precio_INT
 #--------------------------------------------------------#
 #               CLICLO PARA CADA SEXO                   #
@@ -156,19 +159,28 @@ Edad=levels(as.factor(Req_Int_i$Edad))
 
 #---------------- VALIDACIÓN Y SELECIÓN DE GRUPOS----------------
 
-# Extraer grupos
-Grupos_Insumo=levels(as.factor(Datos_Insumo$Grupo)) # GRupos de insumo
+
+
+#Identificar grupos o subgrupos
+if ("Subgrupo" %in% colnames(Datos_Insumo)) {Grupos_Insumo=levels(as.factor(Datos_Insumo$Subgrupo)) } else {Grupos_Insumo=levels(as.factor(Datos_Insumo$Grupo)) }
+
+#Grupos_Insumo=levels(as.factor(Datos_Insumo$Subgrupo))
+
 Grupos_Cantidad_Sel <- unique(Cantidad_selec$Grupo) #grupos de cantidad
 grupos_req=levels(as.factor(Req_Int_i$Grupo))
+
+
 #-------------------
 # 1. Validar que la cantidad de grupos en el vector sea mayor que 5
-if (length(Grupos_Insumo) <= 5) {
-  stop("Error: La cantidad de grupos en el vector debe ser mayor que 5.")
+if (length(Grupos_Insumo) < 5) {
+  stop("Error: La cantidad de grupos en el vector debe ser mayor o igual a 5.")
 }
 
 
 # 2. Identificar los grupos que son iguales de datos insumo y cantidad a selecionar
 Grupos_comunes <- intersect(Grupos_Insumo, Grupos_Cantidad_Sel)
+
+
 
 # Grupos no comunes
 grupos_faltantes <- union(setdiff(Grupos_Insumo, Grupos_Cantidad_Sel),setdiff(Grupos_Cantidad_Sel,Grupos_Insumo))
@@ -209,7 +221,7 @@ Grupos_finales <- subset(Cantidad_selec, Grupo %in% Grupos_comunes_req)
 
 
 
-Generar_A <- function(n,df) { # n- cantidad alimentos y df- es el dt con Intercambio_EER_gr
+Generar_A <- function(n,df) { # n- cantidad alimentos y df- es el dt con Intercambios_g
 
 
 # Validar si están las cantidades necesarias
@@ -220,8 +232,8 @@ stop(paste("Para el grupo",paste(Grupo_i,collapse = ", ")),paste(" hay menos de 
 
 A <- matrix(0, nrow = n, ncol = n)
 for (j in 1:n-1){
-A[j,j]=df$Intercambio_EER_gr[j] # Asignar diagonales iguales
-A[j,j+1]=-df$Intercambio_EER_gr[j+1] # Asignas diagonal siguiente negativo
+A[j,j]=df$Intercambios_g[j] # Asignar diagonales iguales
+A[j,j+1]=-df$Intercambios_g[j+1] # Asignas diagonal siguiente negativo
 }
   A[n,]=1 # Asignar 1 al final
   return(A)
@@ -260,8 +272,9 @@ for (i in 1:length(Edad)) {
     Grupo_i = Grupos_finales$Grupo[j]  # Usar j para el bucle interior
     Cantidad_i = Grupos_finales$Cantidad[j]  # Usar j para el bucle interior
     
-    # Extraer y requerimientos datos por grupo
-    Datos_grupo_i = subset(Datos_Insumo, Grupo == Grupo_i)
+    # Extraer y requerimientos datos por grupo o subgrupo
+    if ("Subgrupo" %in% colnames(Datos_Insumo)) {Datos_grupo_i = subset(Datos_Insumo, Subgrupo == Grupo_i)} else {Datos_grupo_i = subset(Datos_Insumo, Grupo == Grupo_i) }
+
     Datos_grupo_i = Datos_grupo_i[order(Datos_grupo_i$Precio_INT), ]
     Req_i_g = subset(Req_i, Grupo == Grupo_i)
     
@@ -270,7 +283,7 @@ for (i in 1:length(Edad)) {
       stop("La cantidad de elementos a seleccionar debe ser un entero mayor que cero")
     }
     
-    Datos_grupo_i = Datos_grupo_i %>% select(any_of(c("Alimento", "Precio_100g_ajust", "Intercambio_EER_gr", "Precio_INT", "Grupo")))
+    Datos_grupo_i = Datos_grupo_i %>% select(any_of(c("Alimento", "Precio_100g_ajust", "Intercambios_g", "Precio_INT", "Grupo","Energia")))
     Datos_grupo_i = Datos_grupo_i[1:Cantidad_i, ]
     
     # Función para generar entrada A al sistema de ecuaciones
@@ -288,19 +301,15 @@ for (i in 1:length(Edad)) {
   
     Cantidad_INT = solve(A, B)
 
-    Cantidad_g = Cantidad_INT * Datos_grupo_i$Intercambio_EER_gr
+    Cantidad_g = Cantidad_INT * Datos_grupo_i$Intercambios_g
     
     # Crear dataframe directamente y agregar las filas a CoRD_INT_F
-    CoRD_F = cbind(Datos_grupo_i, Cantidad_INT = Cantidad_INT, Cantidad_g = Cantidad_g,Edad=Edad[i],Sexo=sexo_nombre)
+      if ("Energia" %in% colnames(Datos_Insumo)) {CoRD_F = cbind(Datos_grupo_i, Cantidad_INT = Cantidad_INT, Cantidad_g = Cantidad_g,Edad=Edad[i],Sexo=sexo_nombre,Energia=Datos_grupo_i$Energia) }else{CoRD_F = cbind(Datos_grupo_i, Cantidad_INT = Cantidad_INT, Cantidad_g = Cantidad_g,Edad=Edad[i],Sexo=sexo_nombre)}
     
     CoRD_INT = rbind(CoRD_INT, CoRD_F)
-
-
-
-  }
   
+  }
 #SALIDA CON EDAD 
-#Edad_i=rep(Edad[i],sum(Cantidad_selec$Cantidad));Edad_CoRD=c(Edad_CoRD,Edad_i)
 
 }
 
@@ -316,11 +325,13 @@ for (E in Edad) {
   # Calcular el costo para la edad actual
   costo_edad <- sum(df_edad$Precio_INT * df_edad$Cantidad_INT)
 
-  # Crear un dataframe temporal para la edad actual
-  df_temp <- data.frame(Edad = E, Costo = costo_edad)
+
+
+  # calcular costo * 1000kc o no
+ if ("Energia" %in% colnames(Datos_Insumo)){Costo_1000kcal=(costo_edad/sum(Datos_grupo_i$Energia))*1000;df_temp <- data.frame(Edad = E, Costo = costo_edad,Costo_1000kcal=Costo_1000kcal)} else {  df_temp <- data.frame(Edad = E, Costo = costo_edad)}
 
   # Agregar el dataframe temporal a costo
-  CoRD_COST <- rbind(CoRD_COST, df_temp)
+CoRD_COST <- rbind(CoRD_COST, df_temp)
 };CoRD_COST$Sexo=as.numeric(sexo_nombre)
 
 
@@ -354,24 +365,33 @@ Intercambios_CoRD=rbind(Intercambios_CoRD_0,Intercambios_CoRD_1)
 }
 
 
-# Asignación en el ambiente global
-#assign("Costo_CoRD",Costo_CORD,envir = globalenv()) 
-#assign("Intercambios_CoRD",Intercambios_CoRD,envir = globalenv()) 
 
   #----------------------------#
   #     ASGINACIONES DE LISTA  #
   #----------------------------#
   
-  List_CoRD=list(Costo_CORD,Intercambios_CoRD,Precio,Alimento);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD","Precio","Alimento")
+  if ("Energia" %in% colnames(Datos_Insumo)){  
+    List_CoRD=list(Costo_CORD,Intercambios_CoRD,Precio,Alimento,Energia=Datos_Insumo$Energia);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD","Precio","Alimento","Energia")
+
+}else {
+   List_CoRD=list(Costo_CORD,Intercambios_CoRD,Precio,Alimento);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD","Precio","Alimento")
+
+} 
+
+
+
+
+
   
-  # retorno
+
   
-  cat("✔ CoRD")
+if ("Energia" %in% colnames(Datos_Insumo)){cat("(✓) CoRD: Costo diario promedio por cada 1000 kilocalorías es", mean(Costo_CORD$Costo_1000kcal))}else {
+   cat("(✓) CoRD")
+} 
+
   return(invisible(List_CoRD))
 
-#cat("\n") 
-#cat("Ejecución del modelo: 'COSTO DIARIO A UNA DIETA SALUDABLE (CoRD)' correcta")
-#cat("\n") 
+
 }
 
 

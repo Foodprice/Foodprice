@@ -796,12 +796,12 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
     ));
    # Datos_MOD3 <- Datos_MOD3[, -which(names(Datos_MOD3) == "Subgrupo_GABAS")]
   
-  colnames(Datos_MOD3)=c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust",  "Energia","Proteina","Carbohidratos","Lipidos",  "Calcio",  "Zinc", "Hierro", "Magnesio","Fosforo","VitaminaC", "Tiamina", "Riboflavina","Niacina", "Folatos", "VitaminaB12", "VitaminaA","Sodio","Intercambio_EER_gr","Precio_INT","Grupo","Subgrupo")
+  colnames(Datos_MOD3)=c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust",  "Energia","Proteina","Carbohidratos","Lipidos",  "Calcio",  "Zinc", "Hierro", "Magnesio","Fosforo","VitaminaC", "Tiamina", "Riboflavina","Niacina", "Folatos", "VitaminaB12", "VitaminaA","Sodio","Intercambios_g","Precio_INT","Grupo","Subgrupo")
   
   # Orden de salida
   
   Datos_MOD3 <- Datos_MOD3 %>%
-    select(Cod_TCAC, Alimento, Serving, Precio_100g_ajust,Intercambio_EER_gr, Precio_INT, Grupo,Subgrupo, Energia:VitaminaB12,
+    select(Cod_TCAC, Alimento, Serving, Precio_100g_ajust,Intercambios_g, Precio_INT, Grupo,Subgrupo, Energia:VitaminaB12,
            VitaminaA, Sodio)
   
   
