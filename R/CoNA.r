@@ -203,32 +203,25 @@ CoNA = lp(direction = "min",
 #--------------------------------------------------------#
 #               ETAPA DE ESTRUCTURA PLAZA                #
 #-------------------------------------------------------#
-if (CoNA$status == 0) {
+if (CoNA$status == 0 & sum(CoNA$solution)!=0) {
 
 # Guardar estructura de intercambios
 costo <- sum(CoNA$solution * Precio)
 Alimentos_sol <- which(CoNA$solution != 0) # ALimento selexionados
 cantidades_intercambio <- CoNA$solution[Alimentos_sol] # intercambios
+
  if ("Grupo" %in% colnames(Datos_Insumo)) {
 
   indices_coincidencia <- match(Alimento[Alimentos_sol], Datos_Prueba$Alimento)
 
   Grupo_sex=Datos_Prueba$Grupo[indices_coincidencia]
-  
-  
-  } 
+   } 
 
-#print(Alimento[Alimentos_sol])
- 
 # Crear un dataframe temporal de la estructura CIAT
 temp_df <- data.frame(Alimento = Alimento[Alimentos_sol],
 Cantidad_GR = (cantidades_intercambio*100),
 Grupo_demo = Edad[i],
-Sexo = as.numeric(sexo_nombre),
-Grupo = if ("Grupo" %in% colnames(Datos_Insumo)) Grupo_sex else NA)
-
-
-
+Sexo = as.numeric(sexo_nombre),Grupo = if ("Grupo" %in% colnames(Datos_Insumo)) Grupo_sex else NA)
 
 
 # Agregar los resultados al dataframe general
@@ -286,12 +279,11 @@ Costo_T=rbind(Costo_T, temp_df)
 }else { # CUANDO EL MODELO NO ENCUENTRE SOLUCIÓN EN ESA EDAD LLENAR CON PRINT
 
 
-
     temp_df <- data.frame(Alimento = NA,
                           Cantidad_GR = NA,
                           Grupo_demo = Edad[i],
                           Sexo = as.numeric(sexo_nombre),
-                          Grupo=NA)
+                          Grupo = NA)
     Intercambios_CoNA <- merge(Intercambios_CoNA, temp_df, all = TRUE)
 
 
@@ -332,10 +324,6 @@ Costo_T=rbind(Costo_T, temp_df)
 
 
 } #FIN DEL CICLO EN EDAD
-
-# Eliminar grupo si no se encuentra
-  Intercambios_CoNA <- Intercambios_CoNA %>%
-  select(-where(~all(is.na(.))))
 
 
 # Asignaciones por sexo
@@ -387,12 +375,8 @@ CoNA_SP = CoNA_SP[c("Edad", "Nutrientes", "SP", "SPE")]
 
 }
 
-
-
-# Asignación en el ambiente global
-#assign("Costo_CoNA",Costo_CoNA,envir = globalenv()) 
-#assign("Alimentos_CoNA",Alimentos_CoNA,envir = globalenv()) 
-#assign("CoNA_SP_LM",CoNA_SP_LM,envir = globalenv()) 
+  Alimentos_CoNA <- Alimentos_CoNA %>%
+  select(-where(~all(is.na(.))))
 
 #------------------------------------------------------------------------------------------#
 #                       FIN DEL TERCER MÓDULO COMO FUNCIÓN                               #
@@ -405,9 +389,10 @@ CoNA_SP = CoNA_SP[c("Edad", "Nutrientes", "SP", "SPE")]
   
   # retorno
   
-cat("(✓) CoNA: Costo diario promedio por cada 1000 kilocalorías es", mean(Costo_CoNA$Costo_1000kcal)) 
+cat("(✓) CoNA: Costo diario promedio por cada 1000 kilocalorías es", mean(Costo_CoNA$Costo_1000kcal,na.rm=TRUE)) 
 
   return(invisible(List_CoNA))
 
 
 }
+
