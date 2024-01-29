@@ -73,7 +73,7 @@ if (!is.null(Filtrar_Alimentos)) {
 #                       TERCERA ETAPA: MODELO 2                                        #
 #------------------------------------------------------------------------------------#
 
-req_min_ent= DRI_min %>% select(-any_of(c("Edad")))
+req_min_ent= DRI_min 
 req_max_ent= DRI_max %>% select(-any_of(c("Edad","Energia")))
 
 
