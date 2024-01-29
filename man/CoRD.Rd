@@ -4,7 +4,7 @@
 \title{Cost of Recommended Diet (CoRD)}
 \usage{
 
-Modelo_3(
+CoRD(
 Datos_Insumo,
 Req_Int,
 Cantidad_selec,
