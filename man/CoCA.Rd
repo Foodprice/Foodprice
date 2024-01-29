@@ -1,7 +1,7 @@
 
 \name{CoCA}
 \alias{CoCA}
-\title{Función para la estimación del costo diario mínimo de una dieta suficiente en energía}
+\title{Cost of Caloric Adequacy (CoCA)}
 \usage{
 CoCA(
 Datos_Insumo,
@@ -11,7 +11,8 @@ Filtrar_Alimentos=NULL
 
 }
 \description{
-La función CoCA calcula el alimento y su costo minimo para una dieta  suficiente en energía para el día. Presenta dos parámetros obligatorios y uno opcional.
+CoCA computes the minimum daily cost of a caloric adequate diet for an individual according to its estimated energy requirement.
+
 }
 \examples{
 
@@ -31,33 +32,35 @@ kable(Mod$Costo_CoCA)
 
 \arguments{
 
- \code{- PARÁMETROS NECESARIOS} 
+ \code{- Required Parameters} 
 
-    \item{Datos_Insumo:}{Data frame con precios minorístas ajustado por 100gr a cada alimento; debe tener al menos tres columnas con estos nombres: "Precio_100g_ajust", "Alimento", "Energia", para asegurar una estimación correcta del modelo.} 
-    \item{EER:}{Data frame que contiene información sobre los grupos demográficos, el sexo y sus respectivos contenidos energéticos. Este data frame debe incluir las columnas "Edad" , "Energia" y "Sexo". La columna Edad se asume tipo caracter, Energia y Sexo (1=Femenino,0=Masculino) tipo numérico}
+    \item{Datos_Insumo:}{Data frame containing the retail price and energy content of local food items, expressed per 100 g edible portion. The data frame must have at least 3 columns with the following names: “Food”, “Price_100g”, and “Energy”.      } 
+    \item{EER:}{Data frame containing the Estimated Energy Requirement (EER) for different age and sex groups. The data frame must include 3 columns with the following names: “Age”, “EER”, and “Sex”. “Age” is assumed to be a character string, and “EER” and “Sex” (0 if male, 1 if female) are numeric variables.      }
 
  
- \code{- PARÁMETROS OPCIONALES} 
+ \code{- Optional Parameters} 
 
-    \item{Filtrar_Alimentos:}{Un vector utilizado como filtro para los alimentos antes de su ingreso al modelo. Este  es útil si se desea excluir uno o varios alimentos específicos del modelo.}
+    \item{Filtrar_Alimentos:}{A vector used for excluding one or more food items before performing the model.}
 }
 
 \details{
-NOTA: No es imperativo que ambas codificaciones (1=Femenino, 0=Masculino) estén presentes en la columna "Sexo" de EER. En el caso de que su conjunto de datos EER incluya únicamente un género, aún puede ejecutar el modelo sin problemas. En esta situación, simplemente no es necesario especificar la columna "Sexo".}
+The CoCA is defined as the minimum cost of an energy-only diet that provides the calories necessary to meet the EER for an individual. The optimal solution to the linear programming model consists of a diet composed of the food item whose price per kilocalorie is minimal (i.e. the least-cost starchy staple food). (See FoodPrice: An R Package for estimating least-cost diets for further information).
+Note that, for the EER parameter, it is not mandatory that the “Sex” column be defined by two categories (0 if male, 1 if female). If only one of the two categories is included, the function computes the CoCA by age groups. In this case specifying the “Sex” column is not needed. 
 
 \value{
-Las salida se mostrarán como una lista con base en el nombre asignado por el usuario, sus elementos son:
-
-\item{Costo_CoCA:}{Conjunto de resultados que muestra la asignación de costos asociados al alimento de menor costo capaz de satisfacer los requerimientos energéticos de cada grupo demográfico. Las columnas incluyen: "Alimento" (el alimento seleccionado), "Cantidad_G" (la cantidad necesaria en gramos para satisfacer los requerimientos de energía), "Grupo_demo" (grupo demográfico), "Sexo" (género) y "Costo" (el costo del alimento). Este conjunto proporciona una visión detallada de las elecciones alimenticias óptimas desde el punto de vista económico para cada grupo demográfico.}
+The output will be displayed as a list based on the name assigned by the user; its elements are:
 
 
-\item{Precio:}{Vector de precios que ingresaron al modelo  desde los datos de insumo}
+\item{Costo_CoCA:}{A data frame containing the cost and composition of the diet, differentiated by age and sex groups. For each demographic group, the data frame displays the food whose price per kilocalorie is minimal (food), the quantity of food expressed in grams (quantity), the cost per day (cost_day) and the cost per 1000 kcal (cost_kcal) for the energy-only diet. (If the food groups were specified in data parameter, the data frame displays the food group to which the food item belongs).    }
 
 
-\item{Alimento:}{Vector de Alimento que ingresaron al modelo desde los datos de insumo}
+\item{Precio:}{Numeric vector of food item’s retail price expressed per 100 g edible portion (i.e. the objective function coefficients)}
 
-\item{EER:}{Data frame de los requerimientos energéticos por grupos demográficos}
+
+\item{Alimento:}{Vector of food items used in objective function}
+
+\item{EER:}{A data frame containing the constraints of the linear programming model, as entered (i.e. EER by age and sex groups).}
 }
 \note{
-Es importante revisar la documentación para asegurar que los parámetros proporcionados sean correctos y coherentes con los requisitos establecidos.
+It is important to review the documentation to ensure that the provided parameters are correct and consistent with the established requirements.
 }
