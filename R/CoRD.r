@@ -401,7 +401,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     # Asignaciones por sexo
     assign(paste("CoRD_", sexo_nombre, sep = ""), CoRD_COST)
     assign(paste("Intercambios_CoRD_", sexo_nombre, sep = ""), CoRD_INT)
-    
+    print(paste("Intercambios_CoRD_", sexo_nombre, sep = ""))
   }
   
   #--------------------------------------------------------#
@@ -419,7 +419,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     
     Costo_CORD <- CoRD_0 %>%
       select(-Sexo)
-    Intercambios_CoRD<- Intercambios_CoRD__0 %>%
+    Intercambios_CoRD<- Intercambios_CoRD_0 %>%
       select(-Sexo)
   }
   
