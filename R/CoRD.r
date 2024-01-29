@@ -416,4 +416,3 @@ if ("Energia" %in% colnames(Datos_Insumo)){cat("(✓) CoRD: Costo diario promedi
 }
 
 
-
