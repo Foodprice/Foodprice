@@ -208,7 +208,7 @@ df_transformado <- df_alimentos %>%
   #     ASGINACIONES DE LISTA  #
   #----------------------------#
   
-  List_CoCA=list(Costo_CoCA,Precio,Alimento,EER[, -which(names(EER) %in% c("Edad"))]);names(List_CoCA)=c("Costo_CoCA","Precio","Alimento","EER")
+  List_CoCA=list(Costo_CoCA,Precio,Alimento,EER);names(List_CoCA)=c("Costo_CoCA","Precio","Alimento","EER")
   
   # retorno
   
