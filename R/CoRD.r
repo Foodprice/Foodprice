@@ -46,7 +46,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
   if (ncol(Datos_Insumo) < 4) {
     stop("Datos_Insumo debe tener al menos 4 columnas.")
   }
-  required_columns <- c("Precio_100g_ajust" , "Intercambios_g" ,"Precio_INT", "Grupo")
+  required_columns <- c("Alimento" , "Intercambios_g" ,"Precio_INT", "Grupo")
   missing_columns <- setdiff(required_columns, colnames(Datos_Insumo))
   
   if (length(missing_columns) > 0) {
@@ -377,27 +377,25 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
       costo_edad <- sum(df_edad$Precio_INT * df_edad$Cantidad_INT)
       
       # calcular costo * 1000kc o no
-      if ("Energia" %in% colnames(Datos_Insumo)){df_temp <- data.frame(Edad = E, Costo = costo_edad,      Costo_1000kcal= (costo_edad/(sum((df_edad$Energia/100)*df_edad$Cantidad_g)))*1000)}else {df_temp <- data.frame(Edad = E, Costo = costo_edad)}
+      if ("Energia" %in% colnames(Datos_Insumo)){df_temp <- data.frame(Grupo_demo = E, Costo = costo_edad,      Costo_1000kcal= (costo_edad/(sum((df_edad$Energia/100)*df_edad$Cantidad_g)))*1000)}else {df_temp <- data.frame(Edad = E, Costo = costo_edad)}
       
       # Agregar el dataframe temporal a costo
       CoRD_COST <- rbind(CoRD_COST, df_temp)
 
     };CoRD_COST$Sexo=as.numeric(sexo_nombre)
-    
-    assign("Aporte", Aporte,envir = globalenv())
-    
+        
     
     # ----------- ESTRUCTURA CIAT PARA INTERCAMBIOS
     
     if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {
       
       suppressWarnings({CoRD_INT <- merge(CoRD_INT, Datos_Insumo, by = "Alimento", all.x = TRUE)})# recuperar insumos
-      CoRD_INT= CoRD_INT %>% select(any_of(c("Alimento","Grupo","Cantidad_INT","Edad","Sexo")))
+      CoRD_INT= CoRD_INT %>% select(any_of(c("Alimento","Grupo","Cantidad_INT","Grupo_demo","Sexo")))
     }
     
     
     
-    if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {CoRD_INT= CoRD_INT %>% select(any_of(c("Alimento","Grupo","Cantidad_INT","Edad","Sexo")))}
+    if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {CoRD_INT= CoRD_INT %>% select(any_of(c("Alimento","Grupo","Cantidad_INT","Grupo_demo","Sexo")))}
     
     # Asignaciones por sexo
     assign(paste("CoRD_", sexo_nombre, sep = ""), CoRD_COST)

@@ -6,28 +6,31 @@
 
 Modelo_3(
 Datos_Insumo,
-Intercambio_Gramos_OP=NULL,
-Int_Req_M_OP=NULL,
-Int_Req_F_OP=NULL
+Req_Int,
+Cantidad_selec,
+Filtrar_Alimentos=NULL
 )
 
 }
 \description{
-La función CoRD calcula los alimentos para una dieta saludable y su costo mínimo diario. Presenta un parámetro obligatorio y tres opcionales.
+La función CoRD calcula los alimentos para una dieta saludable y su costo mínimo diario. Presenta tres parámetros obligatorios y uno opcional.
 }
 \examples{
 
 # Ejemplo de uso:
 
-# Obtener datos de ejemplo
+# Obtener datos de insumo
 data(Datos_Prueba, package = "Foodprice")
 
-# Aplicar la función a los datos de entrada
-Modelo_3(Datos_Insumo = Datos_Prueba)
+data(Req_Int, package = "Foodprice") # obtener los requerimientos de porciones pro grupos de alimento y grupos demográficos
+data(Cantidad_selec, package = "Foodprice") # Cantidad de alimentos a selecionar por grupos o subgrupos
 
-# Salidas en el ambiente global
-kable(head(Modelo_3_M))
-kable(head(Modelo_3_F))
+
+# Aplicar la función a los datos de entrada
+Mod=CoRD(Datos_Insumo = Datos_Prueba,Cantidad_selec = Cantidad_selec,Req_Int = Req_Int)
+
+# Visualización del costo
+head(Mod$Costo_CORD)
 }
 
 
@@ -35,32 +38,39 @@ kable(head(Modelo_3_F))
 
  \code{- PARÁMETROS NECESARIOS}     
 
-\item{Datos_Insumo:}{El marco de datos debe contener al menos cuatro columnas con los siguientes nombres: "Alimento", "Intercambios_g", "Precio_INT", "Grupo". }
+\item{Datos_Insumo:}{El marco de datos debe contener al menos cuatro columnas con los siguientes nombres: "Alimento" (Alimentos), "Intercambios_g" (Intercambio de cada alimento), "Precio_INT" (Precio por Intercambio del alimento), "Grupo"(Grupo de alimentos, se requieren mínimo 5 grupos).
+Adicional a lo anterior, si requiere que el modelo calcule los alimentos con base en subgrupos pero que el costo se vea en función de Grupos, añada la columna "Subgrupo" a los datos de insumo. Si también requiere calcular el costo por Mil kilocalorias, añada una columna llamda "Energia" con el aporte energético de cada alimento en los datos de insumo.
+ }
 
-  \item{Req_Int:}{DataFrame opcional que debe contener al menos 6 columnas específicas tituladas: "Cod_TCAC", "Alimentos", "Subgrupo_GABAS", "Energia_100g", "Energia_Int", "Intercambio_g". Si no se proporciona, usará los intercambios mapeados para los alimentos de colombia}
+  \item{Req_Int:}{ Data frame con los requerimientos de porciones por grupos de alimentos y grupos demográficos. Debe contener al menos tres columnas así nombradas: "Edad" (Grupo demográfico), "Porción" (Porciones de intercambios por grupo), "Grupo" (Grupos de alimentos). Si se requiere que el modelo trabaje con subgrupos, debe existir la columna "subgrupo" con los mimos niveles que los Subgrupos de los datos de insumo (No es necesaio incluir la columna "Grupo" en tal caso).}
+  \item{Cantidad_selec:}{Data frame con la cantidad de alimentos a selecionar por cada grupo o subgrupo de alimento. Este debe contener al menos dos columnas así nombradas: "Cantidad", "Grupo". Si desea trabajar con subgrupos, cambie la columna "Grupo" por "Subgrupo".}
 
-  \item{Int_Req_M_OP:}{DataFrame  que puede utilizarse como entrada opcional para los intercambios requeridos en gramos de cada grupo de alimento en hombres de diferentes edades. Debería incluir al menos dos columnas. El paquete asume que existe una primer columna dedicada a los grupos de alimentos y, las siguientes columnas son los grupos de edad.}
+ \code{- PARÁMETROS OPCIONALES}
 
-  \item{Int_Req_F_OP:}{DataFrame  que puede utilizarse como entrada opcional para los intercambios requeridos en gramos de cada grupo de alimento en mujeres de diferentes edades. Debería incluir al menos dos columnas. El paquete asume que existe una primer columna dedicada a los grupos de alimentos y, las siguientes columnas son los grupos de edad.}
-
-
- \code{- PARÁMETROS OPCIONALES} 
-
+        \item{Filtrar_Alimentos:}{Un vector utilizado como filtro para los alimentos antes de su ingreso al modelo. Este  es útil si se desea excluir uno o varios alimentos específicos del modelo.}
 }
 
 
 
 
 \details{
-Si los parámetros opcionales no son utilizados, se emplearán por defecto los requerimientos de intercambios establecidos para la región pacífica de Colombia.}
-
+NOTA: Si se requere trabajar con subgrupos, debe existir en los datos de insumo una columna llamada "Subgrupo" además de "Grupo"; Los parámetros Req_Int y Cantidad_selec deberán tener la una columna llamada "Subgrupo" (No es necesario que presenten la columna "Grupo").
+}
 \value{
 
-Las salidas se mostrarán en el ambiente global de R, su estructura es:
+Las salida se mostrarán como una lista con base en el nombre asignado por el usuario, sus elementos son:
 
-    \item{Modelo_3_M:}{Marco de datos con los costos de una dieta saludable para los hombres.}
+    \item{Costo_CORD:}{Data frame que proporciona los costos del modelo. Columnas: "Grupo_demo" identifica el grupo demográfico asociado , mientras que la columna "Sexo" utiliza la codificación 0 para representar el género masculino y 1 para el género femenino . La columna "Costo" refleja el costo diario resultante de la asignación de alimentos para cumplir con los requisitos del modelo. Si los datos de insumo tienen la columna "Energia", calculará el costo por Mil kilocalorias por cada grupo demográfico y sexo en la columna llamada: Costo_1000kcal. }
     
-    \item{Modelo_3_F:}{Marco de datos con los costos de una dieta saludable para las mujeres.}
+    \item{Intercambios_CoRD:}{Data frame que proporciona la cantidad de intercambios por cada Alimento y grupo en cada grupo demográfico y sexo. contiene las columnas:"Alimento", "Grupo", "Cantidad_INT","Edad", "Sexo"}
+
+    \item{Precio:}{Vector de precios de entrada en insumos al modelo}
+
+    \item{Alimento:}{Vector de Alimentos de entrada en insumos al modelo}
+    
+    \item{Energia:}{Vector aporte energéico de cada alimento en insumos al modelo (si este existe)}
+
+
 
 }
 

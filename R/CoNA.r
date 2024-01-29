@@ -229,12 +229,12 @@ Intercambios_CoNA <- merge(Intercambios_CoNA, temp_df, all = TRUE)
 
 # Guardar estructura de costo
 
-Costo_dia=sum(CoNA$solution * Precio)
+Costo=sum(CoNA$solution * Precio)
 
 # Agregar los resultados al dataframe Costo_CoNA
 temp_df <- data.frame(Grupo_demo = Edad[i],
                           Sexo = as.numeric(sexo_nombre),
-                          Costo_dia = sum(CoNA$solution * Precio),
+                          Costo = sum(CoNA$solution * Precio),
                           Costo_1000kcal=(CoNA$objval/as.vector(unlist(Limitaciones[i, , drop = FALSE])[1])*1000))
 
 # Agregar los resultados al dataframe general
@@ -291,7 +291,7 @@ Costo_T=rbind(Costo_T, temp_df)
     # Agregar los resultados al dataframe Costo_CoNA
     temp_df <- data.frame(Grupo_demo = Edad[i],
                           Sexo = as.numeric(sexo_nombre),
-                          Costo_dia = NA,
+                          Costo = NA,
                           Costo_1000kcal = NA)
     Costo_T <- rbind(Costo_T, temp_df)
 
