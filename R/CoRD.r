@@ -44,7 +44,7 @@ for (paquete in paquetes_faltantes) {
   names(Datos_Insumo)
   # Verificar si tiene al menos 3 columnas
   if (ncol(Datos_Insumo) < 4) {
-    stop("Datos_Insumo debe tener al menos 3 columnas.")
+    stop("Datos_Insumo debe tener al menos 4 columnas.")
   }
 required_columns <- c("Precio_100g_ajust" , "Intercambios_g" ,"Precio_INT", "Grupo")
 missing_columns <- setdiff(required_columns, colnames(Datos_Insumo))
