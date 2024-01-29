@@ -63,7 +63,7 @@ Las salida se mostrarán como una lista con base en el nombre asignado por el us
 
     \item{Alimentos_CoNA:}{Data frame que proporciona detalles esenciales sobre la asignación de alimentos según el modelo, incluyendo el nombre del alimento seleccionado ("Alimento"), la cantidad necesaria en gramos para cumplir con los requisitos de energía y otros nutrientes ("Cantidad_GR"), el grupo demográfico al que se asigna ("Grupo_demo"), y la codificación del género asociado con la asignación ("Sexo"). La columna "Sexo" está codificada, utilizando 0 para representar el género masculino y 1 para el género femenino. Este conjunto de datos ofrece una visión completa de las elecciones alimenticias óptimas en términos de cantidad y tipo de alimentos para satisfacer los requerimientos energéticos y de nutrientes}
     
-    \item{Costo_CoNA:}  {Data frame que proporciona los costos del modelo. Columnas: "Grupo_demo" identifica el grupo demográfico asociado , mientras que la columna "Sexo" utiliza la codificación 0 para representar el género masculino y 1 para el género femenino . La columna "Costo" refleja el costo diario resultante de la asignación de alimentos para cumplir con los requisitos del modelo. }
+    \item{Costo_CoNA:}{Data frame que proporciona los costos del modelo. Columnas: "Grupo_demo" identifica el grupo demográfico asociado , mientras que la columna "Sexo" utiliza la codificación 0 para representar el género masculino y 1 para el género femenino . La columna "Costo" refleja el costo diario resultante de la asignación de alimentos para cumplir con los requisitos del modelo. }
     
     \item{CoNA_N_Limit:}{Data frame que proporciona los nutrientes limitantes}
 
