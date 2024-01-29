@@ -21,12 +21,12 @@ The DatosCol function provides the possibility to obtain and handle SIPSA wholes
 # Example of usage:
 
 # Obtain data for Medellín, January 2017
-DatosCol(Month = 1, Year = 2017, City = "Medellín")
+X=DatosCol(Mes = 1, Año = 2017, Ciudad = "Medellín")
 
 # Outputs in the global environment
 
-kable(head(PRICES_SIPSA_January_2017))
-kable(head(Data_Input_Models_2017_January_Medellín))
+kable(head(X))
+
 
 }
 
