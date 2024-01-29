@@ -142,6 +142,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     
   }
   
+  Req_entrantes=Req_Int
   Alimento=Datos_Insumo$Alimento
   Precio=Datos_Insumo$Precio_INT
   #--------------------------------------------------------#
@@ -429,15 +430,12 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
   #----------------------------#
   
   if ("Energia" %in% colnames(Datos_Insumo)){  
-    List_CoRD=list(Costo_CORD,Intercambios_CoRD,Precio,Alimento,Energia=Datos_Insumo$Energia);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD","Precio","Alimento","Energia")
+    List_CoRD=list(Costo_CORD,Intercambios_CoRD,Precio,Alimento,Energia=Datos_Insumo$Energia,Req_entrantes);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD","Precio","Alimento","Energia","Req_int_ent")
     
   }else {
-    List_CoRD=list(Costo_CORD,Intercambios_CoRD,Precio,Alimento);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD","Precio","Alimento")
+    List_CoRD=list(Costo_CORD,Intercambios_CoRD,Precio,Alimento,Req_entrantes);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD","Precio","Alimento","Req_int_ent")
     
   } 
-  
-  
-  
   
   
   
