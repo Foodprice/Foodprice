@@ -1,7 +1,7 @@
 
 \name{TCAC}
 \alias{TCAC}
-\title{Función para la estimación del costo diario mínimo de una dieta saludable.}
+\title{}
 \usage{
 
 Modelo_3(
