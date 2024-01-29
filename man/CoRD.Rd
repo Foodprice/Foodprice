@@ -30,7 +30,7 @@ data(Cantidad_selec, package = "Foodprice")
 Mod=CoRD(Datos_Insumo = Datos_Prueba,Cantidad_selec = Cantidad_selec,Req_Int = Req_Int)
 
 # Cost Visualization
-head(Mod$Costo_CORD)
+head(Mod$Costo_CoRD)
 }
 
 
