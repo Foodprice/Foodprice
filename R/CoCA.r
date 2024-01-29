@@ -14,20 +14,18 @@ CoCA=function(Datos_Insumo,EER,Filtrar_Alimentos=NULL){
   if (!require("pacman")) install.packages("pacman") # Paquete que simplifica la carga de librerias
   pacman::p_load(char = Librerias_base);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
   
-
-# Instala paquetes individualmente si no se han cargado correctamente
-paquetes_faltantes <- Librerias_base[!(Librerias_base %in% pacman::p_loaded())]
-for (paquete in paquetes_faltantes) {
-  if (!require(paquete, character.only = TRUE)) {
-    install.packages(paquete)
-    library(paquete, character.only = TRUE)
+  
+  # Instala paquetes individualmente si no se han cargado correctamente
+  paquetes_faltantes <- Librerias_base[!(Librerias_base %in% pacman::p_loaded())]
+  for (paquete in paquetes_faltantes) {
+    if (!require(paquete, character.only = TRUE)) {
+      install.packages(paquete)
+      library(paquete, character.only = TRUE)
+    }
   }
-}
+  
+  
 
-
-  #cat("\n")
-  #cat("Se instalaron y cargaron todas la librerias corectamente")
-  #cat("\n")
   
   #------------------------------------------------------------------------------------------#
   #         SEGUNDA ETAPA: VALIDACIÓN DE PARÁMETROS OBLIGATORIOS Y OPCIONALES                #
@@ -62,7 +60,7 @@ for (paquete in paquetes_faltantes) {
   }
   
   # Verificar si tiene al menos 3 columnas
-  if (ncol(EER) < 3) {
+  if (ncol(EER) < 2) {
     stop("Los requerimientos para el modelo 1 deben contener al menos 3 columnas.")
   }
   required_columns_E <- c("Edad","Energia")
@@ -110,18 +108,18 @@ for (paquete in paquetes_faltantes) {
     Salida_CoCA <- data.frame(Alimentos = Datos_Insumo$Alimento);Salida_CoCA <- Salida_CoCA %>% add_row(Alimentos = "Costo") # Define el df de salida
     
     # REquerimientos por sexo
-    if ("Sexo" %in% colnames(EER)) {EER_S <- Sexos[[sexo_nombre]]}
+    if ("Sexo" %in% colnames(EER)) {EER_S <- Sexos[[sexo_nombre]]}else{EER_S=EER}
     
     
     # ---Asignación de vectores al modelo
-    Precio = Datos_Insumo$Precio_100g_ajust;Alimento=Datos_Insumo$Alimento;Edad=EER$Edad
+    Precio = Datos_Insumo$Precio_100g_ajust;Alimento=Datos_Insumo$Alimento;Edad=EER_S$Edad
     
     # MAtriz de coef de restricción al modelo (ENERGIA)
     Coef.Restriq = matrix(as.vector(Datos_Insumo$Energia), ncol = length(Alimento))
     
     # Vector de limitaciones del modelo
     Limitaciones=EER_S$Energia
-
+    
     
     #------------------------------Solución del modelo:
     
@@ -146,12 +144,12 @@ for (paquete in paquetes_faltantes) {
       df_2 <- data.frame(Alimentos = "Costo", Valor = CoCA$objval);colnames(df_2) <- colnames(df_1);df_combinado <- rbind(df_1, df_2)
       
       # Agregar la información al dataframe modelo_1
+      
       Salida_CoCA <- merge(Salida_CoCA, df_combinado, by = "Alimentos")
-
-
-
+      
+      
+      
     }  #Fin del ciclio del modelo por edad
-    
     
     #--------------------------------------------------------#
     #               ETAPA DE ESTRUCTURA PLAZA                #
@@ -159,34 +157,34 @@ for (paquete in paquetes_faltantes) {
     
     #DF sin ceros
     DF_o <- Salida_CoCA[rowSums(Salida_CoCA[, -which(names(Salida_CoCA) %in% c("Alimentos"))]) != 0, ]
-
-
+    
     Costo=DF_o[DF_o=="Costo",];Costo=as.vector(t(Costo[Costo$Alimentos == "Costo", -1]))
     Costo_1000kcal=(Costo/Limitaciones)*1000
     # Identificar grupo si existe la columna en insumos
-
+    
     if ("Grupo" %in% colnames(Datos_Insumo)) {Grupo_sex=na.omit(as.vector(Datos_Insumo$Grupo[match(Alimento, DF_o$Alimentos)]))[1]}
-
-
-
+    
+    
+    
     # Indetificando el alimento
     df_alimentos <- DF_o[DF_o$Alimentos != "Costo", ]
     
     # Multiplicar los valores por 100
     df_alimentos[, -1] <- df_alimentos[, -1] * 100
     
-    #ESTRUCTURA CIAT
-df_transformado <- df_alimentos %>%
-  pivot_longer(cols = -Alimentos, names_to = "Grupo_demo", values_to = "Cantidad_G") %>%
-  mutate(
-    Alimento = Alimentos,
-    Sexo = as.numeric(sexo_nombre),
-    Grupo = if ("Grupo" %in% colnames(Datos_Insumo)) Grupo_sex else NA
-  ) %>%
-  select(Alimento, Cantidad_G, Grupo_demo, Sexo, Grupo)
 
-  df_transformado_limpio <- df_transformado %>%
-  select(-where(~all(is.na(.))))
+    #ESTRUCTURA CIAT
+    df_transformado <- df_alimentos %>%
+      pivot_longer(cols = -Alimentos, names_to = "Grupo_demo", values_to = "Cantidad_G") %>%
+      mutate(
+        Alimento = Alimentos,
+        Sexo = as.numeric(sexo_nombre),
+        Grupo = if ("Grupo" %in% colnames(Datos_Insumo)) Grupo_sex else NA
+      ) %>%
+      select(Alimento, Cantidad_G, Grupo_demo, Sexo, Grupo)
+    
+    df_transformado_limpio <- df_transformado %>%
+      select(-where(~all(is.na(.))))
     
     
     assign(paste("CoCA_", sexo_nombre, sep = ""), cbind(df_transformado_limpio, Costo,Costo_1000kcal))
@@ -212,12 +210,13 @@ df_transformado <- df_alimentos %>%
   
   # retorno
   
-cat("(✓) CoCA: Costo diario promedio por cada 1000 kilocalorías es", mean(Costo_CoCA$Costo_1000kcal)) 
-
- return(invisible(List_CoCA))
+  cat("(✓) CoCA: Costo diario promedio por cada 1000 kilocalorías es", mean(Costo_CoCA$Costo_1000kcal)) 
+  
+  return(invisible(List_CoCA))
   
   #------------------------------------------------------------------------------------------#
   #                       FIN DEL SEGUNDO MÓDULO COMO FUNCIÓN                               #
   #-----------------------------------------------------------------------------------------#
-
+  
 }
+
