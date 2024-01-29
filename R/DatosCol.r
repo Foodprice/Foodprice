@@ -811,7 +811,7 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   
   #assign(paste0("Datos_",Año,"_",Mes_Num,"_",Ciudad),Datos_MOD3,envir = globalenv())
   
-  print(paste("✔",Ciudad,"_" ,Año,"_" ,Mes))
+  print(paste("(✓)",Ciudad,"_" ,Año,"_" ,Mes))
   
   #cat("\n")
   # if(length(warnings())<100) {cat("Depuración de datos exitosa", "\n")} else {cat("Cantidad de errores encontrados:",length(warnings()), "\n")}
