@@ -395,4 +395,3 @@ cat("(✓) CoNA: Costo diario promedio por cada 1000 kilocalorías es", mean(Cos
 
 
 }
-

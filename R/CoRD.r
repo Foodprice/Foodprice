@@ -159,12 +159,33 @@ Edad=levels(as.factor(Req_Int_i$Edad))
 
 #---------------- VALIDACIÓN Y SELECIÓN DE GRUPOS----------------
 
+if (("Subgrupo" %in% colnames(Cantidad_selec))) {
 
+
+# Verificar si los dataframes tienen la columna "Subgrupo"
+if (!("Subgrupo" %in% colnames(Req_Int))) {
+  stop("El dataframe Req_Int no tiene la columna Subgrupo")
+}
+
+if (!("Subgrupo" %in% colnames(Datos_Insumo))) {
+  stop("El dataframe Datos_Insumo no tiene la columna Subgrupo")
+}
+
+}
 
 #Identificar grupos o subgrupos
-if ("Subgrupo" %in% colnames(Datos_Insumo)) {Grupos_Insumo=levels(as.factor(Datos_Insumo$Subgrupo)) } else {Grupos_Insumo=levels(as.factor(Datos_Insumo$Grupo)) }
+if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {
+  Grupos_Insumo=levels(as.factor(Datos_Insumo$Subgrupo))
+  Grupos_Cantidad_Sel <- unique(Cantidad_selec$Subgrupo) #grupos de cantidad
+  grupos_req=levels(as.factor(Req_Int_i$Subgrupo)) 
+  
+  } else {
+  Grupos_Insumo=levels(as.factor(Datos_Insumo$Grupo)) 
+  Grupos_Cantidad_Sel <- unique(Cantidad_selec$Grupo) #grupos de cantidad
+  grupos_req=levels(as.factor(Req_Int_i$Grupo))
+  }
 
-#Grupos_Insumo=levels(as.factor(Datos_Insumo$Subgrupo))
+
 
 Grupos_Cantidad_Sel <- unique(Cantidad_selec$Grupo) #grupos de cantidad
 grupos_req=levels(as.factor(Req_Int_i$Grupo))
@@ -393,5 +414,6 @@ if ("Energia" %in% colnames(Datos_Insumo)){cat("(✓) CoRD: Costo diario promedi
 
 
 }
+
 
 
