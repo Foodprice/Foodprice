@@ -23,16 +23,15 @@ La función CoNA calcula los alimentos para una dieta adecuada en nutrientes y s
 # Obtener datos de ejemplo
 # Obtener datos de ejemplo
 data(Datos_Prueba, package = "Foodprice") # Datos de insumo
-data(DRI_min, package = "Foodprice") # Requerimientos minimos de nutrientes
-data(DRI_max, package = "Foodprice") # Requerimientos máximos de nutrientes
+data(Dri_min, package = "Foodprice") # Requerimientos minimos de nutrientes
+data(Dri_max, package = "Foodprice") # Requerimientos máximos de nutrientes
 
 
 # Aplicar la función a los datos de entrada
-CoNA(Datos_Insumo = Datos_Prueba,DRI_min=DRI_min,DRI_max=DRI_max)
+Mod=CoNA(Datos_Insumo = Datos_Prueba,DRI_min=Dri_min,DRI_max=Dri_max)
 
-# Salidas en el ambiente global
-kable(head(Costo_CoNA))
-kable(head(Alimentos_CoNA))
+# Visualización del costo
+kable(Mod$Costo_CoNA)
 
 }
 
@@ -55,16 +54,28 @@ kable(head(Alimentos_CoNA))
 
 
 \details{
-NOTA: Es crucial que los nombres los  nutrientes sean consistentes tanto en Datos_Insumo como en DRI_min y DRI_max para garantizar una integración adecuada entre los conjuntos de datos. Además, el vector necesario de "Energia" se asume se encuentra en DRI_min.}
+NOTA: Es crucial que los nombres los  nutrientes sean consistentes tanto en Datos_Insumo como en DRI_min y DRI_max para garantizar una integración adecuada entre los conjuntos de datos. Además, el vector necesario de "Energia" se asume se encuentra en DRI_min. Además, no es imperativo que ambas codificaciones (1=Femenino, 0=Masculino) estén presentes en la columna "Sexo" de EER. En el caso de que su conjunto de datos EER incluya únicamente un género, aún puede ejecutar el modelo sin problemas. En esta situación, simplemente no es necesario especificar la columna "Sexo".
+}
 
 \value{
 
-Las salidas se mostrarán en el ambiente global de R, su estructura es:
+Las salida se mostrarán como una lista con base en el nombre asignado por el usuario, sus elementos son:
 
     \item{Alimentos_CoNA:}{Data frame que proporciona detalles esenciales sobre la asignación de alimentos según el modelo, incluyendo el nombre del alimento seleccionado ("Alimento"), la cantidad necesaria en gramos para cumplir con los requisitos de energía y otros nutrientes ("Cantidad_GR"), el grupo demográfico al que se asigna ("Grupo_demo"), y la codificación del género asociado con la asignación ("Sexo"). La columna "Sexo" está codificada, utilizando 0 para representar el género masculino y 1 para el género femenino. Este conjunto de datos ofrece una visión completa de las elecciones alimenticias óptimas en términos de cantidad y tipo de alimentos para satisfacer los requerimientos energéticos y de nutrientes}
     
     \item{Costo_CoNA:}{Data frame que proporciona los costos del modelo. Columnas: "Grupo_demo" identifica el grupo demográfico asociado , mientras que la columna "Sexo" utiliza la codificación 0 para representar el género masculino y 1 para el género femenino . La columna "Costo_dia" refleja el costo diario resultante de la asignación de alimentos para cumplir con los requisitos del modelo. }
+    
+    \item{CoNA_N_Limit:}{Data frame que proporciona los nutrientes limitantes}
 
+    \item{CoNA_SP:}{Data frame que proporciona los precios sombra estimados}
+
+    \item{Precio:}{Vector de precios de entrada en insumos al modelo}
+
+    \item{Alimento:}{Vector de Alimentos de entrada en insumos al modelo}
+
+    \item{Req_entrantes:}{Data frame con los requerimientos  de nutrientes mínimos y máximos ingresados al modelo (demás del vector de EER)}
+
+    
 }
 
 \note{

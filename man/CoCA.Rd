@@ -19,13 +19,13 @@ La función CoCA calcula el alimento y su costo minimo para una dieta  suficient
 
 # Obtener datos de ejemplo
 data(Datos_Prueba, package = "Foodprice") # Datos de insumo
-data(DRI_min, package = "Foodprice") # Requerimientos energéticos
+data(EER, package = "Foodprice") # Requerimientos energéticos
 
 # Aplicar la función a los datos de entrada
-CoCA(Datos_Insumo = Datos_Prueba, EER=DRI_min)
+Mod=CoCA(Datos_Insumo = Datos_Prueba, EER=EER)
 
-# Salidas en el ambiente global
-kable(Costo_CoCA)
+# Visualización del costo
+kable(Mod$Costo_CoCA)
 
 }
 
@@ -43,15 +43,21 @@ kable(Costo_CoCA)
 }
 
 \details{
-Nota: No es necesario que ambas codificaciones (1=Femenino, 0=Masculino) estén presentes en la columna "Sexo" de EER. Si su conjunto de datos EER solo incluye un género, aún puede ejecutar el modelo sin problemas. En este caso, simplemente especifique en la columna "Sexo" si corresponde al valor 0 o 1.
-}
+NOTA: No es imperativo que ambas codificaciones (1=Femenino, 0=Masculino) estén presentes en la columna "Sexo" de EER. En el caso de que su conjunto de datos EER incluya únicamente un género, aún puede ejecutar el modelo sin problemas. En esta situación, simplemente no es necesario especificar la columna "Sexo".}
 
 \value{
-Las salida se mostrará en el ambiente global de R, su estructura es:
+Las salida se mostrarán como una lista con base en el nombre asignado por el usuario, sus elementos son:
 
 \item{Costo_CoCA:}{Conjunto de resultados que muestra la asignación de costos asociados al alimento de menor costo capaz de satisfacer los requerimientos energéticos de cada grupo demográfico. Las columnas incluyen: "Alimento" (el alimento seleccionado), "Cantidad_G" (la cantidad necesaria en gramos para satisfacer los requerimientos de energía), "Grupo_demo" (grupo demográfico), "Sexo" (género) y "Costo" (el costo del alimento). Este conjunto proporciona una visión detallada de las elecciones alimenticias óptimas desde el punto de vista económico para cada grupo demográfico.}
-}
 
+
+\item{Precio:}{Vector de precios que ingresaron al modelo  desde los datos de insumo}
+
+
+\item{Alimento:}{Vector de Alimento que ingresaron al modelo desde los datos de insumo}
+
+\item{EER:}{Data frame de los requerimientos energéticos por grupos demográficos}
+}
 \note{
 Es importante revisar la documentación para asegurar que los parámetros proporcionados sean correctos y coherentes con los requisitos establecidos.
 }

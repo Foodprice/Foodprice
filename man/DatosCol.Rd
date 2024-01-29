@@ -21,7 +21,7 @@ La función DatosCol ofrece la posibilidad de obtener y manejar datos de precios
 # Ejemplo de uso:
 
 # Obtener datos para Medellín, enero de 2017
-DatosCol(Mes = "Enero", Año = 2017, Ciudad = "Medellín")
+DatosCol(Mes = 1, Año = 2017, Ciudad = "Medellín")
 
 # Salidas en el ambiente global
 
@@ -34,7 +34,7 @@ kable(head(Datos_Insumo_Modelos_2017_Enero_Medellín))
 
  \code{- PARÁMETROS NECESARIOS} 
 
-    \item{Mes:}{Un texto representando el mes del año (por ejemplo, "Enero").}
+    \item{Mes:}{Un valor numérico representando el mes del año (Rango de 1 a 12).}
     \item{Año:}{Un valor numérico entre 2014 y 2023, indicando el año de interés.}
     \item{Ciudad:}{Un texto que especifica la ciudad de interés en Colombia.}
 
@@ -55,11 +55,8 @@ La función realiza una validación exhaustiva de los parámetros ingresados par
 }
 
 \value{
-Las salidas se mostrarán en el ambiente global de R, su estructura es:
+La salida de la función en una lista que cotiene los precios minoristas estimados y el data frame descargado desde el dane.
 
-    \item{PRECIOS_SIPSA_Mes_Año:}{Datos de los precios mayoristas de SIPSA descargados desde el DANE en el año y més dado}
-
-    \item{Datos_Insumo_Modelos_Año_Mes_Ciudad:}{Dataframe que incluye información detallada sobre diversos alimentos. Cada fila del dataframe representa un alimento específico y las columnas abarcan una variedad de nutrientes y propiedades relacionadas con la composición nutricional de los alimentos. Estos atributos incluyen el código de identificación (Cod_TCAC), el nombre del alimento (Alimento), la porción típica del alimento (Serving), el precio ajustado por 100 gramos (Precio_100g_ajust), y los contenidos de diversos nutrientes esenciales, como energía, proteínas, carbohidratos, lípidos, calcio, zinc, hierro, magnesio, fósforo, vitamina C, tiamina, riboflavina, niacina, folatos, vitamina B12, vitamina A, y sodio.}
 
 }
 
