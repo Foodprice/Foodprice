@@ -1,7 +1,7 @@
 
 \name{CoNA}
 \alias{CoNA}
-\title{Función para la estimación del costo diario mínimo de una dieta adecuada en nutrientes.}
+\title{Cost of Nutrient Adequacy (CoNA)}
 \usage{
 
 CoNA(
@@ -13,14 +13,12 @@ Filtrar_Alimentos=NULL
 )
 
 }
-\description{
-La función CoNA calcula los alimentos para una dieta adecuada en nutrientes y su costo mínimo diario. Presenta tres parámetros obligatorios y uno opcional.
-}
+\description{CoNA computes the minimum daily cost of a nutrient-adequate diet for an individual, according to its dietary reference intakes.}
+
 \examples{
 
 # Ejemplo de uso:
 
-# Obtener datos de ejemplo
 # Obtener datos de ejemplo
 data(Datos_Prueba, package = "Foodprice") # Datos de insumo
 data(Dri_min, package = "Foodprice") # Requerimientos minimos de nutrientes
@@ -39,45 +37,48 @@ kable(Mod$Costo_CoNA)
 
 \arguments{
 
- \code{- PARÁMETROS NECESARIOS} 
+ \code{- Required Parameters} 
 
-        \item{Datos_Insumo:}{Data frame que contiene los precios minoristas ajustados por 100 gramos para cada alimento. Debe incluir al menos las columnas con los siguientes nombres: "Precio_100g_ajust", "Alimento" y "Energia". Además, puede contener columnas adicionales que representan los nutrientes que serán considerados en el modelo. Es crucial que los nombres de estos nutrientes sean consistentes tanto en Datos_Insumo como en DRI_min y DRI_max para garantizar una integración adecuada entre los conjuntos de datos.}
-        \item{DRI_min:}{Data Frame de los requerimientos minimos nutricionales. Debe contener mínimo tres columnas así nombradas: "Edad","Energia","Sexo".La columna Edad se asume tipo caracter, Energia y Sexo (1=Femenino,0=Masculino) tipo numérico. Además, Puede contener columnas adicionales que representan los nutrientes que serán considerados en el modelo.} 
-       \item{DRI_max:}{Data Frame de los requerimientos maximos nutricionales. Debe contener mínimo tres columnas así nombradas: "Edad","Energia","Sexo".La columna Edad se asume tipo caracter, Energia y Sexo (1=Femenino,0=Masculino) tipo numérico. Además, Puede contener columnas adicionales que representan los nutrientes que serán considerados en el modelo. Si un requerimiento tiene valor "NA", se asume igual a 99999} 
+        \item{Datos_Insumo:}{Data frame containing the retail price and nutrient composition of local food items, expressed per 100 g edible portion. The data frame must have 3 columns with specific names (“Food”, “Price_100g”, and “Energy”) and K-columns containing food items’ nutrient content for key macro- and micronutrients. }
+        \item{DRI_min:}{Data frame containing the Estimated Energy Requirement (EER), as well as the lower limits of macro- and micronutrient intake for different age and sex groups. The data frame must include 3 columns with specific names (“Age”, “Sex”, and “EER”) and K-columns containing the lower limits of the K macro- and micronutrients. (The nutrient names must match the names used in data parameter) } 
+       \item{DRI_max:}{Data frame containing the upper limits of macro- and micronutrient intake for different age and sex groups. The data frame must include 2 columns with specific names (“Age”, “Sex”) and K-columns containing the upper limits of the K macro- and micronutrients. (The nutrient names must match the names used in data parameter) } 
 
- \code{- PARÁMETROS OPCIONALES} 
+ \code{- Optional Parameters} 
 
-        \item{Filtrar_Alimentos:}{Un vector utilizado como filtro para los alimentos antes de su ingreso al modelo. Este  es útil si se desea excluir uno o varios alimentos específicos del modelo.}
+        \item{Filtrar_Alimentos:}{A vector used for excluding one or more food items before performing the model.}
 
 }
 
 
 
 \details{
-NOTA: Es crucial que los nombres los  nutrientes sean consistentes tanto en Datos_Insumo como en DRI_min y DRI_max para garantizar una integración adecuada entre los conjuntos de datos. Además, el vector necesario de "Energia" se asume se encuentra en DRI_min. Además, no es imperativo que ambas codificaciones (1=Femenino, 0=Masculino) estén presentes en la columna "Sexo" de EER. En el caso de que su conjunto de datos EER incluya únicamente un género, aún puede ejecutar el modelo sin problemas. En esta situación, simplemente no es necesario especificar la columna "Sexo".
+The CoNA is estimated by selecting the set of food items that, at the lowest cost, meets not only the Estimated Energy Requirement (EER), but also the lower and upper limits of macro- and micronutrient intake for an individual. The minimum cost of the nutrient-adequate diet is given by the solution of a linear programming model with 2K + 1 linear constraints. (See FoodPrice: An R Package for estimating least-cost diets for further information).
+On the basis of the linear programming model, it is possible to identify limiting nutrients, as well as compute shadow price elasticity (SPE) of each nutrient. By definition, a nutrient is identified as a limiting nutrient if the intake level in optimal diet reaches exactly the lower limit. For the k-th nutrient, the SPE is defined as the percentage change in the objective function evaluated at the optimal basis (optimal CoNA) when the constraint is increased by 1%. (For formal details, see FoodPrice: An R Package for estimating least-cost diets).
+Note that, to guarantee data integration, the nutrient names must be consistent across all parameters (data, EER_LL, UL). Additionally, for the EER parameter, it is not mandatory that the “Sex” column be defined by two categories (0 if male, 1 if female). If only one of the two categories is included, the function computes the CoNA by age groups. In this case specifying the “Sex” column is not needed.
+
 }
 
 \value{
 
-Las salida se mostrarán como una lista con base en el nombre asignado por el usuario, sus elementos son:
+The output will be displayed as a list based on the name assigned by the user; its elements are:
 
-    \item{Alimentos_CoNA:}{Data frame que proporciona detalles esenciales sobre la asignación de alimentos según el modelo, incluyendo el nombre del alimento seleccionado ("Alimento"), la cantidad necesaria en gramos para cumplir con los requisitos de energía y otros nutrientes ("Cantidad_GR"), el grupo demográfico al que se asigna ("Grupo_demo"), y la codificación del género asociado con la asignación ("Sexo"). La columna "Sexo" está codificada, utilizando 0 para representar el género masculino y 1 para el género femenino. Este conjunto de datos ofrece una visión completa de las elecciones alimenticias óptimas en términos de cantidad y tipo de alimentos para satisfacer los requerimientos energéticos y de nutrientes}
+    \item{Alimentos_CoNA:}{A data frame containing the composition of the diet, differentiated by age and sex groups. The data frame displays, for each demographic group, the food items included in the optimal solution (food) and its quantity. (If the food groups were specified in data parameter, the data frame displays the food group to which the food item belongs). }
     
-    \item{Costo_CoNA:}{Data frame que proporciona los costos del modelo. Columnas: "Grupo_demo" identifica el grupo demográfico asociado , mientras que la columna "Sexo" utiliza la codificación 0 para representar el género masculino y 1 para el género femenino . La columna "Costo" refleja el costo diario resultante de la asignación de alimentos para cumplir con los requisitos del modelo. }
+    \item{Costo_CoNA:}{A data frame containing, for each demographic group, the cost per day (cost_day) and the cost per 1000 kcal (cost_kcal) for the nutrient-adequate diet}
     
-    \item{CoNA_N_Limit:}{Data frame que proporciona los nutrientes limitantes}
+    \item{CoNA_N_Limit:}{A data frame with a dichotomous variable indicating whether a nutrient was a limiting nutrient. }
 
-    \item{CoNA_SP:}{Data frame que proporciona los precios sombra estimados}
+    \item{CoNA_SP:}{A data frame containing the shadow price (SP) and the shadow price elasticity (SPE) of each constraint. The data frame displays a dichotomous variable (constraints) indicating whether the shadow prices are computed based on the lower limit (min) or the upper limit (max).}
 
-    \item{Precio:}{Vector de precios de entrada en insumos al modelo}
+    \item{Precio:}{Numeric vector of food item’s retail price expressed per 100 g edible portion (i.e. the objective function coefficients)}
 
-    \item{Alimento:}{Vector de Alimentos de entrada en insumos al modelo}
+    \item{Alimento:}{A vector of food items used in objective function}
 
-    \item{Req_entrantes:}{Data frame con los requerimientos  de nutrientes mínimos y máximos ingresados al modelo (demás del vector de EER)}
+    \item{Req_entrantes:}{A data frame containing the constraints of the linear programming model, as entered (i.e. EER, lower and upper limits of macro- and micronutrient intake by age and sex groups).}
 
     
 }
 
 \note{
-Es importante revisar la documentación para asegurar que los parámetros proporcionados sean correctos y coherentes con los requisitos establecidos.
+It is important to review the documentation to ensure that the provided parameters are correct and consistent with the established requirements.
 }
