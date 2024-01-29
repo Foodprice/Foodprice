@@ -343,9 +343,9 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
   
   
   nombres_comunes_sin_energia <- setdiff(nombres_comunes, "Energia")
-  #cat("\n")
-  #cat("Los nutrientes a usar en el modelo son:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
-  #cat("\n")
+  cat("\n")
+  cat("Los nutrientes a usar en el modelo son:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
+  cat("\n")
   
   # Unir ambos df para cada sexo (si existe)
   if ("Sexo" %in% colnames(DRI_min)) {
