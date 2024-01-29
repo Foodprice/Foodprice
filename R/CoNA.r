@@ -101,7 +101,7 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
     # Si no existe la columna "Sexo", establecer el nombre de sexo como "0"
     sexo_nombre <- "0"
     DRI_min_i <- DRI_min
-    DRI_max_i <- DRI_max
+    DRI_max_i <- DRI_max;DRI_max_i[is.na(DRI_max_i)] = 999999
   }
   
   
@@ -116,7 +116,7 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
     if ("Sexo" %in% colnames(DRI_min)){
       DRI_min_i <- Sexos_min[[sexo_nombre]]
       DRI_max_i <- Sexos_max[[sexo_nombre]];DRI_max_i[is.na(DRI_max_i)] = 999999}
-
+    
     
     # Organizar ambos df iguales
     
@@ -171,8 +171,7 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
     
     #Unir los EER, minx y max
     Limitaciones=cbind(DRI_min_li,DRI_max_li)
-    
-    
+
     
     #------------------------------ Preparación de datos de resultados:
     #DF de la solución de intercambios
@@ -344,7 +343,7 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
   
   nombres_comunes_sin_energia <- setdiff(nombres_comunes, "Energia")
   cat("\n")
- # cat("Los nutrientes a usar en el modelo son:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
+  # cat("Los nutrientes a usar en el modelo son:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
   cat("\n")
   
   # Unir ambos df para cada sexo (si existe)
@@ -354,7 +353,7 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
     Alimentos_CoNA=rbind(Intercambios_CoNA_0,Intercambios_CoNA_1)
     CoNA_N_Limit=rbind(N_limit_0,N_limit_1) 
     CoNA_SP=rbind(S_shadow_0,S_shadow_1);CoNA_SP = CoNA_SP %>% filter(constraint != "=")
-
+    
     CoNA_SP = CoNA_SP[c("Edad", "Sexo", "Nutrientes", "SP", "SPE","constraint")]
     
     #Nutrientes limtantes y precios sombre
