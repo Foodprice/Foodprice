@@ -367,7 +367,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     }
     
     
-
+    
     #------------------ CÁLCULO DEL COSTO POR EDAD
     Aporte=data.frame()
     for (E in Edad) {
@@ -382,9 +382,9 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
       
       # Agregar el dataframe temporal a costo
       CoRD_COST <- rbind(CoRD_COST, df_temp)
-
+      
     };CoRD_COST$Sexo=as.numeric(sexo_nombre)
-        
+    
     
     # ----------- ESTRUCTURA CIAT PARA INTERCAMBIOS
     
@@ -401,7 +401,6 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     # Asignaciones por sexo
     assign(paste("CoRD_", sexo_nombre, sep = ""), CoRD_COST)
     assign(paste("Intercambios_CoRD_", sexo_nombre, sep = ""), CoRD_INT)
-    print(paste("Intercambios_CoRD_", sexo_nombre, sep = ""))
   }
   
   #--------------------------------------------------------#
@@ -441,13 +440,15 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
   
   
   
- if ("Energia" %in% colnames(Datos_Insumo)){cat("(✓) CoRD: Costo diario promedio por cada 1000 kilocalorías es", mean(Costo_CORD$Costo_1000kcal))}else {
+  if ("Energia" %in% colnames(Datos_Insumo)){cat("(✓) CoRD: Costo diario promedio por cada 1000 kilocalorías es", mean(Costo_CORD$Costo_1000kcal))}else {
     cat("(✓) CoRD")
-} 
+  } 
   
   return(invisible(List_CoRD))
   
   
 }
+
+
 
 

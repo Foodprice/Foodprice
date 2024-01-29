@@ -115,8 +115,8 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
     
     if ("Sexo" %in% colnames(DRI_min)){
       DRI_min_i <- Sexos_min[[sexo_nombre]]
-      DRI_max_i <- Sexos_max[[sexo_nombre]];DRI_max_i[is.na(DRI_max_i)] = 999999
-    }
+      DRI_max_i <- Sexos_max[[sexo_nombre]];DRI_max_i[is.na(DRI_max_i)] = 999999}
+
     
     # Organizar ambos df iguales
     
