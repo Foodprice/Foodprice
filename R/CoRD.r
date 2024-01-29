@@ -44,9 +44,9 @@ for (paquete in paquetes_faltantes) {
   names(Datos_Insumo)
   # Verificar si tiene al menos 3 columnas
   if (ncol(Datos_Insumo) < 4) {
-    stop("Datos_Insumo debe tener al menos 4 columnas.")
+    stop("Datos_Insumo debe tener al menos 3 columnas.")
   }
-required_columns <- c("Precio_100g_ajust" , "Intercambios_g" ,"Precio_INT","Grupo")
+required_columns <- c("Precio_100g_ajust" , "Intercambios_g" ,"Precio_INT", "Grupo")
 missing_columns <- setdiff(required_columns, colnames(Datos_Insumo))
 
 if (length(missing_columns) > 0) {
@@ -62,11 +62,11 @@ if (length(missing_columns) > 0) {
   }
   
   # Verificar si tiene al menos 3 columnas
-  if (ncol(Req_Int) < 3) {
+  if (ncol(Req_Int) < 2) {
     stop("Los requerimientos para el modelo CoRD deben contener al menos 3 columnas.")
   }
 
-required_columns_E <- c("Grupo"  , "Edad"  ,  "Porción")
+required_columns_E <- c("Edad"  ,  "Porción")
 missing_columns_E <- setdiff(required_columns_E, colnames(Req_Int))
 
 if (length(missing_columns_E) > 0) {
@@ -86,7 +86,7 @@ if (length(missing_columns_E) > 0) {
     stop("La cantidad de grupos a selecionar para el modelo CoRD deben contener al menos 2 columnas.")
   }
 
-required_columns_E <- c("Grupo","Cantidad")
+required_columns_E <- c("Cantidad")
 missing_columns_E <- setdiff(required_columns_E, colnames(Cantidad_selec))
 
 if (length(missing_columns_E) > 0) {
@@ -159,6 +159,7 @@ Edad=levels(as.factor(Req_Int_i$Edad))
 
 #---------------- VALIDACIÓN Y SELECIÓN DE GRUPOS----------------
 
+# validación de subgrupo
 if (("Subgrupo" %in% colnames(Cantidad_selec))) {
 
 
@@ -173,6 +174,8 @@ if (!("Subgrupo" %in% colnames(Datos_Insumo))) {
 
 }
 
+
+
 #Identificar grupos o subgrupos
 if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {
   Grupos_Insumo=levels(as.factor(Datos_Insumo$Subgrupo))
@@ -180,15 +183,19 @@ if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_
   grupos_req=levels(as.factor(Req_Int_i$Subgrupo)) 
   
   } else {
+
+if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {
+
   Grupos_Insumo=levels(as.factor(Datos_Insumo$Grupo)) 
   Grupos_Cantidad_Sel <- unique(Cantidad_selec$Grupo) #grupos de cantidad
   grupos_req=levels(as.factor(Req_Int_i$Grupo))
+
+  } else {
+       stop("Los tres parámetros deben tener la columna Grupo si no tienen Subgrupo")
+
   }
 
-
-
-Grupos_Cantidad_Sel <- unique(Cantidad_selec$Grupo) #grupos de cantidad
-grupos_req=levels(as.factor(Req_Int_i$Grupo))
+  }
 
 
 #-------------------
@@ -234,7 +241,12 @@ paste("Se trabajará entonces sólo con los grupos iguales en los tres vectores 
 }
 
 # Cantidad a selcionar, sólo los comunes
-Grupos_finales <- subset(Cantidad_selec, Grupo %in% Grupos_comunes_req)
+
+if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {Grupos_finales <- subset(Cantidad_selec, Subgrupo %in% Grupos_comunes_req)}
+
+if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {Grupos_finales <- subset(Cantidad_selec, Grupo %in% Grupos_comunes_req)}
+
+
 
 #--------------------------------------------------------------------------------------------------------------------#
 #                       CUARTA ETAPA : MODELO      3                                                                #
@@ -290,21 +302,40 @@ for (i in 1:length(Edad)) {
   for (j in 1:nrow(Grupos_finales)) {
     
     # Extraer el grupo y la cantidad a seleccionar
-    Grupo_i = Grupos_finales$Grupo[j]  # Usar j para el bucle interior
+
+if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {Grupo_i = Grupos_finales$Subgrupo[j] } 
+
+if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {Grupo_i = Grupos_finales$Grupo[j] }
+    
+     # Usar j para el bucle interior
     Cantidad_i = Grupos_finales$Cantidad[j]  # Usar j para el bucle interior
     
     # Extraer y requerimientos datos por grupo o subgrupo
-    if ("Subgrupo" %in% colnames(Datos_Insumo)) {Datos_grupo_i = subset(Datos_Insumo, Subgrupo == Grupo_i)} else {Datos_grupo_i = subset(Datos_Insumo, Grupo == Grupo_i) }
+
+    if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {Datos_grupo_i = subset(Datos_Insumo, Subgrupo == Grupo_i) } 
+
+if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {Datos_grupo_i = subset(Datos_Insumo, Grupo == Grupo_i)}
+
+
 
     Datos_grupo_i = Datos_grupo_i[order(Datos_grupo_i$Precio_INT), ]
-    Req_i_g = subset(Req_i, Grupo == Grupo_i)
+
+if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {    Req_i_g = subset(Req_i, Subgrupo == Grupo_i) } 
+
+if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {    Req_i_g = subset(Req_i, Grupo == Grupo_i) }
+    
+
     
     # Dejar columnas útiles en Datos_grupo_i
     if (Cantidad_i == 0) {
       stop("La cantidad de elementos a seleccionar debe ser un entero mayor que cero")
     }
     
-    Datos_grupo_i = Datos_grupo_i %>% select(any_of(c("Alimento", "Precio_100g_ajust", "Intercambios_g", "Precio_INT", "Grupo","Energia")))
+    if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) { Datos_grupo_i = Datos_grupo_i %>% select(any_of(c("Alimento", "Precio_100g_ajust", "Intercambios_g", "Precio_INT", "Subgrupo","Energia")))}
+    
+    if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) { Datos_grupo_i = Datos_grupo_i %>% select(any_of(c("Alimento", "Precio_100g_ajust", "Intercambios_g", "Precio_INT", "Grupo","Energia")))}
+
+
     Datos_grupo_i = Datos_grupo_i[1:Cantidad_i, ]
     
     # Función para generar entrada A al sistema de ecuaciones
@@ -358,7 +389,16 @@ CoRD_COST <- rbind(CoRD_COST, df_temp)
 
 
 # ----------- ESTRUCTURA CIAT PARA INTERCAMBIOS
-CoRD_INT= CoRD_INT %>% select(any_of(c("Alimento","Grupo","Cantidad_INT","Edad","Sexo")))
+
+if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {
+
+  suppressWarnings({CoRD_INT <- merge(CoRD_INT, Datos_Insumo, by = "Alimento", all.x = TRUE)})# recuperar insumos
+  CoRD_INT= CoRD_INT %>% select(any_of(c("Alimento","Grupo","Cantidad_INT","Edad","Sexo")))
+  }
+
+
+
+if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {CoRD_INT= CoRD_INT %>% select(any_of(c("Alimento","Grupo","Cantidad_INT","Edad","Sexo")))}
 
 # Asignaciones por sexo
 assign(paste("CoRD_", sexo_nombre, sep = ""), CoRD_COST)
@@ -414,5 +454,4 @@ if ("Energia" %in% colnames(Datos_Insumo)){cat("(✓) CoRD: Costo diario promedi
 
 
 }
-
 
