@@ -46,7 +46,7 @@ kable(Mod$Costo_CoCA)
 \details{
 The CoCA is defined as the minimum cost of an energy-only diet that provides the calories necessary to meet the EER for an individual. The optimal solution to the linear programming model consists of a diet composed of the food item whose price per kilocalorie is minimal (i.e. the least-cost starchy staple food). (See FoodPrice: An R Package for estimating least-cost diets for further information).
 Note that, for the EER parameter, it is not mandatory that the “Sex” column be defined by two categories (0 if male, 1 if female). If only one of the two categories is included, the function computes the CoCA by age groups. In this case specifying the “Sex” column is not needed. 
-
+}
 \value{
 The output will be displayed as a list based on the name assigned by the user; its elements are:
 
