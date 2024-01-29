@@ -17,18 +17,18 @@ Filtrar_Alimentos=NULL
 
 \examples{
 
-# Ejemplo de uso:
+# Example:
 
-# Obtener datos de ejemplo
-data(Datos_Prueba, package = "Foodprice") # Datos de insumo
-data(Dri_min, package = "Foodprice") # Requerimientos minimos de nutrientes
-data(Dri_max, package = "Foodprice") # Requerimientos máximos de nutrientes
+# Retrieve input data
+data(Datos_Prueba, package = "Foodprice") 
+data(Dri_min, package = "Foodprice") 
+data(Dri_max, package = "Foodprice") 
 
 
-# Aplicar la función a los datos de entrada
+# Apply the function to the input data
 Mod=CoNA(Datos_Insumo = Datos_Prueba,DRI_min=Dri_min,DRI_max=Dri_max)
 
-# Visualización del costo
+# Cost Visualization
 kable(Mod$Costo_CoNA)
 
 }

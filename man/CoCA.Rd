@@ -16,16 +16,16 @@ CoCA computes the minimum daily cost of a caloric adequate diet for an individua
 }
 \examples{
 
-# Ejemplo de uso:
+# Example:
 
-# Obtener datos de ejemplo
-data(Datos_Prueba, package = "Foodprice") # Datos de insumo
-data(EER, package = "Foodprice") # Requerimientos energéticos
+# Retrieve input data
+data(Datos_Prueba, package = "Foodprice")
+data(EER, package = "Foodprice") 
 
-# Aplicar la función a los datos de entrada
+# Apply the function to the input data
 Mod=CoCA(Datos_Insumo = Datos_Prueba, EER=EER)
 
-# Visualización del costo
+# Cost Visualization
 kable(Mod$Costo_CoCA)
 
 }

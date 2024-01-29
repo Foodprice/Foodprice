@@ -1,7 +1,7 @@
 
 \name{CoRD}
 \alias{CoRD}
-\title{Función para la estimación del costo diario mínimo de una dieta saludable.}
+\title{Cost of Recommended Diet (CoRD)}
 \usage{
 
 Modelo_3(
@@ -13,67 +13,70 @@ Filtrar_Alimentos=NULL
 
 }
 \description{
-La función CoRD calcula los alimentos para una dieta saludable y su costo mínimo diario. Presenta tres parámetros obligatorios y uno opcional.
+CoRD computes the minimum daily cost of a recommended diet or a healthy diet that guarantees among and within groups diversity on the basis of food group recommendations provided by Food-base dietary guidelines (FBDGs).
 }
 \examples{
 
-# Ejemplo de uso:
+# Example:
 
-# Obtener datos de insumo
+# Retrieve input data
 data(Datos_Prueba, package = "Foodprice")
 
-data(Req_Int, package = "Foodprice") # obtener los requerimientos de porciones pro grupos de alimento y grupos demográficos
-data(Cantidad_selec, package = "Foodprice") # Cantidad de alimentos a selecionar por grupos o subgrupos
+data(Req_Int, package = "Foodprice") 
+data(Cantidad_selec, package = "Foodprice") 
 
 
-# Aplicar la función a los datos de entrada
+# Apply the function to the input data
 Mod=CoRD(Datos_Insumo = Datos_Prueba,Cantidad_selec = Cantidad_selec,Req_Int = Req_Int)
 
-# Visualización del costo
+# Cost Visualization
 head(Mod$Costo_CORD)
 }
 
 
 \arguments{
 
- \code{- PARÁMETROS NECESARIOS}     
+ \code{- Required Parameters} 
 
-\item{Datos_Insumo:}{El marco de datos debe contener al menos cuatro columnas con los siguientes nombres: "Alimento" (Alimentos), "Intercambios_g" (Intercambio de cada alimento), "Precio_INT" (Precio por Intercambio del alimento), "Grupo"(Grupo de alimentos, se requieren mínimo 5 grupos).
-Adicional a lo anterior, si requiere que el modelo calcule los alimentos con base en subgrupos pero que el costo se vea en función de Grupos, añada la columna "Subgrupo" a los datos de insumo. Si también requiere calcular el costo por Mil kilocalorias, añada una columna llamda "Energia" con el aporte energético de cada alimento en los datos de insumo.
- }
+\item{Datos_Insumo:}{Data frame containing at least 4 columns with the following names: “Food”, “Group”, “Serving_g”, and “Price_serving”. The “Serving_g” and “Price_serving” columns display the weight in grams per serving and the price per edible serving for each food item. The “Group” column indicates the food group to which the food item belongs (≥ 5 groups). }
 
-  \item{Req_Int:}{ Data frame con los requerimientos de porciones por grupos de alimentos y grupos demográficos. Debe contener al menos tres columnas así nombradas: "Edad" (Grupo demográfico), "Porción" (Porciones de intercambios por grupo), "Grupo" (Grupos de alimentos). Si se requiere que el modelo trabaje con subgrupos, debe existir la columna "subgrupo" con los mimos niveles que los Subgrupos de los datos de insumo (No es necesaio incluir la columna "Grupo" en tal caso).}
-  \item{Cantidad_selec:}{Data frame con la cantidad de alimentos a selecionar por cada grupo o subgrupo de alimento. Este debe contener al menos dos columnas así nombradas: "Cantidad", "Grupo". Si desea trabajar con subgrupos, cambie la columna "Grupo" por "Subgrupo".}
+\item{Req_Int:}{ Data frame having at least the following columns: “Age”, “Sex”, “Serving”, and “Food_group”. The data frame contains, for different age and sex groups, the serving recommendations (Serving) from each food group (Food_group). }
 
- \code{- PARÁMETROS OPCIONALES}
 
-        \item{Filtrar_Alimentos:}{Un vector utilizado como filtro para los alimentos antes de su ingreso al modelo. Este  es útil si se desea excluir uno o varios alimentos específicos del modelo.}
+\item{Cantidad_selec:}{Data frame containing the number of food-items selected from each food group. The data frame must include at least 2 columns with specific names (“Group” and “Number”) }
+
+ \code{- Optional Parameters} 
+
+\item{Filtrar_Alimentos:}{A vector used for excluding one or more food items before performing the model.}
 }
 
 
-
-
 \details{
-NOTA: Si se requere trabajar con subgrupos, debe existir en los datos de insumo una columna llamada "Subgrupo" además de "Grupo"; Los parámetros Req_Int y Cantidad_selec deberán tener la una columna llamada "Subgrupo" (No es necesario que presenten la columna "Grupo").
+
+The CoRD is estimated from the set of food items that satisfy, at the lowest cost, the serving recommendations by food group specified in the Food-base dietary guidelines (FBDGs) of a country. The CoRD guarantees the diversity among and within groups in the sense that a specific number of least-cost food items are chosen from each food group. The quantity of each food item in the recommended diet is determined by two conditions: (1) two food items selected from the same food group are included in the same quantity; (2) each food group must satisy the serving recommendations from the FBDGs. (See FoodPrice: An R Package for estimating least-cost diets for further information).
+Note that the CoRD can be estimated using not only food groups but also food subgroups. For this purpose, a column called “Subgroups” must be added to each of the above-mentioned data frames (data, serve, and diverse). Additionally, the cost per 1000 kcal for the recommended diet can be estimated by adding a column called “Energy” (to the data set in “Data”) that displays the energy content of each food item. 
+For the EER parameter, it is not mandatory that the “Sex” column be defined by two categories (0 if male, 1 if female). If only one of the two categories is included, the function computes the CoRD by age groups. In this case specifying the “Sex” column is not needed.
+
+
 }
 \value{
 
 Las salida se mostrarán como una lista con base en el nombre asignado por el usuario, sus elementos son:
 
-    \item{Costo_CORD:}{Data frame que proporciona los costos del modelo. Columnas: "Grupo_demo" identifica el grupo demográfico asociado , mientras que la columna "Sexo" utiliza la codificación 0 para representar el género masculino y 1 para el género femenino . La columna "Costo" refleja el costo diario resultante de la asignación de alimentos para cumplir con los requisitos del modelo. Si los datos de insumo tienen la columna "Energia", calculará el costo por Mil kilocalorias por cada grupo demográfico y sexo en la columna llamada: Costo_1000kcal. }
+    \item{Costo_CORD:}{A data frame containing, for each demographic group, the cost per day (cost_day) for the recommended diet.  (If the “Energy” column were included in “Data”, the cost per 1000 kcal (cost_kcal) will also be displayed).}
     
-    \item{Intercambios_CoRD:}{Data frame que proporciona la cantidad de intercambios por cada Alimento y grupo en cada grupo demográfico y sexo. contiene las columnas:"Alimento", "Grupo", "Cantidad_INT","Edad", "Sexo"}
+    \item{Intercambios_CoRD:}{A data frame containing the food items (differentiated by food group) included in the recommended diet, as well as its number of servings.         }
 
-    \item{Precio:}{Vector de precios de entrada en insumos al modelo}
+    \item{Precio:}{Numeric vector of the retail price per edible serving of each food item, as entered.}
 
-    \item{Alimento:}{Vector de Alimentos de entrada en insumos al modelo}
+    \item{Alimento:}{A vector of food items, as entered}
     
-    \item{Energia:}{Vector aporte energéico de cada alimento en insumos al modelo (si este existe)}
+    \item{Energia:}{Numeric vector containing the energy content of each food item, as entered in “Energy” column.}
 
 
 
 }
 
 \note{
-Es importante revisar la documentación para asegurar que los parámetros proporcionados sean correctos y coherentes con los requisitos establecidos.
+It is important to review the documentation to ensure that the provided parameters are correct and consistent with the established requirements.
 }
