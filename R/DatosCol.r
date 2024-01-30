@@ -826,7 +826,7 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   
   
   mensaje <- paste("En la ciudad de", Ciudad, "del año", Año, "y mes", Mes, ", se omitieron los siguientes alimentos por falta de información nutricional " , length(alimentos_faltantes) ," :", paste(alimentos_faltantes, collapse = ", "), ". Si conoce la información de estos, utilice el parámetro opcional llamado 'Ingreso_Alimentos' para ingresarlos")
-  
+  cat(mensaje)
   #------------------------------------------------------------------------------------------#
   #                       ASGINACIÓN EN EL ENTORNO GLOBAL                                   #
   #-----------------------------------------------------------------------------------------#
