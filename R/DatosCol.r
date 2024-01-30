@@ -59,11 +59,21 @@ if (!is.null(Percentil_Abast)) {
   }
 }
 # Verificación de Ingreso_Alimentos si es proporcionado
-if (!is.null(Ingreso_Alimentos)) {validar_parametros(Ingreso_Alimentos, "vector", c(21, 21))}
+if (!is.null(Ingreso_Alimentos)) {
+  if (!(is.vector(Ingreso_Alimentos) && length(Ingreso_Alimentos) == 25) && 
+      !(is.data.frame(Ingreso_Alimentos) && ncol(Ingreso_Alimentos) == 25)) {
+    stop("Error: Ingreso_Alimentos debe ser o un vector de tamaño 25 o un dataframe con 25 columnas.")
+  }}
+
+
 # Verificación de data_list_precios
 if (!is.null(data_list_precios)) {validar_parametros(data_list_precios, "list")}
+
 # Verificación de margenes
-if (!is.null(data_list_precios)) {validar_parametros(Margenes, "vector", c(8, 8))}
+if (!is.null(Margenes)) {
+  if (!is.vector(Margenes) || length(Margenes) != 8 || any(Margenes < 0 | Margenes > 100)) {
+    stop("Error: Margenes debe ser un vector de tamaño 8 con valores entre 0 y 100.")
+  }}
 
   #------------------------------------------------------------------------------------------#
   #                       SEGUNDA ETAPA: VALIDACIÓN DE LIBRERIAS                             # ✔ SIMPLIFICADA Y ASEGURADA
@@ -149,20 +159,32 @@ crear_o_reusar_entorno <- function(nombre_entorno) {
 }
 
 # Crear o reutilizar entornos para precios y abastecimiento
-data_list_precios_ev_nuevo <- crear_o_reusar_entorno("data_list_precios_ev")
-data_list_abast_ev_nuevo <- crear_o_reusar_entorno("data_list_abast_ev")
+
+if (is.null(data_list_precios)) {data_list_precios_ev_nuevo <- crear_o_reusar_entorno("data_list_precios_ev")}
+if (!is.null(Percentil_Abast) && is.null(data_list_abas)){data_list_abast_ev_nuevo <- crear_o_reusar_entorno("data_list_abast_ev")}
 
 
 
 # Carga de precios mayoristas
 if (is.null(data_list_precios)) {
   data_list_precios = cargar_datos_dane("precios", Año, data_list_precios_ev_nuevo)
+}else {
+   data_list_precios=data_list_precios
 }
 
-# Carga de datos de abastecimiento
+# carga de abastecimiento
+
 if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
+
   data_list_abas = cargar_datos_dane("abastecimiento", Año, data_list_abast_ev_nuevo)
+} 
+
+
+if (!is.null(Percentil_Abast) && !is.null(data_list_abas)){
+
+  data_list_abas=data_list_abas
 } else {
+
   data_list_abas = NULL
 }
 
@@ -709,47 +731,7 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   #--------------------------------------------------- Salida principal 2 ----------------------------- Datos_Insumo_Modelos ----------------------------------------#
  
   
-  # -----------------------------------------------------------------#
-  #                         Alimentos faltantes                      #
-  #------------------------------------------------------------------#
-  
-  
-  if (!is.null(Ingreso_Alimentos)) {
-    alimentos_faltantes <- Alimentos_Sipsa_Precios[!(Alimentos_Sipsa_Precios %in% Mapeo_Sipsa_TCAC1$Alimento)]
-    
-    if (is.data.frame(Ingreso_Alimentos)) {
-      # Si es un data frame, buscar los alimentos en la columna 'Alimento'
-      alimentos_encontrados <- Ingreso_Alimentos$Alimento[Ingreso_Alimentos$Alimento %in% alimentos_faltantes]
-    } else {
-      # Si es un vector, buscar los alimentos directamente
-      alimentos_encontrados <- Ingreso_Alimentos[Ingreso_Alimentos %in% alimentos_faltantes]
-    }
-    
-    alimentos_faltantes <- alimentos_faltantes[!(alimentos_faltantes %in% alimentos_encontrados)]
-    alimentos_a_eliminar <- c("Ajo importado", "cilantro", "linaza molida", "jengibre", "tomillo", "perejil liso", "crespo", "Ajo","Acelga")
-    
-    # Eliminar alimentos específicos del vector
-    alimentos_faltantes <- alimentos_faltantes[!grepl(paste(alimentos_a_eliminar, collapse = "|"), alimentos_faltantes, ignore.case = TRUE)]
-    
-    alimentos_faltantes <- alimentos_faltantes[!(alimentos_faltantes %in% alimentos_encontrados)]
-    
-    Datos_Insumo_Modelos <- rbind(Ingreso_Alimentos, Datos_Insumo_Modelos)
-  } else {
-    alimentos_faltantes <- Alimentos_Sipsa_Precios[!(Alimentos_Sipsa_Precios %in% Mapeo_Sipsa_TCAC1$Alimento)]
-    # Palabras a eliminar
-    alimentos_a_eliminar <- c("Ajo importado", "cilantro", "linaza molida", "jengibre", "tomillo", "perejil liso", "crespo", "Ajo","Acelga")
-    
-    # Eliminar alimentos específicos del vector
-    alimentos_faltantes <- alimentos_faltantes[!grepl(paste(alimentos_a_eliminar, collapse = "|"), alimentos_faltantes, ignore.case = TRUE)]
-    
-  }
-  
-  
-  
-  mensaje <- paste("En la ciudad de", Ciudad, "del año", Año, "y mes", Mes, ", se omitieron los siguientes alimentos por falta de información nutricional " , length(alimentos_faltantes) ," :", paste(alimentos_faltantes, collapse = ", "), ". Si conoce la información de estos, utilice el parámetro opcional llamado 'Ingreso_Alimentos' para ingresarlos")
-  #---- alimentos por falta de nutrición cat(mensaje)
-  
-  
+
   
   
   # -----------------------------------------------------------------#
@@ -804,6 +786,46 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
     select(Cod_TCAC, Alimento, Serving, Precio_100g_ajust,Intercambios_g, Precio_INT, Grupo,Subgrupo, Energia:VitaminaB12,
            VitaminaA, Sodio)
   
+
+
+   # -----------------------------------------------------------------#
+  #                         Alimentos faltantes                      #
+  #------------------------------------------------------------------#
+  
+  
+  if (!is.null(Ingreso_Alimentos)) {
+    alimentos_faltantes <- Alimentos_Sipsa_Precios[!(Alimentos_Sipsa_Precios %in% Mapeo_Sipsa_TCAC1$Alimento)]
+    
+    if (is.data.frame(Ingreso_Alimentos)) {
+      # Si es un data frame, buscar los alimentos en la columna 'Alimento'
+      alimentos_encontrados <- Ingreso_Alimentos$Alimento[Ingreso_Alimentos$Alimento %in% alimentos_faltantes]
+    } else {
+      # Si es un vector, buscar los alimentos directamente
+      alimentos_encontrados <- Ingreso_Alimentos[Ingreso_Alimentos %in% alimentos_faltantes]
+    }
+    
+    alimentos_faltantes <- alimentos_faltantes[!(alimentos_faltantes %in% alimentos_encontrados)]
+    alimentos_a_eliminar <- c("Ajo importado", "cilantro", "linaza molida", "jengibre", "tomillo", "perejil liso", "crespo", "Ajo","Acelga")
+    
+    # Eliminar alimentos específicos del vector
+    alimentos_faltantes <- alimentos_faltantes[!grepl(paste(alimentos_a_eliminar, collapse = "|"), alimentos_faltantes, ignore.case = TRUE)]
+    
+    alimentos_faltantes <- alimentos_faltantes[!(alimentos_faltantes %in% alimentos_encontrados)]
+    
+    Datos_MOD3 <- rbind(Ingreso_Alimentos, Datos_MOD3)
+  } else {
+    alimentos_faltantes <- Alimentos_Sipsa_Precios[!(Alimentos_Sipsa_Precios %in% Mapeo_Sipsa_TCAC1$Alimento)]
+    # Palabras a eliminar
+    alimentos_a_eliminar <- c("Ajo importado", "cilantro", "linaza molida", "jengibre", "tomillo", "perejil liso", "crespo", "Ajo","Acelga")
+    
+    # Eliminar alimentos específicos del vector
+    alimentos_faltantes <- alimentos_faltantes[!grepl(paste(alimentos_a_eliminar, collapse = "|"), alimentos_faltantes, ignore.case = TRUE)]
+    
+  }
+  
+  
+  
+  mensaje <- paste("En la ciudad de", Ciudad, "del año", Año, "y mes", Mes, ", se omitieron los siguientes alimentos por falta de información nutricional " , length(alimentos_faltantes) ," :", paste(alimentos_faltantes, collapse = ", "), ". Si conoce la información de estos, utilice el parámetro opcional llamado 'Ingreso_Alimentos' para ingresarlos")
   
   #------------------------------------------------------------------------------------------#
   #                       ASGINACIÓN EN EL ENTORNO GLOBAL                                   #
