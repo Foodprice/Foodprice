@@ -102,7 +102,7 @@ CoRD=function(data,serv,diverse,exclude=NULL){
     }
     
     # Filtrar los alimentos que no están en exclude
-    quantitydata <- quantitydata[!(quantitydata$Food %in% exclude), ]
+    data <- data[!(data$Food %in% exclude), ]
   }
   
   
