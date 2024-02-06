@@ -1,14 +1,14 @@
 
 \name{CoRD}
 \alias{CoRD}
-\title{Cost of Recommended Diet (CoRD)}
+\title{cost_day of Recommended Diet (CoRD)}
 \usage{
 
 CoRD(
-Datos_Insumo,
-Req_Int,
-Cantidad_selec,
-Filtrar_Alimentos=NULL
+data,
+serv,
+diverse,
+exclude=NULL
 )
 
 }
@@ -22,14 +22,14 @@ CoRD computes the minimum daily cost of a recommended diet or a healthy diet tha
 # Retrieve input data
 data(Datos_Prueba, package = "Foodprice")
 
-data(Req_Int, package = "Foodprice") 
-data(Cantidad_selec, package = "Foodprice") 
+data(serv, package = "Foodprice") 
+data(diverse, package = "Foodprice") 
 
 
 # Apply the function to the input data
-Mod=CoRD(Datos_Insumo = Datos_Prueba,Cantidad_selec = Cantidad_selec,Req_Int = Req_Int)
+Mod=CoRD(data = Datos_Prueba,diverse = diverse,serv = serv)
 
-# Cost Visualization
+# cost_day Visualization
 head(Mod$Costo_CoRD)
 }
 
@@ -38,16 +38,16 @@ head(Mod$Costo_CoRD)
 
  \code{- Required Parameters} 
 
-\item{Datos_Insumo:}{Data frame containing at least 4 columns with the following names: “Food”, “Group”, “Serving_g”, and “Price_serving”. The “Serving_g” and “Price_serving” columns display the weight in grams per serving and the price per edible serving for each food item. The “Group” column indicates the food group to which the food item belongs (≥ 5 groups). }
+\item{data:}{Data frame containing at least 4 columns with the following names: “Food”, “Group”, “Serving_g”, and “Price_serving”. The “Serving_g” and “Price_serving” columns display the weight in grams per serving and the price per edible serving for each food item. The “Group” column indicates the food group to which the food item belongs (≥ 5 groups). }
 
-\item{Req_Int:}{ Data frame having at least the following columns: “Age”, “Sex”, “Serving”, and “Food_group”. The data frame contains, for different age and sex groups, the serving recommendations (Serving) from each food group (Food_group). }
+\item{serv:}{ Data frame having at least the following columns: “Age”, “Sex”, “Serving”, and “Food_group”. The data frame contains, for different age and sex groups, the serving recommendations (Serving) from each food group (Food_group). }
 
 
-\item{Cantidad_selec:}{Data frame containing the number of food-items selected from each food group. The data frame must include at least 2 columns with specific names (“Group” and “Number”) }
+\item{diverse:}{Data frame containing the number of food-items selected from each food group. The data frame must include at least 2 columns with specific names (“Group” and “Number”) }
 
  \code{- Optional Parameters} 
 
-\item{Filtrar_Alimentos:}{A vector used for excluding one or more food items before performing the model.}
+\item{exclude:}{A vector used for excluding one or more food items before performing the model.}
 }
 
 
@@ -69,9 +69,9 @@ Las salida se mostrarán como una lista con base en el nombre asignado por el us
 
     \item{Precio:}{Numeric vector of the retail price per edible serving of each food item, as entered.}
 
-    \item{Alimento:}{A vector of food items, as entered}
+    \item{Food:}{A vector of food items, as entered}
     
-    \item{Energia:}{Numeric vector containing the energy content of each food item, as entered in “Energy” column.}
+    \item{Energy:}{Numeric vector containing the energy content of each food item, as entered in “Energy” column.}
 
 
 

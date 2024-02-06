@@ -1,7 +1,7 @@
 
 \name{exclusion_3er_modelo}
 \alias{exclusion_3er_modelo}
-\title{exclusion_3er_modelo (dataset for DatosCol function)}
+\title{exclusion_3er_modelo (dataset for DataCol function)}
 
 \description{
 Dataset for filtering foods with very low caloric content, condiments consumed in small quantities, herbs, spices, or preparations.
@@ -12,7 +12,7 @@ exclusion_3er_modelo
 }
 
 \format{
-Dataset of 4 foods (rows) and two columns, "Alimento" (Food) and "Cod_TCAC" (TCAC Code).
+Dataset of 4 foods (rows) and two columns, "Food" (Food) and "Cod_TCAC" (TCAC Code).
 }
 
 \examples{

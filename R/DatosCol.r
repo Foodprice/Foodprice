@@ -3,9 +3,11 @@
 #-----------------------------------------------------------------------------------------#
 
 
-DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos = NULL, data_list_precios = NULL, data_list_abas = NULL, Margenes=NULL) {
+DataCol<- function(Month, Year, City, Percentile = NULL, Food_income = NULL, Price_data_list = NULL, Supply_data_list = NULL, Margins=NULL) {
   
-  
+
+
+
   #------------------------------------------------------------------------------------------#
   #         PRIMERA ETAPA: VALIDACIÓN DE PARÁMETROS OBLIGATORIOS Y OPCIONALES                # ✔ SIMPLIFICADA Y ASEGURADA
   #-----------------------------------------------------------------------------------------#
@@ -13,7 +15,7 @@ DatosCol<- function(Mes, Año, Ciudad, Percentil_Abast = NULL, Ingreso_Alimentos
 #Función para validar parámetros
 validar_parametros <- function(parametro, tipo, rango = NULL) {
   if (missing(parametro)) {
-    stop("Falta el parámetro ", deparse(substitute(parametro)))
+    stop("Parameter is missing", deparse(substitute(parametro)))
   }
   
   if (!is.null(tipo)) {
@@ -25,54 +27,54 @@ validar_parametros <- function(parametro, tipo, rango = NULL) {
                            "default" = function(x) FALSE)
     
     if (!tipo_funcion(parametro)) {
-      stop(paste(deparse(substitute(parametro)), " debe ser de tipo ", tipo))
+      stop(paste(deparse(substitute(parametro)), " It must be of type ", tipo))
     }
   }
   
   if (!is.null(rango) && !is.infinite(rango[1]) && !is.infinite(rango[2])) {
     if (parametro < rango[1] || parametro > rango[2]) {
-      stop(paste(deparse(substitute(parametro)), " debe estar en el rango ", rango[1], " - ", rango[2]))
+      stop(paste(deparse(substitute(parametro)), " It must be within the range ", rango[1], " - ", rango[2]))
     }
   }
 }
 
 #-----------------------Verificaciones de paraḿetros obligatorios
 
-# Verificación de Mes
-validar_parametros(Mes, "numeric", c(1, 12))
-# Verificación de Año
-validar_parametros(Año, "numeric", c(2013, 2023))
-# Verificación de Ciudad
-validar_parametros(Ciudad, "character")
+# Verificación de Month
+validar_parametros(Month, "numeric", c(1, 12))
+# Verificación de Year
+validar_parametros(Year, "numeric", c(2013, 2023))
+# Verificación de City
+validar_parametros(City, "character")
 
 #-----------------------Verificaciones de paraḿetros opcionales
 
-if (!is.null(Percentil_Abast)) {
-  validar_parametros(Percentil_Abast, "numeric", c(0, 1))
+if (!is.null(Percentile)) {
+  validar_parametros(Percentile, "numeric", c(0, 1))
   
-  if (!is.null(data_list_abas)) {
-    validar_parametros(data_list_abas, "list")
+  if (!is.null(Supply_data_list)) {
+    validar_parametros(Supply_data_list, "list")
   }
 } else {
-  if (!is.null(data_list_abas)) {
-    stop("Si se proporciona data_list_abas, Percentil_Abast debe estar presente.")
+  if (!is.null(Supply_data_list)) {
+    stop("If Supply_data_list is provided, Percentile must be present.")
   }
 }
-# Verificación de Ingreso_Alimentos si es proporcionado
-if (!is.null(Ingreso_Alimentos)) {
-  if (!(is.vector(Ingreso_Alimentos) && length(Ingreso_Alimentos) == 25) && 
-      !(is.data.frame(Ingreso_Alimentos) && ncol(Ingreso_Alimentos) == 25)) {
-    stop("Error: Ingreso_Alimentos debe ser o un vector de tamaño 25 o un dataframe con 25 columnas.")
+# Verificación de Food_income si es proporcionado
+if (!is.null(Food_income)) {
+  if (!(is.vector(Food_income) && length(Food_income) == 25) && 
+      !(is.data.frame(Food_income) && ncol(Food_income) == 25)) {
+    stop("Error: Food_income must be either a vector of size 25 or a dataframe with 25 columns.")
   }}
 
 
-# Verificación de data_list_precios
-if (!is.null(data_list_precios)) {validar_parametros(data_list_precios, "list")}
+# Verificación de Price_data_list
+if (!is.null(Price_data_list)) {validar_parametros(Price_data_list, "list")}
 
 # Verificación de margenes
-if (!is.null(Margenes)) {
-  if (!is.vector(Margenes) || length(Margenes) != 8 || any(Margenes < 0 | Margenes > 100)) {
-    stop("Error: Margenes debe ser un vector de tamaño 8 con valores entre 0 y 100.")
+if (!is.null(Margins)) {
+  if (!is.vector(Margins) || length(Margins) != 8 || any(Margins < 0 | Margins > 100)) {
+    stop("Error: Margins must be a vector of size 8 with values between 0 and 100.")
   }}
 
   #------------------------------------------------------------------------------------------#
@@ -96,10 +98,6 @@ for (paquete in paquetes_faltantes) {
 }
 
 
-  #cat("\n")
-  #print("Se instalaron y cargaron todas la librerias corectamente")
-  #cat("\n")
-   
 
   #------------------------------------------------------------------------------------------#
   #                   TERCERA ETAPA: CARGA DE DATOS DESDE EL DANE (COL)                      # ✔ SIMPLIFICADA Y ASEGURADA
@@ -160,32 +158,32 @@ crear_o_reusar_entorno <- function(nombre_entorno) {
 
 # Crear o reutilizar entornos para precios y abastecimiento
 
-if (is.null(data_list_precios)) {data_list_precios_ev_nuevo <- crear_o_reusar_entorno("data_list_precios_ev")}
-if (!is.null(Percentil_Abast) && is.null(data_list_abas)){data_list_abast_ev_nuevo <- crear_o_reusar_entorno("data_list_abast_ev")}
+if (is.null(Price_data_list)) {data_list_precios_ev_nuevo <- crear_o_reusar_entorno("data_list_precios_ev")}
+if (!is.null(Percentile) && is.null(Supply_data_list)){data_list_abast_ev_nuevo <- crear_o_reusar_entorno("data_list_abast_ev")}
 
 
 
 # Carga de precios mayoristas
-if (is.null(data_list_precios)) {
-  data_list_precios = cargar_datos_dane("precios", Año, data_list_precios_ev_nuevo)
+if (is.null(Price_data_list)) {
+  Price_data_list = cargar_datos_dane("precios", Year, data_list_precios_ev_nuevo)
 }else {
-   data_list_precios=data_list_precios
+   Price_data_list=Price_data_list
 }
 
 # carga de abastecimiento
 
-if (!is.null(Percentil_Abast) && is.null(data_list_abas)) {
+if (!is.null(Percentile) && is.null(Supply_data_list)) {
 
-  data_list_abas = cargar_datos_dane("abastecimiento", Año, data_list_abast_ev_nuevo)
+  Supply_data_list = cargar_datos_dane("abastecimiento", Year, data_list_abast_ev_nuevo)
 } 
 
 
-if (!is.null(Percentil_Abast) && !is.null(data_list_abas)){
+if (!is.null(Percentile) && !is.null(Supply_data_list)){
 
-  data_list_abas=data_list_abas
+  Supply_data_list=Supply_data_list
 } else {
 
-  data_list_abas = NULL
+  Supply_data_list = NULL
 }
 
 
@@ -197,31 +195,33 @@ if (!is.null(Percentil_Abast) && !is.null(data_list_abas)){
   #------------------ IDENTIFICACIÓN DE MES, FECHAS Y SEMESTRES ------------------------------
   
   
-  Nombres_Meses = c("Enero","Febrero","Marzo","Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre","Noviembre","Diciembre")
-  Mes_Num=Mes
-  Mes=Nombres_Meses[Mes]  
+  Nombres_Meses = c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+  Mes_Num=Month
+  Month=Nombres_Meses[Month]  
+
   Semestres=c("I_Semestre","II_Semestre")
   
-  Enero = seq(from = as.Date(paste(Año,"1","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"1","31", sep = "-"),format = "%Y-%m-%d"), by =1)
-  Febrero = seq(from = as.Date(paste(Año,"2","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"2","28", sep = "-"),format = "%Y-%m-%d"), by =1)
-  Marzo = seq(from = as.Date(paste(Año,"3","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"3","31", sep = "-"),format = "%Y-%m-%d"), by =1)
-  Abril = seq(from = as.Date(paste(Año,"4","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"4","30", sep = "-"),format = "%Y-%m-%d"), by =1)
-  Mayo = seq(from = as.Date(paste(Año,"4","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"5","31", sep = "-"),format = "%Y-%m-%d"), by =1)
-  Junio = seq(from = as.Date(paste(Año,"6","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"6","30", sep = "-"),format = "%Y-%m-%d"), by =1)
-  Julio = seq(from = as.Date(paste(Año,"7","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"7","31", sep = "-"),format = "%Y-%m-%d"), by =1)
-  Agosto = seq(from = as.Date(paste(Año,"8","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"8","31", sep = "-"),format = "%Y-%m-%d"), by =1)
-  Septiembre = seq(from = as.Date(paste(Año,"9","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"9","30", sep = "-"),format = "%Y-%m-%d"), by =1)
-  Octubre = seq(from = as.Date(paste(Año,"10","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"10","31", sep = "-"),format = "%Y-%m-%d"), by =1)
-  Noviembre = seq(from = as.Date(paste(Año,"11","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"11","30", sep = "-"),format = "%Y-%m-%d"), by =1)
-  Diciembre = seq(from = as.Date(paste(Año,"12","1", sep = "-"),format = "%Y-%m-%d"), to = as.Date(paste(Año,"12","30", sep = "-"),format = "%Y-%m-%d"), by =1)
+January = seq(from = as.Date(paste(Year, "1", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "1", "31", sep = "-"), format = "%Y-%m-%d"), by = 1)
+February = seq(from = as.Date(paste(Year, "2", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "2", "28", sep = "-"), format = "%Y-%m-%d"), by = 1)
+March = seq(from = as.Date(paste(Year, "3", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "3", "31", sep = "-"), format = "%Y-%m-%d"), by = 1)
+April = seq(from = as.Date(paste(Year, "4", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "4", "30", sep = "-"), format = "%Y-%m-%d"), by = 1)
+May = seq(from = as.Date(paste(Year, "5", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "5", "31", sep = "-"), format = "%Y-%m-%d"), by = 1)
+June = seq(from = as.Date(paste(Year, "6", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "6", "30", sep = "-"), format = "%Y-%m-%d"), by = 1)
+July = seq(from = as.Date(paste(Year, "7", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "7", "31", sep = "-"), format = "%Y-%m-%d"), by = 1)
+August = seq(from = as.Date(paste(Year, "8", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "8", "31", sep = "-"), format = "%Y-%m-%d"), by = 1)
+September = seq(from = as.Date(paste(Year, "9", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "9", "30", sep = "-"), format = "%Y-%m-%d"), by = 1)
+October = seq(from = as.Date(paste(Year, "10", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "10", "31", sep = "-"), format = "%Y-%m-%d"), by = 1)
+November = seq(from = as.Date(paste(Year, "11", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "11", "30", sep = "-"), format = "%Y-%m-%d"), by = 1)
+December = seq(from = as.Date(paste(Year, "12", "1", sep = "-"), format = "%Y-%m-%d"), to = as.Date(paste(Year, "12", "30", sep = "-"), format = "%Y-%m-%d"), by = 1)
+
   
-  Semestre_I = c("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio")
-  Semestre_II = c("Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre")
+  Semestre_I = c("January", "February", "March", "April", "May", "June")
+  Semestre_II = c("July", "August", "September", "October", "November", "December")
   
-  Lista_Mes=list(Enero,Febrero,Marzo,Abril, Mayo, Junio, Julio, Agosto, Septiembre,Octubre,Noviembre,Diciembre);names(Lista_Mes)=Nombres_Meses
+  Lista_Mes=list(January, February, March, April, May, June, July, August, September, October, November, December);names(Lista_Mes)=Nombres_Meses
   Lista_Semestres = list(Semestre_I, Semestre_II);names(Lista_Semestres)=c("I_Semestre","II_Semestre")
-  Fecha=Lista_Mes[[Mes]]
-  
+  Fecha=Lista_Mes[[Month]]
+
   # -------------------------------------------------
   
   # ------------DFECHAS
@@ -260,25 +260,25 @@ depurar_y_filtrar <- function(data, mes_num) {
 
 
 # Selección del año según la estructura de datos
-if (Año >= 2019) {
-  Meses <- Nombres_Meses[1:length(data_list_precios) - 1]
-  posicion_mes <- which(Meses %in% Mes)
+if (Year >= 2019) {
+  Meses <- Nombres_Meses[1:length(Price_data_list) - 1]
+  posicion_mes <- which(Meses %in% Month)
   
   if (length(posicion_mes) == 0) {
-    stop("El mes solicitado aún no está presente en los datos abiertos de precios SIPSA.")
+    stop("The requested month is not yet present in the open SIPSA price data.")
   }
   
-  Data_Sipsa_Precios <- depurar_y_filtrar(data_list_precios[[posicion_mes + 1]], Mes_Num)
+  Data_Sipsa_Precios <- depurar_y_filtrar(Price_data_list[[posicion_mes + 1]], Mes_Num)
 }
 
-if (Año == 2018 || Año < 2018) {
-  Año_selec <- ifelse(Año == 2018, 2, which(Año == 2013:2017) + 1)
-  Data_Sipsa_Precios <- depurar_y_filtrar(data_list_precios[[Año_selec]], Mes_Num)
+if (Year == 2018 || Year < 2018) {
+  Año_selec <- ifelse(Year == 2018, 2, which(Year == 2013:2017) + 1)
+  Data_Sipsa_Precios <- depurar_y_filtrar(Price_data_list[[Año_selec]], Mes_Num)
 }
 
   
 
-# assign(paste("PRECIOS_SIPSA", Mes, Año, sep = "_"),Data_Sipsa_Precios,envir = globalenv())
+# assign(paste("PRECIOS_SIPSA", Month, Year, sep = "_"),Data_Sipsa_Precios,envir = globalenv())
   
   
   
@@ -296,7 +296,7 @@ if (Año == 2018 || Año < 2018) {
     opciones_mercado <- unique(df$Mercado[grep(ciudad, df$Mercado, ignore.case = TRUE)])
     
     if (length(opciones_mercado) == 0) {
-      stop("Error:No se encontraron opciones de mercado para la ciudad especificada. Por favor, verifique su ortografía o escriba una ciudad disponible.")
+      stop("Error: No market options were found for the specified city. Please check your spelling or enter an available city.")
       opciones_mercado=NULL
     } else {
       return(opciones_mercado)
@@ -315,12 +315,12 @@ if (Año == 2018 || Año < 2018) {
   }
   
   
-  Mercados_ciudad=asociar_ciudad_entrada_usuario(Ciudad,ciudades_colombia,Data_Sipsa_Precios)
+  Mercados_ciudad=asociar_ciudad_entrada_usuario(City,ciudades_colombia,Data_Sipsa_Precios)
   
   
   if(!is.null(Mercados_ciudad)) {
     Data_Sipsa_Precios = Data_Sipsa_Precios %>% filter(Mercado %in% Mercados_ciudad)
-  } else {cat("Error,",Ciudad," aún no está en los datos públicos de precios SIPSA",sep="")}
+  } else {cat("Error,",City," It is still not in the public SIPSA price data.",sep="")}
   
   
   #-- Crea el vector de alimentos con base en la data de SIPSA precios mayoristas
@@ -341,20 +341,20 @@ if (Año == 2018 || Año < 2018) {
   #------------------ IDENTIFICACIÓN DE MES EN ABASTECIMIENTO    ------------------------------
   
   
-  if (!is.null(Percentil_Abast)){
+  if (!is.null(Percentile)){
     
-    if(Año >=2022){
+    if(Year >=2022){
       
-      Data_Sipsa_Abas=(data_list_abas[[as.integer(which(sapply(Lista_Semestres, function(x) Mes %in% x)))+2]]) # Se extraen los meses disponibles con base en la data dada
+      Data_Sipsa_Abas=(Supply_data_list[[as.integer(which(sapply(Lista_Semestres, function(x) Month %in% x)))+2]]) # Se extraen los meses disponibles con base en la data dada
     }
     
     else  {
       
-      Data_Sipsa_Abas=(data_list_abas[[as.integer(which(sapply(Lista_Semestres, function(x) Mes %in% x)))+1]]) # Se extraen los meses disponibles con base en la data dada
+      Data_Sipsa_Abas=(Supply_data_list[[as.integer(which(sapply(Lista_Semestres, function(x) Month %in% x)))+1]]) # Se extraen los meses disponibles con base en la data dada
       
     }
     
-    if (ncol(Data_Sipsa_Abas)<9){stop("Error: En los datos del DANE no existe información de la fecha para este més, por favor omita los datos de abastecimiento.")}
+    if (ncol(Data_Sipsa_Abas)<9){stop("Error: There is no information for the specified date in the DANE data for this month; please omit the supply data.")}
     
     
     colnames(Data_Sipsa_Abas) = c("Ciudad_Mercado", "Fecha","Cod_Dep", "Cod_Mun", "Dep_Proc", "Mun_Proc","Grupo", "Alimento", "Cantidad_KG")
@@ -373,7 +373,7 @@ if (Año == 2018 || Año < 2018) {
       opciones_mercado <- unique(df$Ciudad_Mercado[grep(ciudad, df$Ciudad_Mercado, ignore.case = TRUE)])
       
       if (length(opciones_mercado) == 0) {
-        print("Error: No se encontraron opciones de mercado para la ciudad especificada en abastecimiento. No es posible filtrar en la ciudad digitada.")
+        print("Error: No market options were found for the specified city in the supply data. It is not possible to filter by the entered city.")
         opciones_mercado=NULL
       } else {
         return(opciones_mercado)
@@ -392,14 +392,14 @@ if (Año == 2018 || Año < 2018) {
     }
     
     
-    Mercados_ciudad_Abas=asociar_ciudad_entrada_usuario_Abas(Ciudad,ciudades_colombia,Data_Sipsa_Abas)
+    Mercados_ciudad_Abas=asociar_ciudad_entrada_usuario_Abas(City,ciudades_colombia,Data_Sipsa_Abas)
     
     
     
     if(!is.null(Mercados_ciudad)) {
       
       Data_Sipsa_Abas = Data_Sipsa_Abas %>% filter(Ciudad_Mercado %in% Mercados_ciudad_Abas) } else 
-      {cat("Error,",Ciudad," aún no está en los datos públicos de abastecimiento SIPSA",sep="")}
+      {cat("Error,",City," it is still not in the public SIPSA supply data",sep="")}
     
     
     # ---------------------------cargar ciudades atuomáticamente
@@ -498,20 +498,20 @@ if (Año == 2018 || Año < 2018) {
   
   Data_abs_precios_Sipsa=Data_Sipsa_Precios_Unicos
 
-  if (!is.null(Percentil_Abast)){
+  if (!is.null(Percentile)){
     # Asignación del valor de abastecimiento en cada caso
     Data_abs_precios_Sipsa = merge(Data_Sipsa_Precios_Unicos, Mapeo_Precios_Abs, by = "Alimento", all.x = TRUE)
     Data_abs_precios_Sipsa = merge(Data_Sipsa_Abas_Unicos, Data_abs_precios_Sipsa,by = "Alimento_abs", all.x = TRUE)
     # Selección de las variables de interés
     Data_abs_precios_Sipsa = Data_abs_precios_Sipsa[c("Alimento", "Precio_kg", "Total")]
     Data_abs_precios_Sipsa = Data_abs_precios_Sipsa[order(Data_abs_precios_Sipsa$Alimento),]
-    colnames(Data_abs_precios_Sipsa) = c("Alimento",paste0("Precio_kg_", Mes), paste0("Total_", Mes))
+    colnames(Data_abs_precios_Sipsa) = c("Alimento",paste0("Precio_kg_", Month), paste0("Total_", Month))
   }
   else {
     # Selección de las variables de interés
     Data_abs_precios_Sipsa = Data_abs_precios_Sipsa[c("Alimento", "Precio_kg")]
     Data_abs_precios_Sipsa = Data_abs_precios_Sipsa[order(Data_abs_precios_Sipsa$Alimento),]
-    colnames(Data_abs_precios_Sipsa) = c("Alimento",paste0("Precio_kg_", Mes))
+    colnames(Data_abs_precios_Sipsa) = c("Alimento",paste0("Precio_kg_", Month))
   }
   
   
@@ -519,9 +519,9 @@ if (Año == 2018 || Año < 2018) {
   #                       criterios de exclusión         #  ✔ SIMPLIFICADA Y ASEGURADA
   #------------------------------------------------------#
   
-  if (!is.null(Percentil_Abast)){
+  if (!is.null(Percentile)){
     
-    Data_abs_precios_Sipsa_ABS=Data_abs_precios_Sipsa[,c("Alimento",paste0("Total_",Mes))]
+    Data_abs_precios_Sipsa_ABS=Data_abs_precios_Sipsa[,c("Alimento",paste0("Total_",Month))]
     
     
     
@@ -532,10 +532,10 @@ if (Año == 2018 || Año < 2018) {
     criterio_2 = Data_abs_precios_Sipsa_ABS %>% filter(Alimento %in% Alimentos_Inclu)
     
     # Eliminar niveles NA de abastecimiento (Flujos de carga nulos)
-    criterio_2 = criterio_2 %>% drop_na(paste0("Total_",Mes))
+    criterio_2 = criterio_2 %>% drop_na(paste0("Total_",Month))
     
     # Calcular cuantiles
-    quant = quantile(criterio_2[,2],probs = Percentil_Abast, na.rm = TRUE)
+    quant = quantile(criterio_2[,2],probs = Percentile, na.rm = TRUE)
     
     # Eliminar los alimentos cuyo flujo de carga está abajo del percentil 25
     criterio_2 = criterio_2[criterio_2[,2] < quant,]
@@ -551,7 +551,7 @@ if (Año == 2018 || Año < 2018) {
     
     
     # Abastecimiento nulo
-    Alimentos_NA = Data_abs_precios_Sipsa_ABS %>% filter(is.na(get(paste0("Total_", Mes))))
+    Alimentos_NA = Data_abs_precios_Sipsa_ABS %>% filter(is.na(get(paste0("Total_", Month))))
     
     # Construir el vector con la totalidad de alimentos excluidos
     # (criterio 1, criterio 2, flujo de carga nulo y exclusiones ad hoc)
@@ -603,14 +603,14 @@ if (Año == 2018 || Año < 2018) {
 
   
   #--------                    -------#
-  #  Margenes de comercialziación     #  ✔ SIMPLIFICADA Y ASEGURADA
+  #  Margins de comercialziación     #  ✔ SIMPLIFICADA Y ASEGURADA
   #-----                       -------#
 
-# Margenes de grupos en general para COL
+# Margins de grupos en general para COL
 categorias <- c("CARNES", "FRUTAS", "GRANOS Y CEREALES", "LACTEOS Y HUEVOS", 
                 "PESCADOS", "PROCESADOS", "TUBERCULOS, RAICES Y PLATANOS", "VERDURAS Y HORTALIZAS")
 
- if (!is.null(Margenes)) {valores=Margenes} else {valores <- c(4.925515, 32.154734, 21.770773, 26.226295, 17.150887, 6.884347, 76.380988, 54.096494)}
+ if (!is.null(Margins)) {valores=Margins} else {valores <- c(4.925515, 32.154734, 21.770773, 26.226295, 17.150887, 6.884347, 76.380988, 54.096494)}
 Df_grupos_marg=data.frame(Grupos=categorias,Valor=valores);grupos_margenes <- levels(as.factor(Precios_Grupos_SIPSA$Grupo))
 
 # Encontrar índices de los grupos en el dataframe
@@ -758,7 +758,7 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   
   # Crear una nueva columna con el precio por intercambio unitario
   Datos_MOD3 <- Datos_MOD3 %>%
-    mutate(Precio_INT = (Precio_100g_ajust/as.numeric(Serving)) * Intercambio_g)
+    mutate(Price_serving = (Precio_100g_ajust/as.numeric(Serving)) * Intercambio_g)
   
   # Recuperar grupos y subgrupos GABAS
   Datos_MOD3 <- merge(Datos_MOD3, TCAC[c("Cod_TCAC", "Grupo_GABAS", "Subgrupo_GABAS")], by = "Cod_TCAC") %>%
@@ -778,13 +778,14 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
     ));
    # Datos_MOD3 <- Datos_MOD3[, -which(names(Datos_MOD3) == "Subgrupo_GABAS")]
   
-  colnames(Datos_MOD3)=c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust",  "Energia","Proteina","Carbohidratos","Lipidos",  "Calcio",  "Zinc", "Hierro", "Magnesio","Fosforo","VitaminaC", "Tiamina", "Riboflavina","Niacina", "Folatos", "VitaminaB12", "VitaminaA","Sodio","Intercambios_g","Precio_INT","Grupo","Subgrupo")
-  
+  #colnames(Datos_MOD3)=c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust",  "Energia","Proteina","Carbohidratos","Lipidos",  "Calcio",  "Zinc", "Hierro", "Magnesio","Fosforo","VitaminaC", "Tiamina", "Riboflavina","Niacina", "Folatos", "VitaminaB12", "VitaminaA","Sodio","Intercambios_g","Price_serving","Grupo","Subgrupo")
+
   # Orden de salida
-  
+    colnames(Datos_MOD3) = c("Cod_TCAC", "Food", "Serving", "Price_100g", "Energy", "Protein", "Carbohydrates", "Lipids", "Calcium", "Zinc", "Iron", "Magnesium", "Phosphorus", "VitaminC", "Thiamine", "Riboflavin", "Niacin", "Folate", "VitaminB12", "VitaminA", "Sodium", "Serving_g", "Price_serving", "Group", "Subgroup")
+
   Datos_MOD3 <- Datos_MOD3 %>%
-    select(Cod_TCAC, Alimento, Serving, Precio_100g_ajust,Intercambios_g, Precio_INT, Grupo,Subgrupo, Energia:VitaminaB12,
-           VitaminaA, Sodio)
+    select(Cod_TCAC, Food, Serving, Price_100g,Serving_g, Price_serving, Group, Subgroup, Energy:VitaminB12,
+           VitaminA, Sodium)
   
 
 
@@ -793,15 +794,15 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   #------------------------------------------------------------------#
   
   
-  if (!is.null(Ingreso_Alimentos)) {
+  if (!is.null(Food_income)) {
     alimentos_faltantes <- Alimentos_Sipsa_Precios[!(Alimentos_Sipsa_Precios %in% Mapeo_Sipsa_TCAC1$Alimento)]
     
-    if (is.data.frame(Ingreso_Alimentos)) {
+    if (is.data.frame(Food_income)) {
       # Si es un data frame, buscar los alimentos en la columna 'Alimento'
-      alimentos_encontrados <- Ingreso_Alimentos$Alimento[Ingreso_Alimentos$Alimento %in% alimentos_faltantes]
+      alimentos_encontrados <- Food_income$Alimento[Food_income$Alimento %in% alimentos_faltantes]
     } else {
       # Si es un vector, buscar los alimentos directamente
-      alimentos_encontrados <- Ingreso_Alimentos[Ingreso_Alimentos %in% alimentos_faltantes]
+      alimentos_encontrados <- Food_income[Food_income %in% alimentos_faltantes]
     }
     
     alimentos_faltantes <- alimentos_faltantes[!(alimentos_faltantes %in% alimentos_encontrados)]
@@ -812,7 +813,7 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
     
     alimentos_faltantes <- alimentos_faltantes[!(alimentos_faltantes %in% alimentos_encontrados)]
     
-    Datos_MOD3 <- rbind(Ingreso_Alimentos, Datos_MOD3)
+    Datos_MOD3 <- rbind(Food_income, Datos_MOD3)
   } else {
     alimentos_faltantes <- Alimentos_Sipsa_Precios[!(Alimentos_Sipsa_Precios %in% Mapeo_Sipsa_TCAC1$Alimento)]
     # Palabras a eliminar
@@ -824,8 +825,10 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   }
   
   
+
+
   
-  mensaje <- paste("En la ciudad de", Ciudad, "del año", Año, "y mes", Mes, ", se omitieron los siguientes alimentos por falta de información nutricional " , length(alimentos_faltantes) ," :", paste(alimentos_faltantes, collapse = ", "), ". Si conoce la información de estos, utilice el parámetro opcional llamado 'Ingreso_Alimentos' para ingresarlos")
+mensaje <- paste("In the city of", City, "for the year", Year, "and month", Month, ", the following foods were omitted due to lack of nutritional information:", length(alimentos_faltantes), ":", paste(alimentos_faltantes, collapse = ", "), ". If you have information for these, use the optional parameter called 'Food_income' to input them.")
   cat("\n")
   cat(mensaje)
   cat("\n")
@@ -833,14 +836,14 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   #                       ASGINACIÓN EN EL ENTORNO GLOBAL                                   #
   #-----------------------------------------------------------------------------------------#
   
-  #assign(paste0("Datos_",Año,"_",Mes_Num,"_",Ciudad),Datos_MOD3,envir = globalenv())
+  #assign(paste0("Datos_",Year,"_",Mes_Num,"_",City),Datos_MOD3,envir = globalenv())
   cat("\n")
-  print(paste("(✓)",Ciudad,"_" ,Año,"_" ,Mes))
+  print(paste("(✓)",City,"_" ,Year,"_" ,Month))
   cat("\n")
 
 
   #cat("\n")
-  # if(length(warnings())<100) {cat("Depuración de datos exitosa", "\n")} else {cat("Cantidad de errores encontrados:",length(warnings()), "\n")}
+  # if(length(warnings())<100) {cat("Depuración de datos exitosa", "\n")} else {cat("Number de errores encontrados:",length(warnings()), "\n")}
   #cat("\n")
   
   
@@ -853,4 +856,8 @@ precios_kg <- Estimación_Precios_Minoristas[c("Alimento", "Precio_minorista_kg"
   
   
 }
+
+library(Foodprice)
+z=DataCol(Month=2,City = "Bogotá",Year=2013)
+View(z)
 

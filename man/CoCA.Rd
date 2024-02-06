@@ -1,12 +1,12 @@
 
 \name{CoCA}
 \alias{CoCA}
-\title{Cost of Caloric Adequacy (CoCA)}
+\title{cost_day of Caloric Adequacy (CoCA)}
 \usage{
 CoCA(
-Datos_Insumo,
+data,
 EER,
-Filtrar_Alimentos=NULL
+exclude=NULL
 )
 
 }
@@ -23,9 +23,9 @@ data(Datos_Prueba, package = "Foodprice")
 data(EER, package = "Foodprice") 
 
 # Apply the function to the input data
-Mod=CoCA(Datos_Insumo = Datos_Prueba, EER=EER)
+Mod=CoCA(data = Datos_Prueba, EER=EER)
 
-# Cost Visualization
+# cost_day Visualization
 kable(Mod$Costo_CoCA)
 
 }
@@ -34,13 +34,13 @@ kable(Mod$Costo_CoCA)
 
  \code{- Required Parameters} 
 
-    \item{Datos_Insumo:}{Data frame containing the retail price and energy content of local food items, expressed per 100 g edible portion. The data frame must have at least 3 columns with the following names: “Food”, “Price_100g”, and “Energy”.      } 
+    \item{data:}{Data frame containing the retail price and energy content of local food items, expressed per 100 g edible portion. The data frame must have at least 3 columns with the following names: “Food”, “Price_100g”, and “Energy”.      } 
     \item{EER:}{Data frame containing the Estimated Energy Requirement (EER) for different age and sex groups. The data frame must include 3 columns with the following names: “Age”, “EER”, and “Sex”. “Age” is assumed to be a character string, and “EER” and “Sex” (0 if male, 1 if female) are numeric variables.      }
 
  
  \code{- Optional Parameters} 
 
-    \item{Filtrar_Alimentos:}{A vector used for excluding one or more food items before performing the model.}
+    \item{exclude:}{A vector used for excluding one or more food items before performing the model.}
 }
 
 \details{
@@ -57,7 +57,7 @@ The output will be displayed as a list based on the name assigned by the user; i
 \item{Precio:}{Numeric vector of food item’s retail price expressed per 100 g edible portion (i.e. the objective function coefficients)}
 
 
-\item{Alimento:}{Vector of food items used in objective function}
+\item{Food:}{Vector of food items used in objective function}
 
 \item{EER:}{A data frame containing the constraints of the linear programming model, as entered (i.e. EER by age and sex groups).}
 }

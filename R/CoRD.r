@@ -4,7 +4,7 @@
 #-----------------------------------------------------------------------------------------#
 
 
-CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
+CoRD=function(data,serv,diverse,exclude=NULL){
   
   
   #------------------------------------------------------------------------------------------#
@@ -37,74 +37,72 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
   #-----------------------------------------------------------------------------------------#
   #-------------- VERIFICACIÓN DE DATOS DE INSUMO
   
-  # Verificar si Datos_Insumo es un data frame
-  if (!is.data.frame(Datos_Insumo)) {
-    stop("Datos_Insumo no es un data frame.")
+  # Verifying if data is a data frame
+  if (!is.data.frame(data)) {
+    stop("data is not a data frame.")
   }
-  names(Datos_Insumo)
-  # Verificar si tiene al menos 3 columnas
-  if (ncol(Datos_Insumo) < 4) {
-    stop("Datos_Insumo debe tener al menos 4 columnas.")
+
+  # Verifying if it has at least 3 columns
+  if (ncol(data) < 4) {
+    stop("data must have at least 4 columns.")
   }
-  required_columns <- c("Alimento" , "Intercambios_g" ,"Precio_INT", "Grupo")
-  missing_columns <- setdiff(required_columns, colnames(Datos_Insumo))
+  required_columns <- c("Food", "Serving_g", "Price_serving", "Group")
+  missing_columns <- setdiff(required_columns, colnames(data))
   
   if (length(missing_columns) > 0) {
-    stop(paste("El modelo CoRD requiere las siguientes columnas en los datos de insumo: ", paste(missing_columns, collapse = ", "),". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al primer modelo"))}
-  
+    stop(paste("CoRD model requires the following columns in the input data: ", paste(missing_columns, collapse = ", "), ". Please refer to the documentation for the required column names for the CoRD model."))}
+
   
   # -------------- VERIFICACIÓN DE REQ
-  
-  
-  # Verificar si Datos_Insumo es un data frame
-  if (!is.data.frame(Req_Int)) {
-    stop("Datos_Insumo no es un data frame.")
+  # Verifying if serv is a data frame
+  if (!is.data.frame(serv)) {
+    stop("serv is not a data frame.")
   }
   
-  # Verificar si tiene al menos 3 columnas
-  if (ncol(Req_Int) < 2) {
-    stop("Los requerimientos para el modelo CoRD deben contener al menos 3 columnas.")
+  # Verifying if it has at least 2 columns
+  if (ncol(serv) < 2) {
+    stop("Requirements for the CoRD model must have at least 2 columns.")
   }
   
-  required_columns_E <- c("Edad"  ,  "Porción")
-  missing_columns_E <- setdiff(required_columns_E, colnames(Req_Int))
+  required_columns_E <- c("Age", "Serving")
+  missing_columns_E <- setdiff(required_columns_E, colnames(serv))
   
   if (length(missing_columns_E) > 0) {
-    stop(paste("El modelo CoRD requiere las siguientes columnas en el parámetro 'Req_Int': ", paste(missing_columns_E, collapse = ", "),". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al primer modelo"))}
+    stop(paste("CoRD model requires the following columns in the 'serv' parameter: ", paste(missing_columns_E, collapse = ", "), ". Please refer to the documentation for the required column names for the CoRD model."))}
   
   
-  # -------------- VERIFICACIÓN DE Cantidad_selec
+  # -------------- VERIFICATION OF diverse
   
   
-  # Verificar si Datos_Insumo es un data frame
-  if (!is.data.frame(Cantidad_selec)) {
-    stop("Cantidad_selec no es un data frame.")
+  # Verifying if diverse is a data frame
+  if (!is.data.frame(diverse)) {
+    stop("diverse is not a data frame.")
   }
   
-  # Verificar si tiene al menos 3 columnas
-  if (ncol(Cantidad_selec) < 2) {
-    stop("La cantidad de grupos a selecionar para el modelo CoRD deben contener al menos 2 columnas.")
+  # Verifying if it has at least 2 columns
+  if (ncol(diverse) < 2) {
+    stop("The quantity of groups to select for the CoRD model must have at least 2 columns.")
   }
   
-  required_columns_E <- c("Cantidad")
-  missing_columns_E <- setdiff(required_columns_E, colnames(Cantidad_selec))
+  required_columns_E <- c("Number")
+  missing_columns_E <- setdiff(required_columns_E, colnames(diverse))
   
   if (length(missing_columns_E) > 0) {
-    stop(paste("El modelo CoRD requiere las siguientes columnas en el parámetro 'Cantidad_selec': ", paste(missing_columns_E, collapse = ", "),". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al primer modelo"))}
+    stop(paste("CoRD model requires the following columns in the 'diverse' parameter: ", paste(missing_columns_E, collapse = ", "), ". Please refer to the documentation for the required column names for the CoRD model."))}
+
   
+  # -------------- VALIDACIÓN DE exclude
   
-  # -------------- VALIDACIÓN DE Filtrar_Alimentos
+  # Validar si exclude es distinto de NULL
   
-  # Validar si Filtrar_Alimentos es distinto de NULL
-  
-  if (!is.null(Filtrar_Alimentos)) {
-    # Validar si Filtrar_Alimentos es un vector
-    if (!is.vector(Filtrar_Alimentos)) {
-      stop("El parámetro Filtrar_Alimentos debe ser un vector.")
+  if (!is.null(exclude)) {
+    # Validar si exclude es un vector
+    if (!is.vector(exclude)) {
+      stop("Exclude parameter must be a vector.")
     }
     
-    # Filtrar los alimentos que no están en Filtrar_Alimentos
-    Datos_insumo <- Datos_insumo[!(Datos_insumo$Alimento %in% Filtrar_Alimentos), ]
+    # Filtrar los alimentos que no están en exclude
+    Datos_insumo <- Datos_insumo[!(Datos_insumo$Food %in% exclude), ]
   }
   
   
@@ -118,7 +116,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
   
   
   #se excluyen los alimentos sin categorías
-  Datos_Insumo = Datos_Insumo %>% filter(!Grupo %in% "Sin categoría")
+  data = data %>% filter(!Group %in% "Sin categoría")
   
   
   # Definir códigos y alimentos a eliminar
@@ -126,51 +124,51 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
   alimentos_a_eliminar <- c("Carne de cerdo, espinazo", "Yuca ICA", "Papa Betina", "Papa única")
   
   # Filtrar el dataframe
-  if ("Cod_TCAC" %in% colnames(Datos_Insumo)){
-    Datos_Insumo <- Datos_Insumo %>%
-      filter(!(Cod_TCAC %in% codigos_a_eliminar) & !(Alimento %in% alimentos_a_eliminar))}
+  if ("Cod_TCAC" %in% colnames(data)){
+    data <- data %>%
+      filter(!(Cod_TCAC %in% codigos_a_eliminar) & !(Food %in% alimentos_a_eliminar))}
   
   #--------------------------------------------------------------------------------------------------------------------#
   #                       TERCER  ETAPA: SELECCIÓN Y VALDIACIÓN DE GRUPOS EN MODELO FEMENINO                      #
   #------------------------------------------------------------------------------------------------------------------#
   
-  # Verificar si existe la columna "Sexo"
+  # Verificar si existe la columna "Sex"
   
   # Extraer sexos disponibles si existe la columna sexo
-  if ("Sexo" %in% colnames(Req_Int)) {Sexos <- split(Req_Int, Req_Int$Sexo);sexo_nombre=names(Sexos)} else {
+  if ("Sex" %in% colnames(serv)) {Sexos <- split(serv, serv$Sex);sexo_nombre=names(Sexos)} else {
     sexo_nombre=0
     
   }
   
-  Req_entrantes=Req_Int
-  Alimento=Datos_Insumo$Alimento
-  Precio=Datos_Insumo$Precio_INT
+  Req_entrantes=serv
+  Food=data$Food
+  Precio=data$Price_serving
   #--------------------------------------------------------#
   #               CLICLO PARA CADA SEXO                   #
   #-------------------------------------------------------#
   
   for (sexo_nombre in sexo_nombre) { 
     
-    if ("Sexo" %in% colnames(Req_Int)) {Req_Int <- Sexos[[sexo_nombre]]}
+    if ("Sex" %in% colnames(serv)) {serv <- Sexos[[sexo_nombre]]}
     
     # Requerimiento y edad
-    Req_Int_i=Req_Int
-    Edad=levels(as.factor(Req_Int_i$Edad))
+    Req_Int_i=serv
+    Age=levels(as.factor(Req_Int_i$Age))
     
     
     #---------------- VALIDACIÓN Y SELECIÓN DE GRUPOS----------------
     
     # validación de subgrupo
-    if (("Subgrupo" %in% colnames(Cantidad_selec))) {
+    if (("Subgroup" %in% colnames(diverse))) {
       
       
-      # Verificar si los dataframes tienen la columna "Subgrupo"
-      if (!("Subgrupo" %in% colnames(Req_Int))) {
-        stop("El dataframe Req_Int no tiene la columna Subgrupo")
+      # Verificar si los dataframes tienen la columna "Subgroup"
+      if (!("Subgroup" %in% colnames(serv))) {
+        stop("The serv dataframe does not have the 'Subgroup' column.")
       }
       
-      if (!("Subgrupo" %in% colnames(Datos_Insumo))) {
-        stop("El dataframe Datos_Insumo no tiene la columna Subgrupo")
+      if (!("Subgroup" %in% colnames(data))) {
+        stop("The data dataframe does not have the 'Subgroup' column.")
       }
       
     }
@@ -178,21 +176,21 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     
     
     #Identificar grupos o subgrupos
-    if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {
-      Grupos_Insumo=levels(as.factor(Datos_Insumo$Subgrupo))
-      Grupos_Cantidad_Sel <- unique(Cantidad_selec$Subgrupo) #grupos de cantidad
-      grupos_req=levels(as.factor(Req_Int_i$Subgrupo)) 
+    if ("Subgroup" %in% colnames(data) && "Subgroup" %in% colnames(diverse) && "Subgroup" %in% colnames(serv)) {
+      Grupos_Insumo=levels(as.factor(data$Subgroup))
+      Grupos_Cantidad_Sel <- unique(diverse$Subgroup) #grupos de cantidad
+      grupos_req=levels(as.factor(Req_Int_i$Subgroup)) 
       
     } else {
       
-      if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {
+      if ("Group" %in% colnames(data) && "Group" %in% colnames(diverse) && "Group" %in% colnames(serv)) {
         
-        Grupos_Insumo=levels(as.factor(Datos_Insumo$Grupo)) 
-        Grupos_Cantidad_Sel <- unique(Cantidad_selec$Grupo) #grupos de cantidad
-        grupos_req=levels(as.factor(Req_Int_i$Grupo))
+        Grupos_Insumo=levels(as.factor(data$Group)) 
+        Grupos_Cantidad_Sel <- unique(diverse$Group) #grupos de cantidad
+        grupos_req=levels(as.factor(Req_Int_i$Group))
         
       } else {
-        stop("Los tres parámetros deben tener la columna Grupo si no tienen Subgrupo")
+        stop("All three parameters must have the 'Group' column if they do not have 'Subgroup'")
         
       }
       
@@ -202,7 +200,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     #-------------------
     # 1. Validar que la cantidad de grupos en el vector sea mayor que 5
     if (length(Grupos_Insumo) < 5) {
-      stop("Error: La cantidad de grupos en el vector debe ser mayor o igual a 5.")
+      stop("Error:The quantity of groups in the vector must be greater than or equal to 5.")
     }
     
     
@@ -223,7 +221,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     
     
     if(length(grupos_faltantes)>0){
-      paste("Se trabajará entonces sólo con los grupos iguales, estos son:",paste(Grupos_comunes,collapse = ", "))
+      paste("We will then work only with the equal groups, which are:",paste(Grupos_comunes,collapse = ", "))
     }
     
     # Validar la intersección entre grupos de req y los demás
@@ -232,20 +230,20 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     grupos_faltantes_req=union(setdiff(Grupos_comunes, grupos_req),setdiff(grupos_req,Grupos_comunes))
     
     if(length(grupos_faltantes_req)>0){
-      paste("Cuidado: Hay grupos no comunes entre los grupos de datos insumo, la cantidad a selecionar y los requerimientos, estos son:",paste(grupos_faltantes_req,collapse = ", "))
+      paste("Caution: There are groups not common among the input data groups, the quantity to select, and the requirements. These are:",paste(grupos_faltantes_req,collapse = ", "))
     }
     
-    if (length(Grupos_comunes_req)<5){stop("Cuidado: Los grupos comunes entre los requerimientos, Datos de insumo y cantidad a selecionar son muy pocos, deben ser mayor a 5")}
+    if (length(Grupos_comunes_req)<5){stop("Caution: The common groups among the requirements, input data, and quantity to select are very few; they must be more than 5")}
     
     if(length(grupos_faltantes_req)>0){
-      paste("Se trabajará entonces sólo con los grupos iguales en los tres vectores de grupos, estos son:",paste(Grupos_comunes_req,collapse = ", "))
+      paste("We will then work only with the common groups in the three group vectors; these are:",paste(Grupos_comunes_req,collapse = ", "))
     }
     
-    # Cantidad a selcionar, sólo los comunes
+    # Number a selcionar, sólo los comunes
     
-    if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {Grupos_finales <- subset(Cantidad_selec, Subgrupo %in% Grupos_comunes_req)}
+    if ("Subgroup" %in% colnames(data) && "Subgroup" %in% colnames(diverse) && "Subgroup" %in% colnames(serv)) {Grupos_finales <- subset(diverse, Subgroup %in% Grupos_comunes_req)}
     
-    if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {Grupos_finales <- subset(Cantidad_selec, Grupo %in% Grupos_comunes_req)}
+    if ("Group" %in% colnames(data) && "Group" %in% colnames(diverse) && "Group" %in% colnames(serv)) {Grupos_finales <- subset(diverse, Group %in% Grupos_comunes_req)}
     
     
     
@@ -255,7 +253,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     
     
     
-    Generar_A <- function(n,df) { # n- cantidad alimentos y df- es el dt con Intercambios_g
+    Generar_A <- function(n,df) { # n- cantidad alimentos y df- es el dt con Serving_g
       
       
       # Validar si están las cantidades necesarias
@@ -266,8 +264,8 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
       
       A <- matrix(0, nrow = n, ncol = n)
       for (j in 1:n-1){
-        A[j,j]=df$Intercambios_g[j] # Asignar diagonales iguales
-        A[j,j+1]=-df$Intercambios_g[j+1] # Asignas diagonal siguiente negativo
+        A[j,j]=df$Serving_g[j] # Asignar diagonales iguales
+        A[j,j+1]=-df$Serving_g[j+1] # Asignas diagonal siguiente negativo
       }
       A[n,]=1 # Asignar 1 al final
       return(A)
@@ -279,7 +277,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     Generar_B=function(n){
       
       Ceros=rep(0,n-1)
-      B=c(Ceros,Req_i_g$Porción)
+      B=c(Ceros,Req_i_g$Serving)
       return(B)
       
     }
@@ -288,53 +286,53 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     
     
     CoRD_INT <- data.frame()  # DATA DE SALIDA
-    Edad_CoRD <- c()  # Edad de salida
+    Edad_CoRD <- c()  # Age de salida
     CoRD_COST <- data.frame() # DF de los costos
     
     # -------------------------------- EXTRACCIONES
     
     # Extraer reque según la edad
-    for (i in 1:length(Edad)) {
+    for (i in 1:length(Age)) {
       
       # Extraer req por edad
-      E_i=Edad[i]
-      Req_i = subset(Req_Int_i, Edad == E_i)
+      E_i=Age[i]
+      Req_i = subset(Req_Int_i, Age == E_i)
       
       for (j in 1:nrow(Grupos_finales)) {
         
         # Extraer el grupo y la cantidad a seleccionar
         
-        if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {Grupo_i = Grupos_finales$Subgrupo[j] } 
+        if ("Subgroup" %in% colnames(data) && "Subgroup" %in% colnames(diverse) && "Subgroup" %in% colnames(serv)) {Grupo_i = Grupos_finales$Subgroup[j] } 
         
-        if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {Grupo_i = Grupos_finales$Grupo[j] }
+        if ("Group" %in% colnames(data) && "Group" %in% colnames(diverse) && "Group" %in% colnames(serv)) {Grupo_i = Grupos_finales$Group[j] }
         
         # Usar j para el bucle interior
-        Cantidad_i = Grupos_finales$Cantidad[j]  # Usar j para el bucle interior
+        Cantidad_i = Grupos_finales$Number[j]  # Usar j para el bucle interior
         
         # Extraer y requerimientos datos por grupo o subgrupo
         
-        if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {Datos_grupo_i = subset(Datos_Insumo, Subgrupo == Grupo_i) } 
+        if ("Subgroup" %in% colnames(data) && "Subgroup" %in% colnames(diverse) && "Subgroup" %in% colnames(serv)) {Datos_grupo_i = subset(data, Subgroup == Grupo_i) } 
         
-        if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {Datos_grupo_i = subset(Datos_Insumo, Grupo == Grupo_i)}
+        if ("Group" %in% colnames(data) && "Group" %in% colnames(diverse) && "Group" %in% colnames(serv)) {Datos_grupo_i = subset(data, Group == Grupo_i)}
         
         
         
-        Datos_grupo_i = Datos_grupo_i[order(Datos_grupo_i$Precio_INT), ]
+        Datos_grupo_i = Datos_grupo_i[order(Datos_grupo_i$Price_serving), ]
         
-        if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {    Req_i_g = subset(Req_i, Subgrupo == Grupo_i) } 
+        if ("Subgroup" %in% colnames(data) && "Subgroup" %in% colnames(diverse) && "Subgroup" %in% colnames(serv)) {    Req_i_g = subset(Req_i, Subgroup == Grupo_i) } 
         
-        if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {    Req_i_g = subset(Req_i, Grupo == Grupo_i) }
+        if ("Group" %in% colnames(data) && "Group" %in% colnames(diverse) && "Group" %in% colnames(serv)) {    Req_i_g = subset(Req_i, Group == Grupo_i) }
         
         
         
         # Dejar columnas útiles en Datos_grupo_i
         if (Cantidad_i == 0) {
-          stop("La cantidad de elementos a seleccionar debe ser un entero mayor que cero")
+          stop("The quantity of elements to select must be an integer greater than zero.")
         }
         
-        if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) { Datos_grupo_i = Datos_grupo_i %>% select(any_of(c("Alimento", "Precio_100g_ajust", "Intercambios_g", "Precio_INT", "Subgrupo","Energia")))}
+        if ("Subgroup" %in% colnames(data) && "Subgroup" %in% colnames(diverse) && "Subgroup" %in% colnames(serv)) { Datos_grupo_i = Datos_grupo_i %>% select(any_of(c("Food", "Price_100g", "Serving_g", "Price_serving", "Subgroup","Energy")))}
         
-        if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) { Datos_grupo_i = Datos_grupo_i %>% select(any_of(c("Alimento", "Precio_100g_ajust", "Intercambios_g", "Precio_INT", "Grupo","Energia")))}
+        if ("Group" %in% colnames(data) && "Group" %in% colnames(diverse) && "Group" %in% colnames(serv)) { Datos_grupo_i = Datos_grupo_i %>% select(any_of(c("Food", "Price_100g", "Serving_g", "Price_serving", "Group","Energy")))}
         
         
         Datos_grupo_i = Datos_grupo_i[1:Cantidad_i, ]
@@ -352,12 +350,12 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
         # Soluciones por INT y gr
         
         
-        Cantidad_INT = solve(A, B)
+        Number_Serving = solve(A, B)
         
-        Cantidad_g = Cantidad_INT * Datos_grupo_i$Intercambios_g
+        Cantidad_g = Number_Serving * Datos_grupo_i$Serving_g
         
         # Crear dataframe directamente y agregar las filas a CoRD_INT_F
-        if ("Energia" %in% colnames(Datos_Insumo)) {CoRD_F = cbind(Datos_grupo_i, Cantidad_INT = Cantidad_INT, Cantidad_g = Cantidad_g,Edad=Edad[i],Sexo=sexo_nombre,Energia=Datos_grupo_i$Energia,Intercambios_g=Datos_grupo_i$Intercambios_g) }else{CoRD_F = cbind(Datos_grupo_i, Cantidad_INT = Cantidad_INT, Cantidad_g = Cantidad_g,Edad=Edad[i],Sexo=sexo_nombre)}
+        if ("Energy" %in% colnames(data)) {CoRD_F = cbind(Datos_grupo_i, Number_Serving = Number_Serving, Cantidad_g = Cantidad_g,Age=Age[i],Sex=sexo_nombre,Energy=Datos_grupo_i$Energy,Serving_g=Datos_grupo_i$Serving_g) }else{CoRD_F = cbind(Datos_grupo_i, Number_Serving = Number_Serving, Cantidad_g = Cantidad_g,Age=Age[i],Sex=sexo_nombre)}
         
         CoRD_INT = rbind(CoRD_INT, CoRD_F)
         
@@ -370,33 +368,33 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
     
     #------------------ CÁLCULO DEL COSTO POR EDAD
     Aporte=data.frame()
-    for (E in Edad) {
+    for (E in Age) {
       # Filtrar el dataframe por edad
-      df_edad <- subset(CoRD_INT, Edad == E)
+      df_edad <- subset(CoRD_INT, Age == E)
       
       # Calcular el costo para la edad actual
-      costo_edad <- sum(df_edad$Precio_INT * df_edad$Cantidad_INT)
+      costo_edad <- sum(df_edad$Price_serving * df_edad$Number_Serving)
       
       # calcular costo * 1000kc o no
-      if ("Energia" %in% colnames(Datos_Insumo)){df_temp <- data.frame(Grupo_demo = E, Costo = costo_edad,      Costo_1000kcal= (costo_edad/(sum((df_edad$Energia/100)*df_edad$Cantidad_g)))*1000)}else {df_temp <- data.frame(Edad = E, Costo = costo_edad)}
+      if ("Energy" %in% colnames(data)){df_temp <- data.frame(Demo_Group = E, cost_day = costo_edad,      Cost_1000kcal= (costo_edad/(sum((df_edad$Energy/100)*df_edad$Cantidad_g)))*1000)}else {df_temp <- data.frame(Age = E, cost_day = costo_edad)}
       
       # Agregar el dataframe temporal a costo
       CoRD_COST <- rbind(CoRD_COST, df_temp)
       
-    };CoRD_COST$Sexo=as.numeric(sexo_nombre)
+    };CoRD_COST$Sex=as.numeric(sexo_nombre)
     
     
     # ----------- ESTRUCTURA CIAT PARA INTERCAMBIOS
     
-    if ("Subgrupo" %in% colnames(Datos_Insumo) && "Subgrupo" %in% colnames(Cantidad_selec) && "Subgrupo" %in% colnames(Req_Int)) {
+    if ("Subgroup" %in% colnames(data) && "Subgroup" %in% colnames(diverse) && "Subgroup" %in% colnames(serv)) {
       
-      suppressWarnings({CoRD_INT <- merge(CoRD_INT, Datos_Insumo, by = "Alimento", all.x = TRUE)})# recuperar insumos
-      CoRD_INT= CoRD_INT %>% select(any_of(c("Alimento","Grupo","Cantidad_INT","Grupo_demo","Sexo")))
+      suppressWarnings({CoRD_INT <- merge(CoRD_INT, data, by = "Food", all.x = TRUE)})# recuperar insumos
+      CoRD_INT= CoRD_INT %>% select(any_of(c("Food","Group","Number_Serving","Demo_Group","Sex")))
     }
     
     
     
-    if ("Grupo" %in% colnames(Datos_Insumo) && "Grupo" %in% colnames(Cantidad_selec) && "Grupo" %in% colnames(Req_Int)) {CoRD_INT= CoRD_INT %>% select(any_of(c("Alimento","Grupo","Cantidad_INT","Grupo_demo","Sexo")))}
+    if ("Group" %in% colnames(data) && "Group" %in% colnames(diverse) && "Group" %in% colnames(serv)) {CoRD_INT= CoRD_INT %>% select(any_of(c("Food","Group","Number_Serving","Demo_Group","Sex")))}
     
     # Asignaciones por sexo
     assign(paste("CoRD_", sexo_nombre, sep = ""), CoRD_COST)
@@ -409,7 +407,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
   
   
   # Unir ambos df para cada sexo (si existe)
-  if ("Sexo" %in% colnames(Req_Int)) {
+  if ("Sex" %in% colnames(serv)) {
     
     Costo_CORD=rbind(CoRD_1,CoRD_0)
     Intercambios_CoRD=rbind(Intercambios_CoRD_0,Intercambios_CoRD_1)
@@ -417,9 +415,9 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
   } else {
     
     Costo_CORD <- CoRD_0 %>%
-      select(-Sexo)
+      select(-Sex)
     Intercambios_CoRD<- Intercambios_CoRD_0 %>%
-      select(-Sexo)
+      select(-Sex)
   }
   
   
@@ -428,11 +426,11 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
   #     ASGINACIONES DE LISTA  #
   #----------------------------#
   
-  if ("Energia" %in% colnames(Datos_Insumo)){  
-    List_CoRD=list(Costo_CORD,Intercambios_CoRD,Precio,Alimento,Energia=Datos_Insumo$Energia,Req_entrantes);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD","Precio","Alimento","Energia","Req_int_ent")
+  if ("Energy" %in% colnames(data)){  
+    List_CoRD=list(Costo_CORD,Intercambios_CoRD,Precio,Food,Energy=data$Energy,Req_entrantes);names(List_CoRD)=c("cost","comp","p","x","Energy","serv")
     
   }else {
-    List_CoRD=list(Costo_CORD,Intercambios_CoRD,Precio,Alimento,Req_entrantes);names(List_CoRD)=c("Costo_CoRD","Intercambios_CoRD","Precio","Alimento","Req_int_ent")
+    List_CoRD=list(Costo_CORD,Intercambios_CoRD,Precio,Food,Req_entrantes);names(List_CoRD)=c("cost","comp","p","x","serv")
     
   } 
   
@@ -440,7 +438,7 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
   
   
   
-  if ("Energia" %in% colnames(Datos_Insumo)){cat("(✓) CoRD: Costo diario promedio por cada 1000 kilocalorías es", mean(Costo_CORD$Costo_1000kcal))}else {
+  if ("Energy" %in% colnames(data)){cat("(✓) CoRD: Average daily cost per 1000 kilocalories is", mean(Costo_CORD$Cost_1000kcal))}else {
     cat("(✓) CoRD")
   } 
   
@@ -448,7 +446,5 @@ CoRD=function(Datos_Insumo,Req_Int,Cantidad_selec,Filtrar_Alimentos=NULL){
   
   
 }
-
-
 
 

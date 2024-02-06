@@ -12,7 +12,7 @@ Dri_min
 }
 
 \format{
-Dataset with 22 demographic groups (rows) and 19 variables (columns). The columns "Sexo" (Gender) and "Edad" (Age) correspond to the genders and demographic groups, respectively; the remaining columns represent the minimum requirements associated with various nutrients.
+Dataset with 22 demographic groups (rows) and 19 variables (columns). The columns "Sex" (Sex) and "Age" (Age) correspond to the genders and demographic groups, respectively; the remaining columns represent the minimum requirements associated with various nutrients.
 }
 
 \examples{

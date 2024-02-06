@@ -13,7 +13,7 @@ EER
 }
 
 \format{
-Dataset with 22 demographic groups (rows) and 3 variables (columns), namely, "Sexo" (0 if male and 1 if female), "Edad" (Demographic group), and "Energia" (energy requirement for each gender and demographic group).
+Dataset with 22 demographic groups (rows) and 3 variables (columns), namely, "Sex" (0 if male and 1 if female), "Age" (Demographic group), and "Energy" (energy requirement for each gender and demographic group).
 }
 
 \examples{

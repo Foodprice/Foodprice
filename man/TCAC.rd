@@ -1,7 +1,7 @@
 
 \name{TCAC}
 \alias{TCAC}
-\title{TCAC(dataset for DatosCol function)}
+\title{TCAC(dataset for DataCol function)}
 
 \description{
 Dataset mapping foods and groups from the Colombian Food Composition Table (TCAC) and the Food-Based Dietary Guidelines for the Colombian Population Aged 2 Years and Older (GABAS).
@@ -12,7 +12,7 @@ TCAC
 }
 
 \format{
-Dataframe of 779 foods (rows) and 5 variables (columns), namely: "Cod_TCAC" (Code of foods for TCAC), "Alimento" (Food), "Grupo_GABAS" (GABAS Groups), "Subgrupo_GABAS" (Food Subgroups for GABAS), and "Grupo_TCAC" (TCAC Food Group).
+Dataframe of 779 foods (rows) and 5 variables (columns), namely: "Cod_TCAC" (Code of foods for TCAC), "Food" (Food), "Grupo_GABAS" (GABAS Groups), "Subgrupo_GABAS" (Food Subgroups for GABAS), and "Grupo_TCAC" (TCAC Food Group).
 
 }
 

@@ -1,14 +1,14 @@
 
 \name{CoNA}
 \alias{CoNA}
-\title{Cost of Nutrient Adequacy (CoNA)}
+\title{cost_day of Nutrient Adequacy (CoNA)}
 \usage{
 
 CoNA(
-Datos_Insumo,
-DRI_min=,
-DRI_max,
-Filtrar_Alimentos=NULL
+data,
+EER_LL=,
+UL,
+exclude=NULL
 
 )
 
@@ -26,9 +26,9 @@ data(Dri_max, package = "Foodprice")
 
 
 # Apply the function to the input data
-Mod=CoNA(Datos_Insumo = Datos_Prueba,DRI_min=Dri_min,DRI_max=Dri_max)
+Mod=CoNA(data = Datos_Prueba,EER_LL=Dri_min,UL=Dri_max)
 
-# Cost Visualization
+# cost_day Visualization
 kable(Mod$Costo_CoNA)
 
 }
@@ -39,13 +39,13 @@ kable(Mod$Costo_CoNA)
 
  \code{- Required Parameters} 
 
-        \item{Datos_Insumo:}{Data frame containing the retail price and nutrient composition of local food items, expressed per 100 g edible portion. The data frame must have 3 columns with specific names (“Food”, “Price_100g”, and “Energy”) and K-columns containing food items’ nutrient content for key macro- and micronutrients. }
-        \item{DRI_min:}{Data frame containing the Estimated Energy Requirement (EER), as well as the lower limits of macro- and micronutrient intake for different age and sex groups. The data frame must include 3 columns with specific names (“Age”, “Sex”, and “EER”) and K-columns containing the lower limits of the K macro- and micronutrients. (The nutrient names must match the names used in data parameter) } 
-       \item{DRI_max:}{Data frame containing the upper limits of macro- and micronutrient intake for different age and sex groups. The data frame must include 2 columns with specific names (“Age”, “Sex”) and K-columns containing the upper limits of the K macro- and micronutrients. (The nutrient names must match the names used in data parameter) } 
+        \item{data:}{Data frame containing the retail price and nutrient composition of local food items, expressed per 100 g edible portion. The data frame must have 3 columns with specific names (“Food”, “Price_100g”, and “Energy”) and K-columns containing food items’ nutrient content for key macro- and micronutrients. }
+        \item{EER_LL:}{Data frame containing the Estimated Energy Requirement (EER), as well as the lower limits of macro- and micronutrient intake for different age and sex groups. The data frame must include 3 columns with specific names (“Age”, “Sex”, and “EER”) and K-columns containing the lower limits of the K macro- and micronutrients. (The nutrient names must match the names used in data parameter) } 
+       \item{UL:}{Data frame containing the upper limits of macro- and micronutrient intake for different age and sex groups. The data frame must include 2 columns with specific names (“Age”, “Sex”) and K-columns containing the upper limits of the K macro- and micronutrients. (The nutrient names must match the names used in data parameter) } 
 
  \code{- Optional Parameters} 
 
-        \item{Filtrar_Alimentos:}{A vector used for excluding one or more food items before performing the model.}
+        \item{exclude:}{A vector used for excluding one or more food items before performing the model.}
 
 }
 
@@ -72,7 +72,7 @@ The output will be displayed as a list based on the name assigned by the user; i
 
     \item{Precio:}{Numeric vector of food item’s retail price expressed per 100 g edible portion (i.e. the objective function coefficients)}
 
-    \item{Alimento:}{A vector of food items used in objective function}
+    \item{Food:}{A vector of food items used in objective function}
 
     \item{Req_entrantes:}{A data frame containing the constraints of the linear programming model, as entered (i.e. EER, lower and upper limits of macro- and micronutrient intake by age and sex groups).}
 

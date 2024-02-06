@@ -1,7 +1,7 @@
 
 \name{Primer_Criterio_Lista_Alimentos}
 \alias{Primer_Criterio_Lista_Alimentos}
-\title{Primer_Criterio_Lista_Alimentos (dataset for DatosCol function)}
+\title{Primer_Criterio_Lista_Alimentos (dataset for DataCol function)}
 
 \description{
 Dataset for filtering foods with very low caloric content, condiments consumed in small quantities, herbs, spices, or preparations.

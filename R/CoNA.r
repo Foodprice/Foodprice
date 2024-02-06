@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------------------------#
 
 
-CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
+CoNA=function(data,EER_LL,UL,exclude=NULL){
   
   #------------------------------------------------------------------------------------------#
   #                       PRIMERA ETAPA: VALIDACIÓN DE LIBRERIAS                             #
@@ -33,39 +33,40 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
   #         SEGUNDA ETAPA: VALIDACIÓN DE PARÁMETROS OBLIGATORIOS Y OPCIONALES                #
   #-----------------------------------------------------------------------------------------#
   
-  # Función para validar la presencia de columnas en un data frame
+# Function to validate the presence of columns in a data frame
   validate_columns <- function(df, required_columns, model_name) {
     if (!is.data.frame(df)) {
-      stop(paste("Error:", model_name, "no es un data frame."))
+      stop(paste("Error:", model_name, "is not a data frame."))
     }
     
     if (ncol(df) <= length(required_columns)) {
-      stop(paste("Error:", model_name, "debe tener al menos", length(required_columns), "columnas."))
+      stop(paste("Error:", model_name, "must have at least", length(required_columns), "columns."))
     }
     
     missing_columns <- setdiff(required_columns, colnames(df))
     
     if (length(missing_columns) > 0) {
-      stop(paste(model_name, "requiere las siguientes columnas en los datos de insumo:", paste(missing_columns, collapse = ", "), ". Por favor revise la documentación para conocer el nombre que deben tener las columnas necesarias al modelo."))
+      stop(paste(model_name, "requires the following columns in the input data:", paste(missing_columns, collapse = ", "), ". Please refer to the documentation for the required column names for the model."))
     }
   }
+
   
-  # Validar Datos_Insumo
-  validate_columns(Datos_Insumo, c("Precio_100g_ajust", "Alimento", "Energia"), "Datos_Insumo")
+  # Validar data
+  validate_columns(data, c("Price_100g", "Food", "Energy"), "data")
   
-  # Validar DRI_min
-  validate_columns(DRI_min, c("Edad"), "DRI_min")
+  # Validar EER_LL
+  validate_columns(EER_LL, c("Age"), "EER_LL")
   
-  # Validar DRI_max
-  validate_columns(DRI_max, c("Edad"), "DRI_max")
+  # Validar UL
+  validate_columns(UL, c("Age"), "UL")
   
   
-  # Verificar Filtrar_Alimentos
-  if (!is.null(Filtrar_Alimentos)) {
-    if (!is.vector(Filtrar_Alimentos)) {
-      stop("Error: El parámetro Filtrar_Alimentos debe ser un vector.")
+  # Verificar exclude
+  if (!is.null(exclude)) {
+    if (!is.vector(exclude)) {
+      stop("Error: The 'exclude' parameter must be a vector.")
     }
-    Datos_Insumo <- Datos_Insumo[!(Datos_Insumo$Alimento %in% Filtrar_Alimentos), ]
+    data <- data[!(data$Food %in% exclude), ]
   }
   
   
@@ -73,23 +74,23 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
   #                       TERCERA ETAPA: MODELO 2                                        #
   #------------------------------------------------------------------------------------#
   
-  req_min_ent= DRI_min 
-  req_max_ent= DRI_max %>% select(-any_of(c("Edad","Energia")))
+  req_min_ent= EER_LL 
+  req_max_ent= UL %>% select(-any_of(c("Age","Energy")))
   
   
   Req_entrantes=cbind(req_min_ent,req_max_ent)
   
   
-  # Verificar si existe la columna "Sexo"
-  if ("Sexo" %in% colnames(DRI_min)) {
+  # Verificar si existe la columna "Sex"
+  if ("Sex" %in% colnames(EER_LL)) {
     
     # Separar por sexo y obtener los nombres de sexo
-    Sexos_min <- split(DRI_min, DRI_min$Sexo)
-    Sexos_max <- split(DRI_max, DRI_max$Sexo)
+    Sexos_min <- split(EER_LL, EER_LL$Sex)
+    Sexos_max <- split(UL, UL$Sex)
     
     # Verificar si los vectores son iguales
     if (!identical(names(Sexos_min), names(Sexos_max))) {
-      stop("Error: Los sexos en ambos requerimientos no son iguales")
+      stop("Error: The genders in both requirements are not the same.")
     }
     
     
@@ -98,10 +99,10 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
     
   } else {
     
-    # Si no existe la columna "Sexo", establecer el nombre de sexo como "0"
+    # Si no existe la columna "Sex", establecer el nombre de sexo como "0"
     sexo_nombre <- "0"
-    DRI_min_i <- DRI_min
-    DRI_max_i <- DRI_max;DRI_max_i[is.na(DRI_max_i)] = 999999
+    DRI_min_i <- EER_LL
+    DRI_max_i <- UL;DRI_max_i[is.na(DRI_max_i)] = 999999
   }
   
   
@@ -113,40 +114,40 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
     
     # ------------ PREPARACIÓN DEL MODELO E IDENTI DE NUTRIENTES
     
-    if ("Sexo" %in% colnames(DRI_min)){
+    if ("Sex" %in% colnames(EER_LL)){
       DRI_min_i <- Sexos_min[[sexo_nombre]]
       DRI_max_i <- Sexos_max[[sexo_nombre]];DRI_max_i[is.na(DRI_max_i)] = 999999}
     
     
     # Organizar ambos df iguales
     
-    DRI_min_i <- arrange(DRI_min_i, Edad)
-    DRI_max_i <- arrange(DRI_max_i, Edad)
+    DRI_min_i <- arrange(DRI_min_i, Age)
+    DRI_max_i <- arrange(DRI_max_i, Age)
     
     # Verificar si los vectores de edad son iguales
-    if (!identical(levels(as.factor((DRI_min_i$Edad))), levels(as.factor((DRI_max_i$Edad))))) {
-      stop("Error: Los grupos de edades en ambos requerimientos no son iguales")
-    }
+    if (!identical(levels(as.factor((DRI_min_i$Age))), levels(as.factor((DRI_max_i$Age))))) {
+    stop("Error: The age groups in both requirements are not the same.")  
+      }
     
     
     # Asignación de vectores
-    Precio = Datos_Insumo$Precio_100g_ajust;Alimento=Datos_Insumo$Alimento;Edad=DRI_min_i$Edad
+    Precio = data$Price_100g;Food=data$Food;Age=DRI_min_i$Age
     
     # DF de limitaciones en nutrientes y validación de nombres
-    DRI_min_li= DRI_min_i %>% select(-any_of(c("Edad","Energia","Sexo")))
-    DRI_max_li= DRI_max_i %>% select(-any_of(c("Edad","Energia","Sexo")))
+    DRI_min_li= DRI_min_i %>% select(-any_of(c("Age","Energy","Sex")))
+    DRI_max_li= DRI_max_i %>% select(-any_of(c("Age","Energy","Sex")))
     
     if (!identical(names(DRI_min_li), names(DRI_max_li))) {
-      stop("Los datos DRI max y min no tienen los mismos nombres en la columnas.")
+stop("Error: UL and EER_LL data do not have the same nutrient names in the columns.")
     }
     
-    # selecionar de DRI_min energía
-    DRI_min_li= DRI_min_i %>% select(-any_of(c("Edad","Sexo")))
-    DRI_max_li= DRI_max_i %>% select(-any_of(c("Edad","Energia","Sexo")))
+    # selecionar de EER_LL energía
+    DRI_min_li= DRI_min_i %>% select(-any_of(c("Age","Sex")))
+    DRI_max_li= DRI_max_i %>% select(-any_of(c("Age","Energy","Sex")))
     
     
-    # Exraer los nutrientes de entrada que son distintos a las columnas: ("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust")
-    DF_Nutrientes_ALimentos <- Datos_Insumo %>% select(-any_of(c("Cod_TCAC", "Alimento", "Serving", "Precio_100g_ajust")))
+    # Exraer los nutrientes de entrada que son distintos a las columnas: ("Cod_TCAC", "Food", "Serving", "Price_100g")
+    DF_Nutrientes_ALimentos <- data %>% select(-any_of(c("Cod_TCAC", "Food", "Serving", "Price_100g")))
     
     
     
@@ -158,7 +159,7 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
     
     
     # Unir los nutrientes de aliemntos en min y max
-    Sin_EER= DF_Nutrientes_ALimentos %>% select(-Energia)
+    Sin_EER= DF_Nutrientes_ALimentos %>% select(-Energy)
     DF_Nutrientes_ALimentos=cbind(DF_Nutrientes_ALimentos,Sin_EER)
     
     
@@ -175,19 +176,19 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
     
     #------------------------------ Preparación de datos de resultados:
     #DF de la solución de intercambios
-    Intercambios_CoNA <- data.frame(Alimento = character(), Cantidad_GR = numeric(), Grupo_demo = integer(), Sexo = integer(), Grupo= character())
+    Intercambios_CoNA <- data.frame(Food = character(), Cantidad_GR = numeric(), Demo_Group = integer(), Sex = integer(), Group= character())
     
     #DF de la solución de csotos
-    Costo_T <- data.frame(Grupo_demo = integer(), Sexo = integer(), Costo_dia = numeric())
+    Costo_T <- data.frame(Demo_Group = integer(), Sex = integer(), Costo_dia = numeric())
     
     # df de nutrientes limitantes
     N_limit=data.frame()
     
     # DF de los precios sombra
-    S_shadow = na.omit(data.frame(Edad = NA,Sexo = NA,Nutrientes = NA,constraint = NA,value_constraint = NA,SP = NA, SPE = NA))
+    S_shadow = na.omit(data.frame(Age = NA,Sex = NA,Nutrients = NA,constraint = NA,value_constraint = NA,SP = NA, SPE = NA))
     # ------------ -------------------- SOLUCIÓN DEL MODELO
     
-    for (i in seq_along(Edad)) { #ciclo para cada edad
+    for (i in seq_along(Age)) { #ciclo para cada edad
       
       
       
@@ -209,18 +210,18 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
         Alimentos_sol <- which(CoNA$solution != 0) # ALimento selexionados
         cantidades_intercambio <- CoNA$solution[Alimentos_sol] # intercambios
         
-        if ("Grupo" %in% colnames(Datos_Insumo)) {
+        if ("Group" %in% colnames(data)) {
           
-          indices_coincidencia <- match(Alimento[Alimentos_sol], Datos_Prueba$Alimento)
+          indices_coincidencia <- match(Food[Alimentos_sol], data$Food)
           
-          Grupo_sex=Datos_Prueba$Grupo[indices_coincidencia]
+          Grupo_sex=data$Group[indices_coincidencia]
         } 
         
         # Crear un dataframe temporal de la estructura CIAT
-        temp_df <- data.frame(Alimento = Alimento[Alimentos_sol],
+        temp_df <- data.frame(Food = Food[Alimentos_sol],
                               Cantidad_GR = (cantidades_intercambio*100),
-                              Grupo_demo = Edad[i],
-                              Sexo = as.numeric(sexo_nombre),Grupo = if ("Grupo" %in% colnames(Datos_Insumo)) Grupo_sex else NA)
+                              Demo_Group = Age[i],
+                              Sex = as.numeric(sexo_nombre),Group = if ("Group" %in% colnames(data)) Grupo_sex else NA)
         
         
         # Agregar los resultados al dataframe general
@@ -228,13 +229,13 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
         
         # Guardar estructura de costo
         
-        Costo=sum(CoNA$solution * Precio)
+        cost_day=sum(CoNA$solution * Precio)
         
         # Agregar los resultados al dataframe Costo_CoNA
-        temp_df <- data.frame(Grupo_demo = Edad[i],
-                              Sexo = as.numeric(sexo_nombre),
-                              Costo = sum(CoNA$solution * Precio),
-                              Costo_1000kcal=(CoNA$objval/as.vector(unlist(Limitaciones[i, , drop = FALSE])[1])*1000))
+        temp_df <- data.frame(Demo_Group = Age[i],
+                              Sex = as.numeric(sexo_nombre),
+                              cost_day = sum(CoNA$solution * Precio),
+                              Cost_1000kcal=(CoNA$objval/as.vector(unlist(Limitaciones[i, , drop = FALSE])[1])*1000))
         
         # Agregar los resultados al dataframe general
         
@@ -246,14 +247,14 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
         
         
         Nutrie_limit <- data.frame(
-          Nutrientes = rownames(Coef.Restriq[1:length(names(DRI_min_li)),] %*% as.matrix(CoNA$solution)), # se asumen nutrientes sin EER y sin repetir
+          Nutrients = rownames(Coef.Restriq[1:length(names(DRI_min_li)),] %*% as.matrix(CoNA$solution)), # se asumen nutrientes sin EER y sin repetir
           Opt = as.numeric(Coef.Restriq[1:length(names(DRI_min_li)),] %*% as.matrix(CoNA$solution))
         ) %>%  
           mutate(Rest = as.matrix(as.vector(unlist(DRI_min_li[i, , drop = FALSE]))),
                  Diff = round(((Opt - Rest) / Rest * 100),2),
                  Limiting = ifelse(Diff == 0, 1, 0),
-                 Edad = Edad[i],
-                 Sexo = as.numeric(sexo_nombre)) %>% filter(Nutrientes != "Energia") 
+                 Age = Age[i],
+                 Sex = as.numeric(sexo_nombre)) %>% filter(Nutrients != "Energy") 
         N_limit = rbind(N_limit, Nutrie_limit)
         
         #------------------------------------#
@@ -261,9 +262,9 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
         #------------------------------------#
         
         Spe <- data.frame(
-          Edad = Edad[i],
-          Sexo = as.numeric(sexo_nombre),
-          Nutrientes = names(Limitaciones),
+          Age = Age[i],
+          Sex = as.numeric(sexo_nombre),
+          Nutrients = names(Limitaciones),
           constraint = constr_signs,
           value_constraint = as.vector(unlist(Limitaciones[i, , drop = FALSE])),
           SP = NA,
@@ -278,40 +279,40 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
       }else { # CUANDO EL MODELO NO ENCUENTRE SOLUCIÓN EN ESA EDAD LLENAR CON PRINT
         
         
-        temp_df <- data.frame(Alimento = NA,
+        temp_df <- data.frame(Food = NA,
                               Cantidad_GR = NA,
-                              Grupo_demo = Edad[i],
-                              Sexo = as.numeric(sexo_nombre),
-                              Grupo = NA)
+                              Demo_Group = Age[i],
+                              Sex = as.numeric(sexo_nombre),
+                              Group = NA)
         Intercambios_CoNA <- merge(Intercambios_CoNA, temp_df, all = TRUE)
         
         
         
         # Agregar los resultados al dataframe Costo_CoNA
-        temp_df <- data.frame(Grupo_demo = Edad[i],
-                              Sexo = as.numeric(sexo_nombre),
-                              Costo = NA,
-                              Costo_1000kcal = NA)
+        temp_df <- data.frame(Demo_Group = Age[i],
+                              Sex = as.numeric(sexo_nombre),
+                              cost_day = NA,
+                              Cost_1000kcal = NA)
         Costo_T <- rbind(Costo_T, temp_df)
         
         
         
-        # Nutrientes Limitantes
+        # Nutrients Limitantes
         Nutrie_limit <- data.frame(
-          Nutrientes = NA,
+          Nutrients = NA,
           Opt = NA,
           Rest = NA,
           Diff = NA,
           Limiting = NA,
-          Edad = Edad[i],
-          Sexo = as.numeric(sexo_nombre))
+          Age = Age[i],
+          Sex = as.numeric(sexo_nombre))
         N_limit = rbind(N_limit, Nutrie_limit)
         
         # Precios Sombra y Elasticidades
         Spe <- data.frame(
-          Edad = Edad[i],
-          Sexo = as.numeric(sexo_nombre),
-          Nutrientes = NA,
+          Age = Age[i],
+          Sex = as.numeric(sexo_nombre),
+          Nutrients = NA,
           constraint = NA,
           value_constraint = NA,
           SP = NA,
@@ -341,36 +342,36 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
   }
   
   
-  nombres_comunes_sin_energia <- setdiff(nombres_comunes, "Energia")
+  nombres_comunes_sin_energia <- setdiff(nombres_comunes, "Energy")
   cat("\n")
-  # cat("Los nutrientes a usar en el modelo son:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
+  cat("The nutrients to use in the model are:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
   cat("\n")
   
   # Unir ambos df para cada sexo (si existe)
-  if ("Sexo" %in% colnames(DRI_min)) {
+  if ("Sex" %in% colnames(EER_LL)) {
     
     Costo_CoNA=rbind(CoNA_1,CoNA_0)
     Alimentos_CoNA=rbind(Intercambios_CoNA_0,Intercambios_CoNA_1)
     CoNA_N_Limit=rbind(N_limit_0,N_limit_1) 
     CoNA_SP=rbind(S_shadow_0,S_shadow_1);CoNA_SP = CoNA_SP %>% filter(constraint != "=")
     
-    CoNA_SP = CoNA_SP[c("Edad", "Sexo", "Nutrientes", "SP", "SPE","constraint")]
+    CoNA_SP = CoNA_SP[c("Age", "Sex", "Nutrients", "SP", "SPE","constraint")]
     
-    #Nutrientes limtantes y precios sombre
+    #Nutrients limtantes y precios sombre
     
   } else {
     
     Costo_CoNA <- CoNA_0 %>%
-      select(-Sexo)
+      select(-Sex)
     Alimentos_CoNA<- Intercambios_CoNA_0 %>%
-      select(-Sexo)
+      select(-Sex)
     CoNA_N_Limit<- N_limit_0 %>%
-      select(-Sexo)
+      select(-Sex)
     CoNA_SP<- S_shadow_0 %>%
-      select(-Sexo)
+      select(-Sex)
     
     CoNA_SP = CoNA_SP %>% filter(constraint != "=")
-    CoNA_SP = CoNA_SP[c("Edad", "Nutrientes", "SP", "SPE","constraint")]
+    CoNA_SP = CoNA_SP[c("Age", "Nutrients", "SP", "SPE","constraint")]
     
     
   }
@@ -392,16 +393,14 @@ CoNA=function(Datos_Insumo,DRI_min,DRI_max,Filtrar_Alimentos=NULL){
   #     ASGINACIONES DE LISTA  #
   #----------------------------#
   
-  List_CoNA=list(Costo_CoNA,Alimentos_CoNA,CoNA_N_Limit,CoNA_SP,Precio,Alimento,Req_entrantes);names(List_CoNA)=c("Costo_CoNA","Alimentos_CoNA","CoNA_N_Limit","CoNA_SP","Precio","Alimento","Req")
+  List_CoNA=list(Costo_CoNA,Alimentos_CoNA,CoNA_N_Limit,CoNA_SP,Precio,Food,Req_entrantes);names(List_CoNA)=c("cost","comp","limit","spe","p","x","constraints")
   
   # retorno
   
-  cat("(✓) CoNA: Costo diario promedio por cada 1000 kilocalorías es", mean(Costo_CoNA$Costo_1000kcal,na.rm=TRUE)) 
+  cat("(✓) CoNA: Average daily cost per 1000 kilocalories is: ", mean(Costo_CoNA$Cost_1000kcal,na.rm=TRUE)) 
   
   return(invisible(List_CoNA))
   
   
 }
-
-
 
