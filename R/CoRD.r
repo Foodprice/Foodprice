@@ -215,7 +215,7 @@ CoRD=function(data,serv,diverse,exclude=NULL){
     
     
     if(length(grupos_faltantes)>0){
-      paste("Cuidado: Hay grupos no comunes entre los grupos de datos insumo y la cantidad a selecionar de estos:",paste(grupos_faltantes,collapse = ", "))
+      paste("Caution: There are groups not common between the input data groups and the quantity to select from them:",paste(grupos_faltantes,collapse = ", "))
     }
     
     
