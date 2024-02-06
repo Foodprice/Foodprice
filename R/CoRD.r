@@ -447,4 +447,3 @@ CoRD=function(data,serv,diverse,exclude=NULL){
   
 }
 
-
