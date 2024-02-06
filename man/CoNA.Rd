@@ -20,13 +20,14 @@ exclude=NULL
 # Example:
 
 # Retrieve input data
-data(Datos_Prueba, package = "Foodprice") 
-data(Dri_min, package = "Foodprice") 
-data(Dri_max, package = "Foodprice") 
+# FALTA REALIZAR: data(Datos_Prueba, package = "Foodprice") 
+
+data(EER_LL, package = "Foodprice") 
+data(UL, package = "Foodprice") 
 
 
 # Apply the function to the input data
-Mod=CoNA(data = Datos_Prueba,EER_LL=Dri_min,UL=Dri_max)
+Mod=CoNA(data = ,EER_LL=EER_LL,UL=UL)
 
 # cost_day Visualization
 kable(Mod$Costo_CoNA)
@@ -62,19 +63,19 @@ Note that, to guarantee data integration, the nutrient names must be consistent 
 
 The output will be displayed as a list based on the name assigned by the user; its elements are:
 
-    \item{Alimentos_CoNA:}{A data frame containing the composition of the diet, differentiated by age and sex groups. The data frame displays, for each demographic group, the food items included in the optimal solution (food) and its quantity. (If the food groups were specified in data parameter, the data frame displays the food group to which the food item belongs). }
+    \item{comp:}{A data frame containing the composition of the diet, differentiated by age and sex groups. The data frame displays, for each demographic group, the food items included in the optimal solution (food) and its quantity. (If the food groups were specified in data parameter, the data frame displays the food group to which the food item belongs). }
     
-    \item{Costo_CoNA:}{A data frame containing, for each demographic group, the cost per day (cost_day) and the cost per 1000 kcal (cost_kcal) for the nutrient-adequate diet}
+    \item{cost:}{A data frame containing, for each demographic group, the cost per day (cost_day) and the cost per 1000 kcal (cost_kcal) for the nutrient-adequate diet}
     
-    \item{CoNA_N_Limit:}{A data frame with a dichotomous variable indicating whether a nutrient was a limiting nutrient. }
+    \item{limit:}{A data frame with a dichotomous variable indicating whether a nutrient was a limiting nutrient. }
 
-    \item{CoNA_SP:}{A data frame containing the shadow price (SP) and the shadow price elasticity (SPE) of each constraint. The data frame displays a dichotomous variable (constraints) indicating whether the shadow prices are computed based on the lower limit (min) or the upper limit (max).}
+    \item{spe:}{A data frame containing the shadow price (SP) and the shadow price elasticity (SPE) of each constraint. The data frame displays a dichotomous variable (constraints) indicating whether the shadow prices are computed based on the lower limit (min) or the upper limit (max).}
 
-    \item{Precio:}{Numeric vector of food item’s retail price expressed per 100 g edible portion (i.e. the objective function coefficients)}
+    \item{p:}{Numeric vector of food item’s retail price expressed per 100 g edible portion (i.e. the objective function coefficients)}
 
-    \item{Food:}{A vector of food items used in objective function}
+    \item{x:}{A vector of food items used in objective function}
 
-    \item{Req_entrantes:}{A data frame containing the constraints of the linear programming model, as entered (i.e. EER, lower and upper limits of macro- and micronutrient intake by age and sex groups).}
+    \item{constraints:}{A data frame containing the constraints of the linear programming model, as entered (i.e. EER, lower and upper limits of macro- and micronutrient intake by age and sex groups).}
 
     
 }

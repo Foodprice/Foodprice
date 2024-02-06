@@ -19,11 +19,12 @@ CoCA computes the minimum daily cost of a caloric adequate diet for an individua
 # Example:
 
 # Retrieve input data
-data(Datos_Prueba, package = "Foodprice")
+# FALTA REALIZAR :data(Datos_Prueba, package = "Foodprice")
+
 data(EER, package = "Foodprice") 
 
 # Apply the function to the input data
-Mod=CoCA(data = Datos_Prueba, EER=EER)
+Mod=CoCA(data = , EER=EER)
 
 # cost_day Visualization
 kable(Mod$Costo_CoCA)
@@ -51,15 +52,15 @@ Note that, for the EER parameter, it is not mandatory that the “Sex” column 
 The output will be displayed as a list based on the name assigned by the user; its elements are:
 
 
-\item{Costo_CoCA:}{A data frame containing the cost and composition of the diet, differentiated by age and sex groups. For each demographic group, the data frame displays the food whose price per kilocalorie is minimal (food), the quantity of food expressed in grams (quantity), the cost per day (cost_day) and the cost per 1000 kcal (cost_kcal) for the energy-only diet. (If the food groups were specified in data parameter, the data frame displays the food group to which the food item belongs).    }
+\item{cost:}{A data frame containing the cost and composition of the diet, differentiated by age and sex groups. For each demographic group, the data frame displays the food whose price per kilocalorie is minimal (food), the quantity of food expressed in grams (quantity), the cost per day (cost_day) and the cost per 1000 kcal (cost_kcal) for the energy-only diet. (If the food groups were specified in data parameter, the data frame displays the food group to which the food item belongs).    }
 
 
-\item{Precio:}{Numeric vector of food item’s retail price expressed per 100 g edible portion (i.e. the objective function coefficients)}
+\item{p:}{Numeric vector of food item’s retail price expressed per 100 g edible portion (i.e. the objective function coefficients)}
 
 
-\item{Food:}{Vector of food items used in objective function}
+\item{x:}{Vector of food items used in objective function}
 
-\item{EER:}{A data frame containing the constraints of the linear programming model, as entered (i.e. EER by age and sex groups).}
+\item{energy:}{A data frame containing the constraints of the linear programming model, as entered (i.e. EER by age and sex groups).}
 }
 \note{
 It is important to review the documentation to ensure that the provided parameters are correct and consistent with the established requirements.

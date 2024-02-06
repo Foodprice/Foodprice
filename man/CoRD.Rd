@@ -20,14 +20,15 @@ CoRD computes the minimum daily cost of a recommended diet or a healthy diet tha
 # Example:
 
 # Retrieve input data
-data(Datos_Prueba, package = "Foodprice")
+
+# FALTA REALIZAR data(Datos_Prueba, package = "Foodprice")
 
 data(serv, package = "Foodprice") 
 data(diverse, package = "Foodprice") 
 
 
 # Apply the function to the input data
-Mod=CoRD(data = Datos_Prueba,diverse = diverse,serv = serv)
+Mod=CoRD(data = ,diverse = diverse,serv = serv)
 
 # cost_day Visualization
 head(Mod$Costo_CoRD)
@@ -63,13 +64,15 @@ For the EER parameter, it is not mandatory that the “Sex” column be defined 
 
 Las salida se mostrarán como una lista con base en el nombre asignado por el usuario, sus elementos son:
 
-    \item{Costo_CORD:}{A data frame containing, for each demographic group, the cost per day (cost_day) for the recommended diet.  (If the “Energy” column were included in “Data”, the cost per 1000 kcal (cost_kcal) will also be displayed).}
+    \item{cost:}{A data frame containing, for each demographic group, the cost per day (cost_day) for the recommended diet.  (If the “Energy” column were included in “Data”, the cost per 1000 kcal (cost_kcal) will also be displayed).}
     
-    \item{Intercambios_CoRD:}{A data frame containing the food items (differentiated by food group) included in the recommended diet, as well as its number of servings.         }
+    \item{serv:}{A data frame containing the food items (differentiated by food group) included in the recommended diet, as well as its number of servings.         }
 
-    \item{Precio:}{Numeric vector of the retail price per edible serving of each food item, as entered.}
+    \item{comp:}{Data frame with exchange numbers by gender, food, and group..}
 
-    \item{Food:}{A vector of food items, as entered}
+    \item{p:}{Numeric vector of the retail price per edible serving of each food item, as entered.}
+
+    \item{x:}{A vector of food items, as entered}
     
     \item{Energy:}{Numeric vector containing the energy content of each food item, as entered in “Energy” column.}
 
