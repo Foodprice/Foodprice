@@ -857,7 +857,3 @@ mensaje <- paste("In the city of", City, "for the year", Year, "and month", Mont
   
 }
 
-library(Foodprice)
-z=DataCol(Month=2,City = "Bogotá",Year=2013)
-View(z)
-
