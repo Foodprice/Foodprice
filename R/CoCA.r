@@ -175,13 +175,13 @@ CoCA=function(data,EER,exclude=NULL){
 
     #ESTRUCTURA CIAT
     df_transformado <- df_alimentos %>%
-      pivot_longer(cols = -Alimentos, names_to = "Demo_Group", values_to = "Cantidad_G") %>%
+      pivot_longer(cols = -Alimentos, names_to = "Demo_Group", values_to = "quantity") %>%
       mutate(
         Food = Alimentos,
         Sex = as.numeric(sexo_nombre),
         Group = if ("Group" %in% colnames(data)) Grupo_sex else NA
       ) %>%
-      select(Food, Cantidad_G, Demo_Group, Sex, Group)
+      select(Food, quantity, Demo_Group, Sex, Group)
     
     df_transformado_limpio <- df_transformado %>%
       select(-where(~all(is.na(.))))

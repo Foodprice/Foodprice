@@ -176,7 +176,7 @@ stop("Error: UL and EER_LL data do not have the same nutrient names in the colum
     
     #------------------------------ Preparación de datos de resultados:
     #DF de la solución de intercambios
-    Intercambios_CoNA <- data.frame(Food = character(), Cantidad_GR = numeric(), Demo_Group = integer(), Sex = integer(), Group= character())
+    Intercambios_CoNA <- data.frame(Food = character(), quantity = numeric(), Demo_Group = integer(), Sex = integer(), Group= character())
     
     #DF de la solución de csotos
     Costo_T <- data.frame(Demo_Group = integer(), Sex = integer(), Costo_dia = numeric())
@@ -219,7 +219,7 @@ stop("Error: UL and EER_LL data do not have the same nutrient names in the colum
         
         # Crear un dataframe temporal de la estructura CIAT
         temp_df <- data.frame(Food = Food[Alimentos_sol],
-                              Cantidad_GR = (cantidades_intercambio*100),
+                              quantity = (cantidades_intercambio*100),
                               Demo_Group = Age[i],
                               Sex = as.numeric(sexo_nombre),Group = if ("Group" %in% colnames(data)) Grupo_sex else NA)
         
@@ -280,7 +280,7 @@ stop("Error: UL and EER_LL data do not have the same nutrient names in the colum
         
         
         temp_df <- data.frame(Food = NA,
-                              Cantidad_GR = NA,
+                              quantity = NA,
                               Demo_Group = Age[i],
                               Sex = as.numeric(sexo_nombre),
                               Group = NA)
