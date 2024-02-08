@@ -210,7 +210,7 @@ CoCA=function(data,EER,exclude=NULL){
   
   # retorno
   
-  cat("(✓) CoCA: Average daily cost per 1000 kilocalories is ", mean(Costo_CoCA$Cost_1000kcal)) 
+  cat("CoCA: Average daily cost per 1000 kilocalories is ", mean(Costo_CoCA$Cost_1000kcal)) 
   
   return(invisible(List_CoCA))
   

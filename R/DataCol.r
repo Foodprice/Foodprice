@@ -838,7 +838,7 @@ mensaje <- paste("In the city of", City, "for the year", Year, "and month", Mont
   
   #assign(paste0("Datos_",Year,"_",Mes_Num,"_",City),Datos_MOD3,envir = globalenv())
   cat("\n")
-  print(paste("(✓)",City,"_" ,Year,"_" ,Month))
+  print(paste(City,"_" ,Year,"_" ,Month))
   cat("\n")
 
 

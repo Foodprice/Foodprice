@@ -438,8 +438,8 @@ CoRD=function(data,serv,diverse,exclude=NULL){
   
   
   
-  if ("Energy" %in% colnames(data)){cat("(✓) CoRD: Average daily cost per 1000 kilocalories is", mean(Costo_CORD$Cost_1000kcal))}else {
-    cat("(✓) CoRD")
+  if ("Energy" %in% colnames(data)){cat("CoRD: Average daily cost per 1000 kilocalories is", mean(Costo_CORD$Cost_1000kcal))}else {
+    cat("CoRD")
   } 
   
   return(invisible(List_CoRD))

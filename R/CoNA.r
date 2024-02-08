@@ -397,7 +397,7 @@ stop("Error: UL and EER_LL data do not have the same nutrient names in the colum
   
   # retorno
   
-  cat("(✓) CoNA: Average daily cost per 1000 kilocalories is: ", mean(Costo_CoNA$Cost_1000kcal,na.rm=TRUE)) 
+  cat("CoNA: Average daily cost per 1000 kilocalories is: ", mean(Costo_CoNA$Cost_1000kcal,na.rm=TRUE)) 
   
   return(invisible(List_CoNA))
   
