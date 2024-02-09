@@ -344,7 +344,7 @@ stop("Error: UL and EER_LL data do not have the same nutrient names in the colum
   
   nombres_comunes_sin_energia <- setdiff(nombres_comunes, "Energy")
   cat("\n")
-  cat("The nutrients to use in the model are:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
+ # cat("The nutrients to use in the model are:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
   cat("\n")
   
   # Unir ambos df para cada sexo (si existe)
