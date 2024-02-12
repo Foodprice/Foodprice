@@ -43,7 +43,7 @@ lp <- function(direction = "min", objective.in, const.mat, const.dir, const.rhs,
 	#        (i, j, k), it means "constraint i, variable j = value k." This
 	#        is ignored if const.mat is supplied.
         #     scale: integer giving scaling. Possible values can be found in
-        #      in the lpSolve documentatation. 0 = no scaling. Default: 196.
+        #      in the  documentatation. 0 = no scaling. Default: 196.
 	#      num.bin.solns: If all.bin is True, we will attempt to find up to
 	#        num.bin.solns solutions and return them in a matrix.
 	#      use.rw: Work around a bug when num.bin.solns=TRUE by writing each
@@ -263,7 +263,7 @@ lp <- function(direction = "min", objective.in, const.mat, const.dir, const.rhs,
                 tmp = as.character(tmp),
 		status = as.integer(status),
                 timeout = as.integer(timeout),
-                PACKAGE="lpSolve")
+                PACKAGE="Foodprice")
         lp.out$objective <- objective.in
         lp.out$constraints <- big.const.mat
 	if(any(names(version) == "language"))
