@@ -1,3 +1,4 @@
+library(Foodprice)
 lp <- function(direction = "min", objective.in, const.mat, const.dir, const.rhs,
 	transpose.constraints = TRUE, int.vec, presolve = 0, compute.sens = 0,
 	binary.vec, all.int=FALSE, all.bin=FALSE, scale=196, dense.const, 
@@ -233,7 +234,10 @@ lp <- function(direction = "min", objective.in, const.mat, const.dir, const.rhs,
 	    dense.col = dense.const[,"Var"]
 	    dense.val = dense.const[,"Value"]
         }
-	lp.out <- .C("lpslink",
+
+		dyn.load("lpslink56.so")	# REcurrir a biblioteca compartida
+		
+		lp.out <- .C("lpslink",
 		direction = as.integer(direction),
 		x.count = as.integer(x.count),
 		objective = as.double(objective),
