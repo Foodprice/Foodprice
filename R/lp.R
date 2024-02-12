@@ -263,7 +263,7 @@ lp <- function(direction = "min", objective.in, const.mat, const.dir, const.rhs,
                 tmp = as.character(tmp),
 		status = as.integer(status),
                 timeout = as.integer(timeout),
-                PACKAGE="lpSolve")
+                PACKAGE="Foodprice")
         lp.out$objective <- objective.in
         lp.out$constraints <- big.const.mat
 	if(any(names(version) == "language"))
