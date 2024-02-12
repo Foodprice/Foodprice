@@ -248,7 +248,7 @@ void lpslink (LONG_OR_INT *direction,         /* 1 for max, 0 for min        */
 ** This is the function called from the outside.
 */
 /*
-** "rw file" notes: to get around some sort of a bug in , we allow
+** "rw file" notes: to get around some sort of a bug in lpSolve, we allow
 ** callers to set "use_rw_file" to TRUE and pass a file name in rw_file.
 ** This only makes sense in the case where all the decision variables are
 ** binary and num_bin_solns > 1. Then instead of just adding constraints to 
