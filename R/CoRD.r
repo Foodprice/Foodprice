@@ -12,7 +12,7 @@ CoRD=function(data,serv,diverse,exclude=NULL){
   #-----------------------------------------------------------------------------------------#
   
   Librerias_base = c("readxl","dplyr","ggplot2","reshape2","knitr","haven","foreign","stringi","labelled","tidyr","plyr","tidyverse",
-                     "Rglpk","scatterplot3d","reshape","R6","rio","janitor","stringr","stringdist") # Nombra las librerias necesarias
+                     "Rglpk","scatterplot3d","reshape","R6","rio","janitor","stringr","stringdist","lpSolve") # Nombra las librerias necesarias
   
   if (!require("pacman")) install.packages("pacman") # Paquete que simplifica la carga de librerias
   pacman::p_load(char = Librerias_base);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
