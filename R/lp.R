@@ -1,4 +1,3 @@
-library(Foodprice)
 lp <- function(direction = "min", objective.in, const.mat, const.dir, const.rhs,
 	transpose.constraints = TRUE, int.vec, presolve = 0, compute.sens = 0,
 	binary.vec, all.int=FALSE, all.bin=FALSE, scale=196, dense.const, 
