@@ -127,7 +127,7 @@ CoCA=function(data,EER,exclude=NULL){
     
     for( i in seq_along(Limitaciones)) {#ciclo para cada edad
       
-      CoCA = Foodprice::lp(direction = "min",
+      CoCA = lp(direction = "min",
                 objective.in = Precio,
                 const.mat = Coef.Restriq,
                 const.dir = c("="),
