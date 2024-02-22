@@ -16,7 +16,7 @@ DataCol(
 \description{
 The DataCol function provides the possibility to obtain and handle SIPSA wholesale price data from the National Administrative Department of Statistics (DANE) in Colombia, suitable for a specific month, year, and city. Its main result focuses on the estimates of retail prices, linking the corresponding nutrients for each food.
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 La función DataCol proporciona la posibilidad de obtener y manipular datos de precios al por mayor SIPSA del Departamento Administrativo Nacional de Estadística (DANE) en Colombia, adecuados para un mes, año y ciudad específicos. Su resultado principal se centra en las estimaciones de precios al por menor, vinculando los nutrientes correspondientes para cada alimento.
 
@@ -24,12 +24,15 @@ La función DataCol proporciona la posibilidad de obtener y manipular datos de p
 \examples{
 
 # Example of usage:
+# Ejemplo de uso
 
 # Obtain data for Medellín, January 2017
+# Obteniendo datos para medellín, Enero del 2017
+
 X=DataCol(Month = 1, Year = 2017, City = "Medellín")
 
 # Outputs in the global environment
-
+# Salida en el ambiente global de R
 kable(head(X))
 
 
@@ -51,7 +54,7 @@ kable(head(X))
     \item{Supply_data_list:}{A collection of data linked to supply. The loading process for this data is expected to follow the same guidelines as those established for loading the price list, i.e., applying the same loading conditions and procedures used for data_list_prices.}
     \item{Margins:}{A set of eight values representing the marketing margins associated with each food category. These values must follow a specific order corresponding to the following categories: meats, fruits, grains and cereals, dairy and eggs, fish, processed products, tubers, roots and bananas, vegetables.}
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 \code{- PARÁMETROS NECESARIOS} 
 
@@ -74,7 +77,7 @@ kable(head(X))
 \details{
 The function performs a thorough validation of the entered parameters to ensure their coherence and then processes the corresponding DANE data to estimate retail prices along with the composition of each food.
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 La función realiza una validación exhaustiva de los parámetros ingresados para garantizar su coherencia y luego procesa los datos correspondientes del DANE para estimar los precios al por menor junto con la composición de cada alimento.
 
@@ -83,16 +86,16 @@ La función realiza una validación exhaustiva de los parámetros ingresados par
 \value{
 The function output is a list containing the estimated retail prices and the data frame downloaded from DANE.
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 La salida de la función es una lista que contiene los precios al por menor estimados y el marco de datos descargado del DANE.
 }
 
 \note{
-   
+
 It is important to review the documentation to ensure that the provided parameters are correct and consistent with the established requirements.
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Es importante revisar la documentación para asegurarse de que los parámetros proporcionados sean correctos y consistentes con los requisitos establecidos.
 }
