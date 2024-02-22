@@ -119,7 +119,7 @@ cargar_datos_dane <- function(tipo, año, env) {
       tipo,
       "precios" = {
         if (año > 2022) {
-          sprintf("https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-%d.xlsx", año)
+          sprintf("https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-Dic2023.xlsx")
         } else if (año > 2017) {
           sprintf("https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-%d.xlsx", año)
         } else {
