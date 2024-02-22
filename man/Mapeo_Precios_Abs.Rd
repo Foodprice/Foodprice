@@ -1,7 +1,7 @@
 
 \name{Mapeo_Precios_Abs}
 \alias{Mapeo_Precios_Abs}
-\title{Mapeo_Precios_Abs (dataset for DataCol function)}
+\title{(dataset for DataCol function)-Mapeo_Precios_Abs}
 
 \description{
 

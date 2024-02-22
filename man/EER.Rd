@@ -1,7 +1,7 @@
 
 \name{EER}
 \alias{EER}
-\title{EER (Example dataset)}
+\title{(Dataset of requirements for Colombia)-EER}
 
 \description{
 Dataset of national energy requirements by sex and demographic groups. EER was calculated based on information on weight, height, and predominant physical activity for each age group and sex in the region. For the population under 65 years of age, the latter information was extracted from the National Survey of Nutritional Situation (Encuesta Nacional de Situación Nutricional [ENSIN] of 2015);

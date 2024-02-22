@@ -1,7 +1,7 @@
 
 \name{Mapeo_Sipsa_TCAC_GABAS_Grupos}
 \alias{Mapeo_Sipsa_TCAC_GABAS_Grupos}
-\title{Mapeo_Sipsa_TCAC_GABAS_Grupos (dataset for DataCol function)}
+\title{(dataset for DataCol function)-Mapeo_Sipsa_TCAC_GABAS_Grupos}
 
 \description{
 Dataset that maps foods with their energy contributions and nutrients.

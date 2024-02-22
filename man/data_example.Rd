@@ -1,7 +1,7 @@
 
 \name{data_example}
 \alias{data_example}
-\title{data_example (Example dataset)}
+\title{(Example dataset)-data_example }
 
 \description{
 Dataset obtained through a simulation based on information gathered in September 2022 in the city of Cali, Colombia. This simulation was conducted using marginal copula functions gamma, ensuring the distribution shape and the dependence between price, exchanges, and nutrients columns. The foods, food groups, and subgroups contain arbitrary names. The dataset comprises 96 foods (rows) and 24 variables (columns) corresponding to the prices, exchanges, groups, subgroups, and nutritional contributions of each food.}

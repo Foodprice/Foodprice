@@ -1,7 +1,7 @@
 
 \name{intercambio_gramos}
 \alias{intercambio_gramos}
-\title{intercambio_gramos (dataset for DataCol function)}
+\title{(dataset for DataCol function)-intercambio_gramos}
 
 \description{
 Dataset that establishes the corresponding exchange for each food. Necessary for mapping outgoing Colombian foods and their exchanges for the CoRD model.

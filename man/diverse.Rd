@@ -1,7 +1,7 @@
 
 \name{diverse}
 \alias{diverse}
-\title{diverse (Example dataset)}
+\title{(Dataset of requirements for Colombia)-diverse}
 
 \description{
 Dataset containing the quantity of foods to be selected per groups according to GABAS.

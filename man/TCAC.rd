@@ -1,7 +1,7 @@
 
 \name{TCAC}
 \alias{TCAC}
-\title{TCAC(dataset for DataCol function)}
+\title{(dataset for DataCol function)-TCAC}
 
 \description{
 Dataset mapping foods and groups from the Colombian Food Composition Table (TCAC) and the Food-Based Dietary Guidelines for the Colombian Population Aged 2 Years and Older (GABAS).
