@@ -18,3 +18,4 @@ diverse_example
 
 library(Foodprice)
 head(diverse_example)
+}

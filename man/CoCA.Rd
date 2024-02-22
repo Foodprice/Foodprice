@@ -98,7 +98,7 @@ La salida se mostrará como una lista basada en el nombre asignado por el usuari
 \item{energy:}{Un marco de datos que contiene las restricciones del modelo de programación lineal, según se ingresaron (es decir, EER por grupos de edad y sexo).}
 }
 
-}
+
 \note{
 It is important to review the documentation to ensure that the provided parameters are correct and consistent with the established requirements.
 
