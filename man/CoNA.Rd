@@ -20,17 +20,16 @@ exclude=NULL
 # Example:
 
 # Retrieve input data
-# FALTA REALIZAR: data(Datos_Prueba, package = "Foodprice") 
-
+data(data_example, package = "Foodprice")
 data(EER_LL, package = "Foodprice") 
 data(UL, package = "Foodprice") 
 
 
 # Apply the function to the input data
-Mod=CoNA(data = ,EER_LL=EER_LL,UL=UL)
+Mod=CoNA(data = data_example,EER_LL=EER_LL_example,UL=UL_example)
 
 # cost_day Visualization
-kable(Mod$Costo_CoNA)
+kable(Mod$cost)
 
 }
 

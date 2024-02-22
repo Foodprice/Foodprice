@@ -19,15 +19,14 @@ CoCA computes the minimum daily cost of a caloric adequate diet for an individua
 # Example:
 
 # Retrieve input data
-# FALTA REALIZAR :data(Datos_Prueba, package = "Foodprice")
-
+data(data_example, package = "Foodprice")
 data(EER, package = "Foodprice") 
 
 # Apply the function to the input data
-Mod=CoCA(data = , EER=EER)
+Mod=CoCA(data = data_example, EER=EER_example)
 
 # cost_day Visualization
-kable(Mod$Costo_CoCA)
+kable(Mod$cost)
 
 }
 

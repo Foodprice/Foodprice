@@ -21,17 +21,16 @@ CoRD computes the minimum daily cost of a recommended diet or a healthy diet tha
 
 # Retrieve input data
 
-# FALTA REALIZAR data(Datos_Prueba, package = "Foodprice")
-
-data(serv, package = "Foodprice") 
-data(diverse, package = "Foodprice") 
+data(data_example, package = "Foodprice")
+data(serv_example, package = "Foodprice") 
+data(diverse_example, package = "Foodprice") 
 
 
 # Apply the function to the input data
-Mod=CoRD(data = ,diverse = diverse,serv = serv)
+Mod=CoRD(data = data_example,diverse = diverse_example,serv = serv_example)
 
 # cost_day Visualization
-head(Mod$Costo_CoRD)
+head(Mod$cost)
 }
 
 
