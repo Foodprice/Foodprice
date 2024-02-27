@@ -9,8 +9,7 @@ CoNA=function(data,EER_LL,UL,exclude=NULL){
   #                       PRIMERA ETAPA: VALIDACIÓN DE LIBRERIAS                             #
   #-----------------------------------------------------------------------------------------#
   
-  Librerias_base = c("readxl","dplyr","ggplot2","reshape2","knitr","haven","foreign","stringi","labelled","tidyr","plyr","tidyverse",
-                     "Rglpk","scatterplot3d","reshape","R6","rio","janitor","stringr","stringdist", "lpSolve") # Nombra las librerias necesarias
+Librerias_base = c("tidyverse","rio","janitor","stringdist","lpSolve")  # Nombra las librerias necesarias
   
   if (!require("pacman")) install.packages("pacman") # Paquete que simplifica la carga de librerias
   pacman::p_load(char = Librerias_base);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
@@ -55,7 +54,7 @@ CoNA=function(data,EER_LL,UL,exclude=NULL){
   validate_columns(data, c("Price_100g", "Food", "Energy"), "data")
   
   # Validar EER_LL
-  validate_columns(EER_LL, c("Age"), "EER_LL")
+  validate_columns(EER_LL, c("Age","Energy"), "EER_LL")
   
   # Validar UL
   validate_columns(UL, c("Age"), "UL")
@@ -162,7 +161,7 @@ stop("Error: UL and EER_LL data do not have the same nutrient names in the colum
     Sin_EER= DF_Nutrientes_ALimentos %>% select(-Energy)
     DF_Nutrientes_ALimentos=cbind(DF_Nutrientes_ALimentos,Sin_EER)
     
-    
+
     # Matriz de coef de restricción al modelo (ENERGIA y nutrientes)
     Coef.Restriq=DF_Nutrientes_ALimentos %>% as.matrix() %>% t()
     
@@ -344,7 +343,7 @@ stop("Error: UL and EER_LL data do not have the same nutrient names in the colum
   
   nombres_comunes_sin_energia <- setdiff(nombres_comunes, "Energy")
   cat("\n")
- # cat("The nutrients to use in the model are:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
+ cat("The nutrients to use in the model are:", paste(nombres_comunes_sin_energia, collapse = ", "), "\n")
   cat("\n")
   
   # Unir ambos df para cada sexo (si existe)

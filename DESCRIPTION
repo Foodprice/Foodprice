@@ -2,10 +2,15 @@ Package: Foodprice
 Type: Package
 Title: R library for the estimation of the minimum cost for three types of diets. 
 Version: 1.0.0
-Author: Pontificia Universidad Javeriana Cali
-Maintainer: Responsable del matenimiento paquete <juan.ordonez.duenas@correounivalle.edu.co>
-Description: Este paquete proporciona herramientas para estimar el costo mínimo de una dieta que cumpla con los siguientes criterios. suficiencia en energía, adecuación en nutrientes y promoción de la salud. Desarrollado en colaboración con la Pontificia Universidad Javeriana Calii y Alianza Bioversity-CIAT, el paquete ofrece funcionalidades que permiten calcular y optimizar el costo asociado con la elaboración de dietas saludables y equilibradas.
-License:GPL-3
+Author: Daniel González, Sergio A. Barona, Juan Camilo Ordoñez
+Maintainer: Juan Camilo Ordoñez  <juan.ordonez.duenas@correounivalle.edu.co>
+Depends: R (>= 4.3.2)
+Imports: tidyverse, rio, janitor, stringdist, lpSolve
+Description: This package provides tools to estimate the minimum cost of a diet that meets the following criteria: sufficiency in energy, adequacy in nutrients, and health promotion. Developed in collaboration with Pontificia Universidad Javeriana Cali and the Alliance Bioversity-CIAT, the package offers functionalities that allow calculating and optimizing the cost associated with the preparation of healthy and balanced diets.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+NeedsCompilation: No
+URL: https://github.com/Foodprice/Foodprice
+Date:2024-02-26
 

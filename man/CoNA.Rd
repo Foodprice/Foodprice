@@ -1,7 +1,8 @@
 
 \name{CoNA}
+\docType{package}
 \alias{CoNA}
-\title{cost_day of Nutrient Adequacy (CoNA)}
+\title{cost day of Nutrient Adequacy (CoNA)}
 \usage{
 
 CoNA(
@@ -17,7 +18,7 @@ exclude=NULL
 
 ----
 
-CoNA calcula el costo diario mínimo de una dieta adecuada en nutrientes para un individuo, según sus ingestas de referencia dietética.
+LA función CoNA calcula el costo diario mínimo de una dieta adecuada en nutrientes para un individuo según sus ingestas de referencia dietética.
 }
 
 \examples{
@@ -60,9 +61,9 @@ kable(Mod$cost)
 
 \code{- Parámetros necesarios} 
 
-        \item{data:}{Marco de datos que contiene el precio al por menor y la composición de nutrientes de los alimentos locales, expresados por cada 100 g de porción comestible. El marco de datos debe tener 3 columnas con nombres específicos (“Food”, “Price_100g”, y “Energy”) y K-columnas conteniendo el contenido de nutrientes de los alimentos para K macro- y micronutrientes clave. }
-        \item{EER_LL:}{Marco de datos que contiene el Requerimiento Energético Estimado (EER), así como los límites inferiores de la ingesta de macro- y micronutrientes para diferentes grupos de edad y sexo. El marco de datos debe incluir 3 columnas con nombres específicos (“Age”, “Sex”, y “EER”) y K-columnas conteniendo los límites inferiores de los K macro- y micronutrientes. (Los nombres de los nutrientes deben coincidir con los nombres utilizados en el parámetro data) } 
-       \item{UL:}{Marco de datos que contiene los límites superiores de la ingesta de macro- y micronutrientes para diferentes grupos de edad y sexo. El marco de datos debe incluir 2 columnas con nombres específicos (“Age”, “Sex”) y K-columnas conteniendo los límites superiores de los K macro- y micronutrientes. (Los nombres de los nutrientes deben coincidir con los nombres utilizados en el parámetro data) } 
+        \item{data:}{Conjunto de datos que contiene el precio al por menor y la composición de nutrientes de los alimentos locales, expresados por cada 100 g de porción comestible. El conjunto de datos debe tener 3 columnas con nombres específicos (“Food”, “Price_100g”, y “Energy”) y K-columnas conteniendo el contenido de nutrientes de los alimentos para K macro- y micronutrientes clave. }
+        \item{EER_LL:}{Conjunto de datos que contiene el Requerimiento Energético Estimado (EER), así como los límites inferiores de la ingesta de macro y micronutrientes para diferentes grupos de edad y sexo. El conjunto de datos debe incluir 3 columnas con nombres específicos (“Age”, “Sex”, y "Energy") y K-columnas conteniendo los límites inferiores de los K macro- y micronutrientes. (Los nombres de los nutrientes deben coincidir con los nombres utilizados en el parámetro data) } 
+       \item{UL:}{Conjunto de datos que contiene los límites superiores de la ingesta de macro y micronutrientes para diferentes grupos de edad y sexo. El conjunto de datos debe incluir 2 columnas con nombres específicos (“Age”, “Sex”) y K-columnas conteniendo los límites superiores de los K macro- y micronutrientes. (Los nombres de los nutrientes deben coincidir con los nombres utilizados en el parámetro data y EER_LL) } 
 
 \code{- Parámetros Opcionales} 
 
@@ -79,9 +80,9 @@ Note that, to guarantee data integration, the nutrient names must be consistent 
 
 ----
 
-El CoNA se estima seleccionando el conjunto de alimentos que, al costo más bajo, cumple no solo con el Requerimiento Energético Estimado (EER), sino también con los límites inferiores y superiores de la ingesta de macro- y micronutrientes para un individuo. El costo mínimo de la dieta adecuada en nutrientes está dado por la solución de un modelo de programación lineal con 2K + 1 restricciones lineales. (Consulte FoodPrice: Un paquete de R para estimar dietas de menor costo para obtener más información).
+El CoNA se estima seleccionando el conjunto de alimentos que, al costo más bajo, cumple no solo con el Requerimiento Energético Estimado (EER), sino también con los límites inferiores y superiores de la ingesta de macro y micronutrientes para un individuo. El costo mínimo de la dieta adecuada en nutrientes está dado por la solución de un modelo de programación lineal con 2K + 1 restricciones lineales. (Consulte FoodPrice: Un paquete de R para estimar dietas de menor costo para obtener más información).
 Sobre la base del modelo de programación lineal, es posible identificar nutrientes limitantes, así como calcular la elasticidad del precio sombra (SPE) de cada nutriente. Por definición, un nutriente se identifica como nutriente limitante si el nivel de ingesta en la dieta óptima alcanza exactamente el límite inferior. Para el k-ésimo nutriente, la SPE se define como el cambio porcentual en la función objetivo evaluada en la base óptima (CoNA óptimo) cuando la restricción se aumenta en un 1%. (Para detalles formales, consulte FoodPrice: Un paquete de R para estimar dietas de menor costo).
-Tenga en cuenta que, para garantizar la integración de datos, los nombres de los nutrientes deben ser consistentes en todos los parámetros (data, EER_LL, UL). Además, para el parámetro EER, no es obligatorio que la columna "Sex" esté definida por dos categorías (0 si es hombre, 1 si es mujer). Si solo se incluye una de las dos categorías, la función calcula el CoNA por grupos de edad. En este caso, no es necesario especificar la columna "Sex".
+Tenga en cuenta que, para garantizar la integración de datos, los nombres de los nutrientes deben ser consistentes en todos los parámetros (data, EER_LL, UL). Además, para los parámetros  EER_LL y UL, no es obligatorio que la columna "Sex" esté definida. Si solo se cuenta con una de las dos categorías (por ejemplo, si solo se tienen datos de hombres o solo de mujeres), la función calculará el CoRD por grupos de edad en lugar de tener en cuenta el sexo. En este caso, no es necesario especificar la columna "Sex".
 
 }
 
@@ -107,19 +108,19 @@ The output will be displayed as a list based on the name assigned by the user; i
 
 La salida se mostrará como una lista basada en el nombre asignado por el usuario; sus elementos son:
 
-    \item{comp:}{Un marco de datos que contiene la composición de la dieta, diferenciada por grupos de edad y sexo. El marco de datos muestra, para cada grupo demográfico, los alimentos incluidos en la solución óptima (alimento) y su cantidad. (Si se especificaron los grupos de alimentos en el parámetro data, el marco de datos muestra el grupo de alimentos al que pertenece el alimento). }
+    \item{comp:}{Un conjunto de datos que contiene la composición de la dieta, diferenciada por grupos de edad y sexo. El conjunto de datos muestra, para cada grupo demográfico, los alimentos incluidos en la solución óptima (alimento) y su cantidad. (Si se especificaron los grupos de alimentos en el parámetro data, el conjunto de datos muestra el grupo de alimentos al que pertenece el alimento). }
     
-    \item{cost:}{Un marco de datos que contiene, para cada grupo demográfico, el costo por día (costo_día) y el costo por 1000 kcal (costo_kcal) para la dieta adecuada en nutrientes}
+    \item{cost:}{Un conjunto de datos que contiene, para cada grupo demográfico, el costo por día (costo_día) y el costo por 1000 kcal (costo_kcal) para la dieta adecuada en nutrientes}
     
-    \item{limit:}{Un marco de datos con una variable dicotómica que indica si un nutriente fue un nutriente limitante. }
+    \item{limit:}{Un conjunto de datos con una variable dicotómica que indica si un nutriente fue un nutriente limitante. (1 si es limitante 0 si no)}
 
-    \item{spe:}{Un marco de datos que contiene el precio sombra (SP) y la elasticidad del precio sombra (SPE) de cada restricción. El marco de datos muestra una variable dicotómica (restricciones) que indica si los precios sombra se calculan en función del límite inferior (min) o el límite superior (max).}
+    \item{spe:}{Un conjunto de datos que contiene el precio sombra (SP) y la elasticidad del precio sombra (SPE) de cada restricción. El conjunto de datos muestra una variable dicotómica (restricciones) que indica si los precios sombra se calculan en función del límite inferior (min) o el límite superior (max).}
 
     \item{p:}{Vector numérico del precio al por menor del alimento expresado por cada 100 g de porción comestible (es decir, los coeficientes de la función objetivo)}
 
     \item{x:}{Un vector de alimentos utilizados en la función objetivo}
 
-    \item{constraints:}{Un marco de datos que contiene las restricciones del modelo de programación lineal, según se ingresaron (es decir, EER, límites inferiores y superiores de la ingesta de macro- y micronutrientes por grupos de edad y sexo).}
+    \item{constraints:}{Un conjunto de datos que contiene las restricciones del modelo de programación lineal según se ingresaron (es decir, Energy, límites inferiores y superiores de la ingesta de macro y micronutrientes por grupos de edad y sexo).}
 
         
 }

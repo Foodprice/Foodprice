@@ -1,4 +1,5 @@
 \name{DataCol}
+\docType{package}
 \alias{DataCol}
 \title{Function to process SIPSA wholesale price data from DANE in Colombia, from 2013 to 2023.}
 \usage{
@@ -64,11 +65,11 @@ kable(head(X))
 
  \code{- Parámetros Opcionales} 
 
-    \item{Percentile:}{Un número dentro del rango de 0 a 1 que indica el percentil utilizado para filtrar alimentos con un nivel de suministro por debajo de este valor. Por defecto, es NULL.}
-    \item{Food_income:}{Un vector o marco de datos con 21 columnas, que puede tener un tamaño de 21 si es un vector. Este conjunto de datos actúa como un suplemento para la información nutricional faltante para ciertos alimentos. Inicialmente, se realizaron análisis nutricionales exclusivamente para la ciudad de Cali, Colombia, lo que resultó en una falta de información sobre la composición nutricional de varios alimentos en otras ciudades. La función identifica y muestra los alimentos faltantes en la ciudad proporcionada debido a esta falta de datos nutricionales específicos para cada ubicación.}
-    \item{Price_data_list:}{Una lista que incorpora información de precios. Para que funcione correctamente, el paquete espera datos descargados directamente del DANE, evitando cualquier procedimiento previo de limpieza de datos. Se asume que estos datos están en un archivo de Excel con varias hojas, por lo que deben cargarse como una lista utilizando la biblioteca RIO. Por ejemplo, se puede usar la función rio::import_list(Excel_file, setclass = "tbl").}
-    \item{Supply_data_list:}{Una colección de datos vinculados al suministro. Se espera que el proceso de carga de estos datos siga las mismas pautas que las establecidas para cargar la lista de precios, es decir, aplicando las mismas condiciones y procedimientos de carga utilizados para data_list_prices.}
-    \item{Margins:}{Un conjunto de ocho valores que representan los márgenes de comercialización asociados con cada categoría de alimentos. Estos valores deben seguir un orden específico correspondiente a las siguientes categorías: carnes, frutas, granos y cereales, lácteos y huevos, pescado, productos procesados, tubérculos, raíces y plátanos, verduras.}
+    \item{Percentile:}{Un número dentro del rango de 0 a 1 que indica el percentil utilizado para filtrar alimentos con un nivel de abastecimiento por debajo de este valor. Por defecto, es NULL.}
+    \item{Food_income:}{Un vector de longitud 25 o conjunto de datos con 25 columnas. Este conjunto de datos actúa como un suplemento para la información nutricional faltante para ciertos alimentos. Inicialmente, se realizaron análisis nutricionales exclusivamente para la ciudad de Cali, Colombia, lo que resultó en una falta de información sobre la composición nutricional de varios alimentos en otras ciudades. La función 'DataCol' identifica y muestra los alimentos faltantes en la ciudad proporcionada debido a esta falta de datos nutricionales específicos para cada ubicación.}
+    \item{Price_data_list:}{Una lista que incorpora información de precios al por mayor de SIPSA-DANE. Para que funcione correctamente, la función espera datos descargados directamente del DANE, evitando cualquier procedimiento previo de limpieza de datos. Se asume que estos datos están en un archivo de Excel con varias hojas, por lo que deben cargarse como una lista utilizando la librería RIO. Por ejemplo, se puede usar la función rio::import_list(Excel_file, setclass = "tbl").}
+    \item{Supply_data_list:}{Una lista de datos vinculados al abastecimiento de SIPSA-DANE. Se espera que el proceso de carga de estos datos siga las mismas pautas que las establecidas para cargar la lista de precios, es decir, aplicando las mismas condiciones y procedimientos de carga utilizados para data_list_prices.}
+    \item{Margins:}{Un vector de ocho valores que representan los márgenes de comercialización asociados con cada categoría de alimentos. Estos valores deben seguir un orden específico correspondiente a las siguientes categorías: carnes, frutas, granos y cereales, lácteos y huevos, pescado, productos procesados, tubérculos, raíces y plátanos, verduras.}
 
 }
 
@@ -88,7 +89,7 @@ The function output is a list containing the estimated retail prices and the dat
 
 ----
 
-La salida de la función es una lista que contiene los precios al por menor estimados y el marco de datos descargado del DANE.
+La salida de la función es un conjunto de datos que contiene los precios al por menor estimados.
 }
 
 \note{

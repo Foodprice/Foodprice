@@ -4,14 +4,25 @@
 \title{(Example dataset)-serv_example}
 
 \description{
-Dataset that contains the exchange requirements for each food subgroup, demographic group, and gender. The determination of the set of foods that satisfy, at the lowest cost, the recommendations of groups specified in the Food-based dietary guidelines for the Colombian population (Guías Alimentarias Basadas en Alimentos para la población colombiana [GABAS]) is based on the number of exchanges needed, adjusted according to caloric intake (differentiated by food group) and the EER (differentiated by age group)}
+Dataset containing exchange requirements for arbitrary foods and subgroups. The exchange values are identical to those expressed in the 'serv' dataset.
+
+----
+
+Conjunto de datos que incluye los requisitos de intercambio para alimentos y subgrupos arbitrarios. Los valores de intercambio son idénticos a los expresados en el conjunto de datos 'serv'.
+}
 
 \usage{
 serv_example
 }
 
 \format{
-Dataset with 220 rows (combinations of food subgroups and demographic groups) and 4 variables: "Age" (Age, demographic group), "Serving" (Portion, exchanges), "Subgroup" (Food subgroup), and "Sex" (Sex).
+
+Dataset with 220 rows (combinations of food subgroups and demographic groups) and 4 variables: "Age" (Age, demographic group), "Serving" (Serving, exchanges), "subgroup" (Food subgroup), and "Sex" (Sex, gender).
+
+----
+
+Conjunto de datos con 220 filas (combinaciones de subgrupos de alimentos y grupos demográficos) y 4 variables (columnas): "Age" (Edad, grupo demográfico), "Serving" (Porción, intercambios), "subgroup" (Subgrupo de alimentos) y "Sex" (Sexo, género).
+
 }
 
 \examples{
@@ -21,7 +32,3 @@ head(serv_example)
 
 }
 
-\source{
-
-
-}

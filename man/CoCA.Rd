@@ -1,7 +1,8 @@
 
 \name{CoCA}
+\docType{package}
 \alias{CoCA}
-\title{cost_day of Caloric Adequacy (CoCA)}
+\title{cost day of Caloric Adequacy (CoCA)}
 \usage{
 CoCA(
 data,
@@ -15,7 +16,7 @@ CoCA computes the minimum daily cost of a caloric adequate diet for an individua
 
 ----
 
-CoCA calcula el costo diario mínimo de una dieta calórica adecuada para un individuo según su requerimiento energético estimado.
+La función CoCA calcula el costo diario mínimo de una dieta adecuada en calorías para un individuo, basándose en su requerimiento energético estimado.
 }
 \examples{
 
@@ -27,8 +28,8 @@ CoCA calcula el costo diario mínimo de una dieta calórica adecuada para un ind
 data(data_example, package = "Foodprice")
 data(EER, package = "Foodprice") 
 
-# Apply the function to the input data
-# Aplicando el modelo
+# Applying the model with the sample data
+# Aplicando el modelo con los datos de ejemplo
 Mod=CoCA(data = data_example, EER=EER_example)
 
 # cost_day Visualization
@@ -53,8 +54,8 @@ kable(Mod$cost)
 
  \code{- Parámetros necesarios} 
  
-    \item{data:}{conjunto de datos que contiene el precio al por menor y el contenido energético de los alimentos locales, expresados por cada 100 g de porción comestible. El marco de datos debe tener al menos 3 columnas con los siguientes nombres: "Food", "Price_100g", y "Energy".} 
-    \item{EER:}{conjunto de datos que contiene el Requerimiento Energético Estimado (EER) para diferentes grupos de edad y sexo. El marco de datos debe incluir 3 columnas con los siguientes nombres: "Age", "EER", y "Sex". Se asume que "Age" es una cadena de caracteres, y "EER" y "Sex" (0 si es hombre, 1 si es mujer) son variables numéricas.}
+    \item{data:}{Un conjunto de datos que contiene el precio al por menor y el contenido energético de los alimentos locales, expresados por cada 100 g de porción comestible. El conjunto de datos debe tener al menos tres columnas con los siguientes nombres: "Food", "Price_100g", y "Energy".} 
+    \item{EER:}{Un conjunto de datos que contiene el requerimiento energético Estimado (EER) para diferentes grupos de edad y sexo. El conjunto de datos debe incluir 3 columnas con los siguientes nombres: "Age", "EER", y "Sex". Se asume que "Age" es una cadena de texto, mientras que "EER" y "Sex" son variables numéricas, donde "Sex" toma el valor de 0 si se trata de un hombre y 1 si se trata de una mujer.}
  
  \code{- Parámetros Opcionales} 
     \item{exclude:}{Un vector utilizado para excluir uno o más alimentos antes de realizar el modelo.}
@@ -68,7 +69,7 @@ Note that, for the EER parameter, it is not mandatory that the “Sex” column 
 ----
 
 El CoCA se define como el costo mínimo de una dieta solo de energía que proporciona las calorías necesarias para cumplir con el EER para un individuo. La solución óptima al modelo de programación lineal consiste en una dieta compuesta por el alimento cuyo precio por kilocaloría es mínimo (es decir, el alimento básico de menor costo). (Consulte FoodPrice: Un paquete de R para estimar dietas de menor costo para obtener más información).
-Tenga en cuenta que, para el parámetro EER, no es obligatorio que la columna "Sex" esté definida por dos categorías (0 si es hombre, 1 si es mujer). Si solo se incluye una de las dos categorías, la función calcula el CoCA por grupos de edad. En este caso, no es necesario especificar la columna "Sex".
+Tenga en cuenta que, para el parámetro EER, no es obligatorio que la columna "Sex" esté definida. Si solo se cuenta con una de las dos categorías (por ejemplo, si solo se tienen datos de hombres o solo de mujeres), la función calculará el CoCA por grupos de edad en lugar de tener en cuenta el sexo. En este caso, no es necesario especificar la columna "Sex".
 
 }
 \value{
@@ -89,13 +90,13 @@ The output will be displayed as a list based on the name assigned by the user; i
 
 La salida se mostrará como una lista basada en el nombre asignado por el usuario; sus elementos son:
 
-\item{cost:}{Un marco de datos que contiene el costo y la composición de la dieta, diferenciados por grupos de edad y sexo. Para cada grupo demográfico, el marco de datos muestra el alimento cuyo precio por kilocaloría es mínimo (alimento), la cantidad de alimento expresada en gramos (cantidad), el costo por día (costo_día) y el costo por 1000 kcal (costo_kcal) para la dieta solo de energía. (Si se especificaron los grupos de alimentos en el parámetro data, el marco de datos muestra el grupo de alimentos al que pertenece el alimento).}
+\item{cost:}{Un conjunto de datos que contiene el costo y la composición de la dieta, diferenciados por grupos de edad y sexo. Para cada grupo demográfico, el conjunto de datos muestra el alimento cuyo precio por kilocaloría es mínimo (Food), la cantidad de alimento expresada en gramos (quantity), el costo por día (cost_day) y el costo por 1000 kcal (cost_kcal) para la dieta solo de energía. (Si se especificaron los grupos de alimentos en el parámetro data, el conjunto de datos muestra el grupo de alimentos al que pertenece el alimento).}
 
 \item{p:}{Vector numérico del precio al por menor del alimento expresado por cada 100 g de porción comestible (es decir, los coeficientes de la función objetivo).}
 
 \item{x:}{Vector de alimentos utilizados en la función objetivo}
 
-\item{energy:}{Un marco de datos que contiene las restricciones del modelo de programación lineal, según se ingresaron (es decir, EER por grupos de edad y sexo).}
+\item{energy:}{Un conjunto de datos que contiene las restricciones del modelo de programación lineal según se ingresaron (es decir, EER por grupos de edad y sexo).}
 }
 
 
