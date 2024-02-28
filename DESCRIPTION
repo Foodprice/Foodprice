@@ -5,7 +5,7 @@ Version: 1.0.0
 Author: Daniel González, Sergio A. Barona, Juan Camilo Ordoñez
 Maintainer: Juan Camilo Ordoñez  <kmilinm19@gmail.com>
 Depends: R (>= 4.3.2)
-Imports: tidyverse, rio, janitor, stringdist, lpSolve
+Imports: tidyverse, rio, janitor, stringdist, lpSolve, knitr
 Description: This package provides tools to estimate the minimum cost of a diet that meets the following criteria: sufficiency in energy, adequacy in nutrients, and health promotion. Developed in collaboration with Pontificia Universidad Javeriana Cali and the Alliance Bioversity-CIAT, the package offers functionalities that allow calculating and optimizing the cost associated with the preparation of healthy and balanced diets.
 License: MIT
 Encoding: UTF-8
