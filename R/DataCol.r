@@ -81,7 +81,7 @@ if (!is.null(Margins)) {
   #                       SEGUNDA ETAPA: VALIDACIÓN DE LIBRERIAS                             # ✔ SIMPLIFICADA Y ASEGURADA
   #-----------------------------------------------------------------------------------------#
   
-Librerias_base = c("tidyverse","rio","janitor","stringdist","lpSolve")  # Nombra las librerias necesarias
+Librerias_base = c("tidyverse","rio","janitor","stringdist","lpSolve","knitr")  # Nombra las librerias necesarias
   
   if (!require("pacman")) install.packages("pacman") # Paquete que simplifica la carga de librerias
   pacman::p_load(char = Librerias_base,character.only = TRUE);Librerias_base_print = paste0(paste0("'", Librerias_base, "'"), collapse = ", ") # Instala si es necesario, o en su defecto, sólo llama los paquetes
