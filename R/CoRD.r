@@ -344,7 +344,7 @@ CoRD=function(data,serv,diverse,exclude=NULL){
         # generar igualdades del sistema
         B = Generar_B(Cantidad_i)
         
-        # ----------------- MODELO FEMENINO-----------------
+        # ----------------- MODELO -----------------
         
         # Soluciones por INT y gr
         
@@ -354,7 +354,7 @@ CoRD=function(data,serv,diverse,exclude=NULL){
         Cantidad_g = Number_Serving * Datos_grupo_i$Serving_g
         
         # Crear dataframe directamente y agregar las filas a CoRD_INT_F
-        if ("Energy" %in% colnames(data)) {CoRD_F = cbind(Datos_grupo_i, Number_Serving = Number_Serving, Cantidad_g = Cantidad_g,Age=Age[i],Sex=sexo_nombre,Energy=Datos_grupo_i$Energy,Serving_g=Datos_grupo_i$Serving_g) }else{CoRD_F = cbind(Datos_grupo_i, Number_Serving = Number_Serving, Cantidad_g = Cantidad_g,Age=Age[i],Sex=sexo_nombre)}
+        if ("Energy" %in% colnames(data)) {CoRD_F = cbind(Datos_grupo_i, Number_Serving = Number_Serving, Cantidad_g = Cantidad_g,Demo_Group=Age[i],Sex=sexo_nombre,Energy=Datos_grupo_i$Energy,Serving_g=Datos_grupo_i$Serving_g) }else{CoRD_F = cbind(Datos_grupo_i, Number_Serving = Number_Serving, Cantidad_g = Cantidad_g,Demo_Group=Age[i],Sex=sexo_nombre)}
         
         CoRD_INT = rbind(CoRD_INT, CoRD_F)
         
@@ -363,10 +363,11 @@ CoRD=function(data,serv,diverse,exclude=NULL){
       
     }
     
-    
+
     
     #------------------ CÁLCULO DEL COSTO POR EDAD
     Aporte=data.frame()
+
     for (E in Age) {
       # Filtrar el dataframe por edad
       df_edad <- subset(CoRD_INT, Age == E)
@@ -375,7 +376,7 @@ CoRD=function(data,serv,diverse,exclude=NULL){
       costo_edad <- sum(df_edad$Price_serving * df_edad$Number_Serving)
       
       # calcular costo * 1000kc o no
-      if ("Energy" %in% colnames(data)){df_temp <- data.frame(Demo_Group = E, cost_day = costo_edad,      Cost_1000kcal= (costo_edad/(sum((df_edad$Energy/100)*df_edad$Cantidad_g)))*1000)}else {df_temp <- data.frame(Age = E, cost_day = costo_edad)}
+      if ("Energy" %in% colnames(data)){df_temp <- data.frame(Demo_Group = E, cost_day = costo_edad,      Cost_1000kcal= (costo_edad/(sum((df_edad$Energy/100)*df_edad$Cantidad_g)))*1000)}else {df_temp <- data.frame(Demo_Group = E, cost_day = costo_edad)}
       
       # Agregar el dataframe temporal a costo
       CoRD_COST <- rbind(CoRD_COST, df_temp)
@@ -445,5 +446,4 @@ CoRD=function(data,serv,diverse,exclude=NULL){
   
   
 }
-
 
