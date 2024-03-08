@@ -36,8 +36,3 @@ head(data_example)
 
 }
 
-\source{
-
-REFERENCIAR EL DOCUMENTO ANTERIOR
-
-}
