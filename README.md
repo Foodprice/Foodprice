@@ -9,11 +9,10 @@
 
 En el presente repositorio encontrará la versión 1.0.0 del paquete Foodprice, el cúal alberga cuatro funciones:
 
-- **DataCol:** La función Datos_dane_col ofrece la posibilidad de obtener y manejar datos de precios mayoristas SIPSA del Departamento Administrativo Nacional de Estadística (DANE) en Colombia, adecuados para un mes, año y ciudad particulares. Su resultado principal se centra en las estimaciones de los precios minoristas, vinculando los nutrientes correspondientes a cada alimento.
-
-- **CoCA:** Calcula el alimento y su costo minimo para una dieta que garantice suficiente energía en el día. 
-- **CoNA:** calcula los alimentos para una dieta adecuada en nutrientes y su costo mínimo diario. 
-- **CoRD:** calcula los alimentos para una dieta saludable y su costo mínimo diario. 
+- **DataCol:** Proporciona la posibilidad de obtener y manipular datos de precios al por mayor SIPSA del Departamento Administrativo Nacional de Estadística (DANE) en Colombia, adecuados para un mes, año y ciudad específicos. Su resultado principal se centra en las estimaciones de precios al por menor, vinculando los nutrientes correspondientes para cada alimento.
+- **CoCA:** Calcula el costo diario mínimo de una dieta adecuada en calorías para un individuo, basándose en su requerimiento energético estimado.
+- **CoNA:** Calcula el costo diario mínimo de una dieta adecuada en nutrientes para un individuo según sus ingestas de referencia dietética. 
+- **CoRD:** Calcula el costo diario mínimo de una dieta recomendada o saludable que garantiza diversidad entre los grupos de alimentos, siguiendo las recomendaciones de grupos de alimentos proporcionadas por las Guías Alimentarias Basadas en Alimentos (GABA)
 #
 
 ### :wrench: **Instrucciones de instalación y uso:**
