@@ -270,7 +270,7 @@ stop("Error: UL and EER_LL data do not have the same nutrient names in the colum
           SPE = NA
         ) %>%
           mutate(SP = CoNA$duals[1:length(constr_signs)],
-                 SPE = ((SP/1) * (unlist(Limitaciones[i, , drop = FALSE])/CoNA$objval)) * 100)
+                 SPE = ((SP/1) * (unlist(Limitaciones[i, , drop = FALSE])/CoNA$objval)))
         
         S_shadow <- rbind(S_shadow, Spe)
         
